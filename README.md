@@ -4,7 +4,23 @@ This code was developed by Dr. Julio Sotelo, as part of his PhD thesis and also 
 
 The application run on Windows and macOS, it can also be used in Linux. To generate the FEM mesh we make use of iso2mesh opensource toolbox (http://iso2mesh.sourceforge.net/cgi-bin/index.cgi?Home). [Reference 6 and 7]
 
-Please load the 4D Flow MRI data set as structure file of MATLAB (See the document USER-GUIDE-4D-FLOW-APP). If you have some problems to create this structure file, please send me an email to: julio.sotelo@uv.cl or jasotelo@uc.cl.
+The 4D Flow MRI data set need to be loaded as MATLAB structure file (See the document USER-GUIDE-4D-FLOW-APP). 
+
+The data structure must have the following format:
+a) the file neet to be named data.mat, and saved in a single folder.
+b) the data.mat file contain the following:
+  - data.MR_FFE_FH = magnitude image (4D matrix with: rows, columns, slices, cardiac phases)
+  - data.MR_FFE_AP = magnitude image (4D matrix with: rows, columns, slices, cardiac phases)
+  - data.MR_FFE_RL = magnitude image (4D matrix with: rows, columns, slices, cardiac phases)
+  - data.MR_PCA_FH = velocity image in cm/s (4D matrix with: rows, columns, slices, cardiac phases)
+  - data.MR_PCA_AP = velocity image in cm/s (4D matrix with: rows, columns, slices, cardiac phases)
+  - data.MR_PCA_RL = velocity image in cm/s (4D matrix with: rows, columns, slices, cardiac phases)
+  - data.voxel_MR = voxel size (row,columns,slices)
+  - data.VENC = velocity encoding
+  - data.heart_rate = cardiac frequency in bpm
+  - data.type = you can write 'DCM' in this variable.
+
+If you have some problems to create this structure file, or if you need more assistance, please contact me to the email: julio.sotelo@uv.cl or jasotelo@uc.cl.
 
 # References
 
