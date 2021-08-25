@@ -8,9 +8,9 @@ The 4D Flow MRI data set need to be loaded as MATLAB structure file (See the doc
 
 The data structure must have the following format:
 
-a) the file neet to be named data.mat, and saved in a single folder.
+a) The file need to be named data.mat, and saved in a single folder.
 
-b) the data.mat file contain the following:
+b) The data.mat file contain the following:
 
   - data.MR_FFE_FH = magnitude image (4D matrix with: rows, columns, slices, cardiac phases)
   - data.MR_FFE_AP = magnitude image (4D matrix with: rows, columns, slices, cardiac phases)
@@ -22,9 +22,9 @@ b) the data.mat file contain the following:
   - data.VENC = velocity encoding
   - data.heart_rate = cardiac frequency in bpm
   - data.type = you can write 'DCM' in this variable.
-  - If you need more information to save you can add more data.XXX variables. 
+  - if you need more information to save you can add more data.XXX variables. 
   
-c) to excecute the app go to the app folder and write "run GUIDE_4D_FLOW.p" in the MATLAB command windows.
+c) To excecute the app go to the app folder and write "run GUIDE_4D_FLOW.p" in the MATLAB command windows.
 
 If you have some problems to create this structure file, or if you need more assistance, please contact me to the email: julio.sotelo@uv.cl or jasotelo@uc.cl.
 
