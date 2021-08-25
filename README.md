@@ -1,8 +1,8 @@
 # 4D-Flow-Matlab-Toolbox
 
-This code was developed by Dr. Julio Sotelo, as part of his PhD thesis and also his postdoctoral research, guided by the professors Dr. Sergio Uribe and Dr. Daniel Hurtado, from the Pontificia Universidad Católica de Chile. It is also part of the contribution developed by the Center for Biomedical Imaging (www.mri.cl) and Nucleo Milenio CardioMR (https://cardiomr.cl/). We have developed a methodology for the non-invasive quantification of hemodynamics and geometrical parameters from 4D flow data sets based on Finite Elements methods. [Reference 1 to 5]
+This code was developed by Dr. Julio Sotelo, as part of his PhD thesis and also his postdoctoral research, guided by the professors Dr. Sergio Uribe and Dr. Daniel Hurtado, from the Pontificia Universidad Católica de Chile. It is also part of the contribution developed by the Center for Biomedical Imaging (www.mri.cl) and Nucleo Milenio CardioMR (https://cardiomr.cl/). We have developed a methodology for the non-invasive quantification of hemodynamics and geometrical parameters from 4D flow data sets based on Finite Elements methods. [Reference 1 to 6]
 
-The application run on Windows and macOS, it can also be used in Linux. To generate the FEM mesh we make use of iso2mesh opensource toolbox (http://iso2mesh.sourceforge.net/cgi-bin/index.cgi?Home). [Reference 6 and 7]
+The application run on Windows and macOS, it can also be used in Linux. To generate the FEM mesh we make use of iso2mesh opensource toolbox (http://iso2mesh.sourceforge.net/cgi-bin/index.cgi?Home). [Reference 7 and 8]
 
 The 4D Flow MRI data set need to be loaded as MATLAB structure file (See the document USER-GUIDE-4D-FLOW-APP). 
 
@@ -40,9 +40,11 @@ If you have some problems to create this structure file, or if you need more ass
 
 >5.- Sotelo J, Valverde I, Martins D, Bonnet D, Boddaert N, Pushparajan K, Uribe S, Raimondi F. Impact of aortic arch curvature in flow haemodynamics in patients with transposition of the great arteries after arterial switch operation. Eur Heart J Cardiovasc Imaging. 2021 Jan 31:jeaa416. doi: 10.1093/ehjci/jeaa416. Epub ahead of print. PMID: 33517430.
 
->6.-Anh Phong Tran, Shijie Yan and Qianqian Fang*, (2020) "Improving model-based fNIRS analysis using mesh-based anatomical and light-transport models," Neurophotonics, 7(1), 015008
+>6.- Sotelo J, Bissell MM, Jiang Y, Mella H, Mura J, Uribe S. Three-Dimensional quantification of circulation using finite-element methods in 4D flow MR data of the thoracic aorta. Magn Reson Med. 2021 (In Press). doi: 10.1002/MRM.29004
 
->7.- Qianqian Fang and David Boas, "Tetrahedral mesh generation from volumetric binary and gray-scale images," Proceedings of IEEE International Symposium on Biomedical Imaging 2009, pp. 1142-1145, 2009
+>7.-Anh Phong Tran, Shijie Yan and Qianqian Fang*, (2020) "Improving model-based fNIRS analysis using mesh-based anatomical and light-transport models," Neurophotonics, 7(1), 015008
+
+>8.- Qianqian Fang and David Boas, "Tetrahedral mesh generation from volumetric binary and gray-scale images," Proceedings of IEEE International Symposium on Biomedical Imaging 2009, pp. 1142-1145, 2009
 
 # Networks
 
