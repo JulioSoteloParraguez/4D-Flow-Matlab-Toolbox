@@ -22,7 +22,8 @@ b) the data.mat file contain the following:
   - data.VENC = velocity encoding
   - data.heart_rate = cardiac frequency in bpm
   - data.type = you can write 'DCM' in this variable.
-
+  - If you need more information to save you can add more data.XXX variables. 
+  
 c) to excecute the app go to the app folder and write "run GUIDE_4D_FLOW.p" in the MATLAB command windows.
 
 If you have some problems to create this structure file, or if you need more assistance, please contact me to the email: julio.sotelo@uv.cl or jasotelo@uc.cl.
