@@ -18,8 +18,8 @@ b) The data.mat file contain the following:
   - data.MR_PCA_FH = velocity image in cm/s (4D matrix with: rows, columns, slices, cardiac phases)
   - data.MR_PCA_AP = velocity image in cm/s (4D matrix with: rows, columns, slices, cardiac phases)
   - data.MR_PCA_RL = velocity image in cm/s (4D matrix with: rows, columns, slices, cardiac phases)
-  - data.voxel_MR = voxel size (row,columns,slices)
-  - data.VENC = velocity encoding
+  - data.voxel_MR = voxel size (row,columns,slices) in mm
+  - data.VENC = velocity encoding in cm/s
   - data.heart_rate = cardiac frequency in bpm
   - data.type = you can write 'DCM' in this variable.
   - if you need more information to save you can add more data.XXX variables. 
