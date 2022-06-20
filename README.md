@@ -30,7 +30,7 @@ To include the vWERP module: You can contact to David Marlevi (marlevi@mit.edu),
 
 If you have some problems to create this structure file, or if you need more assistance, please contact me to the email: julio.sotelo@uv.cl or jasotelo@uc.cl.
 
-# References
+# References APP and Hemodynamics Parameters
 
 >1.- Sotelo J, Mura J, Hurtado DE, Uribe S. A NOVEL MATLAB TOOLBOX FOR PROCESSING 4D FLOW MRI DATA. Proc. Intl. Soc. Mag. Reson. Med. 27 (2019)
 
@@ -44,9 +44,15 @@ If you have some problems to create this structure file, or if you need more ass
 
 >6.- Sotelo J, Bissell MM, Jiang Y, Mella H, Mura J, Uribe S. Three-Dimensional quantification of circulation using finite-element methods in 4D flow MR data of the thoracic aorta. Magn Reson Med. 2021 (In Press). doi: 10.1002/MRM.29004
 
+# References for iso2mesh toolbox
+
 >7.-Anh Phong Tran, Shijie Yan and Qianqian Fang*, (2020) "Improving model-based fNIRS analysis using mesh-based anatomical and light-transport models," Neurophotonics, 7(1), 015008
 
 >8.- Qianqian Fang and David Boas, "Tetrahedral mesh generation from volumetric binary and gray-scale images," Proceedings of IEEE International Symposium on Biomedical Imaging 2009, pp. 1142-1145, 2009
+
+# References for vWERP method
+
+>9.- Marlevi, D., Ruijsink, B., Balmus, M. et al. Estimation of Cardiovascular Relative Pressure Using Virtual Work-Energy. Sci Rep 9, 1375 (2019). https://doi.org/10.1038/s41598-018-37714-0
 
 # Networks
 
