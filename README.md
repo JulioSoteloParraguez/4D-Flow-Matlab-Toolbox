@@ -24,7 +24,9 @@ b) The data.mat file contain the following:
   - data.type = you can write 'DCM' in this variable.
   - if you need more information to save you can add more data.XXX variables. 
   
-c) To excecute the app go to the app folder and write "run GUIDE_4D_FLOW.m" in the MATLAB command windows.
+c) unzip the zip file (iso2mesh), for the system version that you are using.
+
+d) To excecute the app go to the app folder and write "run GUIDE_4D_FLOW.m" in the MATLAB command windows.
 
 To include the vWERP module: You can contact to David Marlevi (marlevi@mit.edu), the author of this method and request the "vWERP/" folder that has to go inside the 4D flow APP folder.
 
