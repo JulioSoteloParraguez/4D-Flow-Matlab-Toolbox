@@ -9370,6 +9370,7 @@ function Load_Folder_Callback(hObject, eventdata, handles)
     remain = allSubFolders;
     
     if ismac || isunix 
+      path(path,'iso2mesh-Mac/')
       listOfFolderNames = {};
       while true
         [singleSubFolder, remain] = strtok(remain, ':');
@@ -9381,6 +9382,7 @@ function Load_Folder_Callback(hObject, eventdata, handles)
       numberOfFolders = length(listOfFolderNames);
       
     elseif ispc
+      path(path,'iso2mesh-Win/')
       listOfFolderNames = {};
       while true
         [singleSubFolder, remain] = strtok(remain, ';');
@@ -10568,8 +10570,6 @@ function Load_Folder_Callback(hObject, eventdata, handles)
     handles.max_value_th = max(handles.IPCMRA(:));
     handles.id_resizing = 0;
         
-    path(path,'iso2mesh/')
-    
     handles.id_mesh = 0;
     handles.id_unwrappping = 0;
     handles.id_vel = 0;
