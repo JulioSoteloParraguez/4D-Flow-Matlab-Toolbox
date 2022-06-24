@@ -11666,7 +11666,7 @@ function Save_Data_Callback(hObject, eventdata, handles)
                 h = waitbar(0,['Saving VTU Files ',num2str(0),' files of ',num2str(size(handles.veset,3)),' ...']);
                 steps = 1;
                 st = steps;
-                nodevol = squeeze(nodevolume(nodes_n,handles.elem));
+                nodevol = squeeze(nodevolume(nodes_n,handles.elem))*1e+9;% variable is saved in mm3
                 for n =1:size(handles.veset,3)
                     name = sprintf(['vessel_','%04d','.vtu'],n);
                     fileID = fopen([directory,'/VTU FILES/',name],'w');
@@ -11825,7 +11825,7 @@ function Save_Data_Callback(hObject, eventdata, handles)
                         fprintf(fileID,'%s\n','</DataArray>');
                     end
 
-                    fprintf(fileID,'%s\n','<DataArray  type="Float64"  Name="Node Volume [m$^3$]"  NumberOfComponents="1" format="ascii">');
+                    fprintf(fileID,'%s\n','<DataArray  type="Float64"  Name="Node Volume [mm$^3$]"  NumberOfComponents="1" format="ascii">');
                     fprintf(fileID,'%f\n',squeeze(nodevol(:,1))');
                     fprintf(fileID,'%s\n','</DataArray>');
                     fprintf(fileID,'%s\n','<DataArray  type="Float64"  Name="ID nodes[#]"  NumberOfComponents="1" format="ascii">');
