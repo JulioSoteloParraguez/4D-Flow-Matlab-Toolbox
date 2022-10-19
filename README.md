@@ -1,5 +1,8 @@
 # 4D-Flow-Matlab-Toolbox
 
+![fcvm-09-885338-g001](https://user-images.githubusercontent.com/75703824/196751007-3f58efda-eefc-4b39-ac8a-b40c3217af2b.jpg)
+
+
 This code was developed by Dr. Julio Sotelo, as part of his PhD thesis and also his postdoctoral research, guided by the professors Dr. Sergio Uribe and Dr. Daniel Hurtado, from the Pontificia Universidad Católica de Chile. It is also part of the contribution developed by the Center for Biomedical Imaging (www.mri.cl) and Nucleo Milenio CardioMR (https://cardiomr.cl/). We have developed a methodology for the non-invasive quantification of hemodynamics and geometrical parameters from 4D flow data sets based on Finite Elements methods. [Reference 1 to 6]
 
 Also we include aditional Matlab-based toolkits to extract the pressure differences from 4D flow MRI images, developed by colaborators at Massachusetts Institute of Technology (MIT) and King's College London (KCL).
