@@ -2,7 +2,7 @@
 
 This code was developed by Dr. Julio Sotelo, as part of his PhD thesis and also his postdoctoral research, guided by the professors Dr. Sergio Uribe and Dr. Daniel Hurtado, from the Pontificia Universidad Católica de Chile. It is also part of the contribution developed by the Center for Biomedical Imaging (www.mri.cl) and Nucleo Milenio CardioMR (https://cardiomr.cl/). We have developed a methodology for the non-invasive quantification of hemodynamics and geometrical parameters from 4D flow data sets based on Finite Elements methods. [Reference 1 to 6]
 
-Also we include aditional Matlab-based toolkits to extract the pressure differences from 4D flow MRI images, developed by colaborators at Massachusetts Institute of Technology (MIT), University of Michigan (UMich) and King's College London (KCL).
+Also we include aditional Matlab-based toolkits to extract the pressure differences from 4D flow MRI images, developed by colaborators at Massachusetts Institute of Technology (MIT) and King's College London (KCL).
 
 The application run on Windows and macOS, it can also be used in Linux. To generate the FEM mesh we make use of iso2mesh opensource toolbox (http://iso2mesh.sourceforge.net/cgi-bin/index.cgi?Home). [Reference 7 and 8]
 
