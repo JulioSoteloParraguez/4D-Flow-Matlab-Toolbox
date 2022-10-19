@@ -177,14 +177,14 @@ function OFFSET_ERR_AND_NOISE_MASKING_OpeningFcn(hObject, ~, handles, varargin)
         min_value = round(min([handles.a, handles.b, handles.c])*0.1);
 
         handles.points_view1 = [    min_value, min_value ;...
-                                    min_value,handles.a-(min_value) ;... 
-                                    handles.b-(min_value),min_value ;... 
-                                    handles.b-(min_value),handles.a-(min_value)]; % modificado JSOTELO
+                                    min_value, handles.a-(min_value) ;... 
+                                    handles.b-(min_value), min_value ;... 
+                                    handles.b-(min_value), handles.a-(min_value)]; % modificado JSOTELO
         
         handles.points_view2 = [    min_value, min_value ; 
-                                    min_value,handles.c-(min_value) ; 
-                                    handles.a-(min_value),min_value ; 
-                                    handles.a-(min_value),handles.c-(min_value)]; % modificado JSOTELO
+                                    min_value, handles.c-(min_value) ; 
+                                    handles.a-(min_value), min_value ; 
+                                    handles.a-(min_value), handles.c-(min_value)]; % modificado JSOTELO
                 
         handles.points_view3 = [    min_value, min_value ; 
                                     min_value,handles.c-(min_value) ; 
@@ -198,10 +198,10 @@ function OFFSET_ERR_AND_NOISE_MASKING_OpeningFcn(hObject, ~, handles, varargin)
         handles.points_view1(:,1) = handles.points_view1(:,1).*handles.voxel_MR(2);
         handles.points_view1(:,2) = handles.points_view1(:,2).*handles.voxel_MR(1);
 
-        handles.points_view2(:,1) = handles.points_view2(:,1).*handles.voxel_MR(2);
+        handles.points_view2(:,1) = handles.points_view2(:,1).*handles.voxel_MR(1);
         handles.points_view2(:,2) = handles.points_view2(:,2).*handles.voxel_MR(3);
 
-        handles.points_view3(:,1) = handles.points_view3(:,1).*handles.voxel_MR(1);
+        handles.points_view3(:,1) = handles.points_view3(:,1).*handles.voxel_MR(2);
         handles.points_view3(:,2) = handles.points_view3(:,2).*handles.voxel_MR(3);
 
         handles.mask_roi = zeros(size(handles.MR_PCA_FH));
@@ -2377,8 +2377,32 @@ function pushbutton9_Callback(hObject, ~, handles)
         h = msgbox({'Please wait ...','Masking Velocities ...'});
 
         col = round(handles.points_view1(:,1)./handles.voxel_MR(2));
-        row = round(handles.points_view1(:,2)./handles.voxel_MR(2));
+        row = round(handles.points_view1(:,2)./handles.voxel_MR(1));
         slc = round(handles.points_view2(:,2)./handles.voxel_MR(3));
+
+        for kk = 1:length(col)
+            if col(kk)<1
+                col(kk)=1;
+            elseif col(kk)> size(handles.MR_PCA_FH,2)
+                col(kk)=size(handles.MR_PCA_FH,2);
+            end
+        end
+
+        for kk = 1:length(row)
+            if row(kk)<1
+                row(kk)=1;
+            elseif row(kk)> size(handles.MR_PCA_FH,1)
+                row(kk)=size(handles.MR_PCA_FH,1);
+            end
+        end
+
+        for kk = 1:length(slc)
+            if slc(kk)<1
+                slc(kk)=1;
+            elseif slc(kk)> size(handles.MR_PCA_FH,3)
+                slc(kk)=size(handles.MR_PCA_FH,3);
+            end
+        end
 
         mask_roi = handles.mask_roi;
         mask_roi(min(row):max(row), min(col):max(col),min(slc):max(slc),:) = handles.mask_roi(min(row):max(row), min(col):max(col),min(slc):max(slc),:)+1;
@@ -3732,9 +3756,33 @@ function pushbutton6_Callback(hObject, ~, handles)
         h = msgbox({'Please wait ...','Masking Velocities ...'});
 
         col = round(handles.points_view1(:,1)./handles.voxel_MR(2));
-        row = round(handles.points_view1(:,2)./handles.voxel_MR(2));
+        row = round(handles.points_view1(:,2)./handles.voxel_MR(1));
         slc = round(handles.points_view2(:,2)./handles.voxel_MR(3));
 
+        for kk = 1:length(col)
+            if col(kk)<1
+                col(kk)=1;
+            elseif col(kk)> size(handles.MR_PCA_FH,2)
+                col(kk)=size(handles.MR_PCA_FH,2);
+            end
+        end
+
+        for kk = 1:length(row)
+            if row(kk)<1
+                row(kk)=1;
+            elseif row(kk)> size(handles.MR_PCA_FH,1)
+                row(kk)=size(handles.MR_PCA_FH,1);
+            end
+        end
+
+        for kk = 1:length(slc)
+            if slc(kk)<1
+                slc(kk)=1;
+            elseif slc(kk)> size(handles.MR_PCA_FH,3)
+                slc(kk)=size(handles.MR_PCA_FH,3);
+            end
+        end
+        
         mask_roi = handles.mask_roi;
         mask_roi(min(row):max(row), min(col):max(col),min(slc):max(slc),:) = handles.mask_roi(min(row):max(row), min(col):max(col),min(slc):max(slc),:)+1;
 
@@ -5087,10 +5135,34 @@ function pushbutton3_Callback(hObject, ~, handles)
     elseif handles.id_variable ==4
 
         h = msgbox({'Please wait ...','Masking Velocities ...'});
-
+        
         col = round(handles.points_view1(:,1)./handles.voxel_MR(2));
-        row = round(handles.points_view1(:,2)./handles.voxel_MR(2));
+        row = round(handles.points_view1(:,2)./handles.voxel_MR(1));
         slc = round(handles.points_view2(:,2)./handles.voxel_MR(3));
+
+        for kk = 1:length(col)
+            if col(kk)<1
+                col(kk)=1;
+            elseif col(kk)> size(handles.MR_PCA_FH,2)
+                col(kk)=size(handles.MR_PCA_FH,2);
+            end
+        end
+
+        for kk = 1:length(row)
+            if row(kk)<1
+                row(kk)=1;
+            elseif row(kk)> size(handles.MR_PCA_FH,1)
+                row(kk)=size(handles.MR_PCA_FH,1);
+            end
+        end
+
+        for kk = 1:length(slc)
+            if slc(kk)<1
+                slc(kk)=1;
+            elseif slc(kk)> size(handles.MR_PCA_FH,3)
+                slc(kk)=size(handles.MR_PCA_FH,3);
+            end
+        end
 
         mask_roi = handles.mask_roi;
         mask_roi(min(row):max(row), min(col):max(col),min(slc):max(slc),:) = handles.mask_roi(min(row):max(row), min(col):max(col),min(slc):max(slc),:)+1;

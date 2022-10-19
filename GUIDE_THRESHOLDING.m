@@ -111,7 +111,7 @@ handles.output = hObject;
         set(handles.uitable1, 'Units', 'normalized');
         
         set(handles.uitable1,'visible','on','ColumnName',{'Color','# voxels','Selection'},'ColumnEditable',true,'ColumnWidth',{round(AA(3)/3)*0.9 round(AA(3)/3)*0.9 round(AA(3)/3)*0.9})
-        data = cell(handles.NUM,3);
+        handles.data_colors = cell(handles.NUM,3);
         R = squeeze(handles.Lrgb(:,:,:,1));
         G = squeeze(handles.Lrgb(:,:,:,2));
         B = squeeze(handles.Lrgb(:,:,:,3));
@@ -119,11 +119,13 @@ handles.output = hObject;
         G = G(:);
         B = B(:);
         for n=1:handles.NUM
-            data{n,1} = ['<html><table border=0 width=100 bgcolor=',rgb2hex([mean(R(handles.L(:)==n)), mean(G(handles.L(:)==n)), mean(B(handles.L(:)==n))]),'><TR><TD>',num2str(n),'</TD></TR> </table></html>'];
-            data{n,2} = sum(handles.L(:)==n);
-            data{n,3} = false;
+            handles.data_colors{n,1} = ['<html><table border=0 width=100 bgcolor=',rgb2hex([mean(R(handles.L(:)==n)), mean(G(handles.L(:)==n)), mean(B(handles.L(:)==n))]),'><TR><TD>',num2str(n),'</TD></TR> </table></html>'];
+            handles.data_colors{n,2} = sum(handles.L(:)==n);
+            handles.data_colors{n,3} = false;
+            handles.data_colors{n,4} = n;
         end
-        set(handles.uitable1,'Data',data)
+        handles.data_colors = sortrows(handles.data_colors,2,'descend');
+        set(handles.uitable1,'Data',handles.data_colors(:,1:3))
         axes(handles.axes1);
         imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.IPCMRA(:,:,handles.slider_axes1)))
         hold on
@@ -243,7 +245,7 @@ function pushbutton1_Callback(hObject, eventdata, handles)
         
         
         set(handles.uitable1,'visible','on','ColumnName',{'Color','# voxels','Selection'},'ColumnEditable',true,'ColumnWidth',{round(AA(3)/3)*0.9 round(AA(3)/3)*0.9 round(AA(3)/3)*0.9})
-        data = cell(NUM,3);
+        handles.data_colors = cell(NUM,3);
         R = squeeze(handles.Lrgb(:,:,:,1));
         G = squeeze(handles.Lrgb(:,:,:,2));
         B = squeeze(handles.Lrgb(:,:,:,3));
@@ -251,11 +253,13 @@ function pushbutton1_Callback(hObject, eventdata, handles)
         G = G(:);
         B = B(:);
         for n=1:NUM
-            data{n,1} = ['<html><table border=0 width=100 bgcolor=',rgb2hex([mean(R(handles.L(:)==n)), mean(G(handles.L(:)==n)), mean(B(handles.L(:)==n))]),'><TR><TD>',num2str(n),'</TD></TR> </table></html>'];
-            data{n,2} = sum(handles.L(:)==n);
-            data{n,3} = false;
+            handles.data_colors{n,1} = ['<html><table border=0 width=100 bgcolor=',rgb2hex([mean(R(handles.L(:)==n)), mean(G(handles.L(:)==n)), mean(B(handles.L(:)==n))]),'><TR><TD>',num2str(n),'</TD></TR> </table></html>'];
+            handles.data_colors{n,2} = sum(handles.L(:)==n);
+            handles.data_colors{n,3} = false;
+            handles.data_colors{n,4} = n;
         end
-        set(handles.uitable1,'Data',data)
+        handles.data_colors = sortrows(handles.data_colors,2,'descend');
+        set(handles.uitable1,'Data',handles.data_colors(:,1:3))
         handles.id_seg = 1;
         if handles.view_sac == 1;
             axes(handles.axes1);
@@ -329,8 +333,9 @@ function pushbutton2_Callback(hObject, eventdata, handles)
     SEG_new = zeros(size(handles.IPCMRA));
     L_new = zeros(size(handles.IPCMRA));
     for n=1:length(r)
-        SEG_new = SEG_new + double((handles.L == r(n)));
-        L_new = L_new + double((handles.L == r(n)))*r(n);
+        r_id = handles.data_colors(r(n),4);
+        SEG_new = SEG_new + double((handles.L == r_id{1}));
+        L_new = L_new + double((handles.L == r_id{1}))*r_id{1};
     end
     handles.Lrgb = handles.Lrgb.*double(repmat(abs(SEG_new),1,1,1,3)) + double(repmat(abs(SEG_new-1),1,1,1,3));
     handles.SEG = SEG_new;

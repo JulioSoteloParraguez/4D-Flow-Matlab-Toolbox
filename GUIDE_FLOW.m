@@ -2759,17 +2759,25 @@ function pushbutton1_Callback(hObject, eventdata, handles)
         normal = VR_n/norm(VR_n);
         handles.velocity_proj = sum(handles.veset(r,:,:).*repmat(normal,size(handles.veset(r,:,:),1),1,size(handles.veset(r,:,:),3)),2);
 
+        
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         % flow quantification    
         nod_volume_selected = nodevol(r)/sum(nodevol(r));
-        handles.flow = squeeze(sum((handles.velocity_proj*100).*nod_volume_selected*(area/100)));
+        handles.flow = squeeze(sum((handles.velocity_proj*100).*nod_volume_selected))*(area/100);
         handles.time = linspace(0,60/handles.heart_rate,size(handles.veset,3))';
         [~,I] = max(abs(handles.flow));
         handles.peak_flow = I;
 
-
+        % Julio Sotelo
+%         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%         disp(size(nod_volume_selected))
+%         disp(size(handles.velocity_proj))
+%         disp(handles.flow)
+%         disp(area)
+%         disp(squeeze(sum((handles.velocity_proj*100).*nod_volume_selected)))
+        
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -4382,7 +4390,8 @@ VV = {'Time [s]';...
       'Net Flow [ml]';...
       'Mean Velocity [cm/s]';
       'Maximum Velocity [cm/s]';...
-      'Minimum Velocity [cm/s]'};
+      'Minimum Velocity [cm/s]';...
+      'Area [cm2]'};
 MM = [handles.time';handles.flow';handles.net_flow';mean_velocity';handles.max_velocity';handles.min_velocity'];
 TT = table(VV,MM);
 TT.Properties.VariableNames = {'Parameter','Cardiac_Phase'};

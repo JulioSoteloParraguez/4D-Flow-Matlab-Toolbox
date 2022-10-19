@@ -20,6 +20,7 @@ gui_State = struct('gui_Name',       mfilename, ...
                    'gui_OutputFcn',  @GUIDE_4D_FLOW_OutputFcn, ...
                    'gui_LayoutFcn',  [] , ...
                    'gui_Callback',   []);
+               
 if nargin && ischar(varargin{1})
     
     gui_State.gui_Callback = str2func(varargin{1});
@@ -34,7 +35,7 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function GUIDE_4D_FLOW_OpeningFcn(hObject, eventdata, handles, varargin)
 
-handles.output = hObject;
+    handles.output = hObject;
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Showing the logo image %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1031,6 +1032,8 @@ function pushbutton12_Callback(hObject, eventdata, handles)
     AP_ori = getappdata(0,'MR_PCA_AP_ori');
     RL_ori = getappdata(0,'MR_PCA_RL_ori');
     
+    %%%%% save('example.mat','FH', 'FH_ori', 'AP', 'AP_ori', 'RL', 'RL_ori')
+    
     if isempty(handles.veset)==0
         handles.mags_vel = handles.mags_vol;
         handles.Lrgb_vel = handles.Lrgb_vel(3:end-2,3:end-2,3:end-2,:,:);
@@ -1049,7 +1052,6 @@ function pushbutton12_Callback(hObject, eventdata, handles)
         handles.MR_PCA_FH = FH_ori(3:end-2,3:end-2,3:end-2,:);
         handles.MR_PCA_AP = AP_ori(3:end-2,3:end-2,3:end-2,:);
         handles.MR_PCA_RL = RL_ori(3:end-2,3:end-2,3:end-2,:);
-    
 
         list_string = {'...','Surface','Voxel','Mesh','Velocity'};
         set(handles.popupmenu1,'visible','on','String',list_string);
@@ -1058,6 +1060,9 @@ function pushbutton12_Callback(hObject, eventdata, handles)
         if isfolder('vWERP')
             set(handles.pushbutton83,'visible','on');
         end
+        
+        
+        handles.exec_fe_mesh = 1;
     else
         msgbox('The tetrahedral mesh has not been generated ...','Warning','warn')
     end
@@ -6531,7 +6536,7 @@ switch get(handles.popupmenu1,'Value')
         c.Location = 'manual';
         c.Position = [0.2 0.1 0.02 0.5];
         c.FontWeight = 'bold';
-        c.Label.String = 'Laplace Value [-]';
+        c.Label.String = 'Laplace [-]';
         windows_screen_size = get(0,'ScreenSize');
         if windows_screen_size(4)<=900
             c.FontSize = 9;
@@ -9733,6 +9738,7 @@ function Load_Folder_Callback(hObject, eventdata, handles)
             Rescale_intercept = M(:,12);
             Rescale_slope = M(:,13);
             Scale_slope = M(:,14);
+            trigger_time = unique(M(:,33));                         % added julio sotelo
             if version == 1 || version == 2 || version == 3 
                 Slice_gap = M(:,23) + M(:,24); 
             end
@@ -9740,7 +9746,11 @@ function Load_Folder_Callback(hObject, eventdata, handles)
             if version == 1 || version == 3
                 Cardiac_frequency = abs(M(:,37));
             elseif version == 2
-                Cardiac_frequency = 60;
+                if max(trigger_time)~=0                             % added julio sotelo
+                    Cardiac_frequency = 60/(max(trigger_time)/1000);% added julio sotelo
+                else                                                % added julio sotelo
+                    Cardiac_frequency = 60;                         % added julio sotelo
+                end
             end
             fid2 = fopen(files_names_rec{f});
             [data] = fread(fid2,'int16');
@@ -9775,7 +9785,7 @@ function Load_Folder_Callback(hObject, eventdata, handles)
         end
         close(h)
         eval('handles.voxel_MR = [Pixel_spacing(1,:),Slice_gap(1)];')
-        eval('handles.heart_rate = Cardiac_frequency(1,1);')
+        eval('handles.heart_rate = round(Cardiac_frequency(1,1));')
         handles.VENC = max(abs(phase_encoding));
         handles.MR_FFE_FH = double(handles.MR_FFE_FH);
         handles.MR_FFE_AP = double(handles.MR_FFE_AP);
@@ -10849,6 +10859,8 @@ function Load_Folder_Callback(hObject, eventdata, handles)
     set(gca,'Visible','off','Units','pixels','Position', [2 2 Sz(2) Sz(1)]);
     waitfor(flogo)
         
+    % Julio Sotelo 18092022
+    handles.exec_fe_mesh = 0;
 
 handles.output = hObject;
 guidata(hObject, handles);
@@ -12411,6 +12423,7 @@ set(handles.pushbutton79,'FontUnits','Normalized','FontSize',0.38)
 set(handles.pushbutton80,'FontUnits','Normalized','FontSize',0.38)
 set(handles.pushbutton81,'FontUnits','Normalized','FontSize',0.22)
 set(handles.pushbutton83,'FontUnits','Normalized','FontSize',0.22)
+set(handles.pushbutton84,'FontUnits','Normalized','FontSize',0.22)
 set(handles.popupmenu1,'FontUnits','Normalized','FontSize',0.59)
 
 % UNWRAPPING
@@ -15069,7 +15082,6 @@ function pushbutton62_Callback(hObject, eventdata, handles)
     
     input.inlet_exec = 0;
     input.outlet_exec = 0;
-    
     input.id_view = 1;
     input.id_ipcmra = 1;
     input.id_mag = 0;
@@ -15278,7 +15290,7 @@ function pushbutton62_Callback(hObject, eventdata, handles)
                 c.Location = 'manual';
                 c.Position = [0.2 0.1 0.02 0.5];
                 c.FontWeight = 'bold';
-                c.Label.String = 'OSI [-]';
+                c.Label.String = 'Laplace [-]';
                 windows_screen_size = get(0,'ScreenSize');
                 if windows_screen_size(4)<=900
                     c.FontSize = 9;
@@ -15387,7 +15399,9 @@ function pushbutton62_Callback(hObject, eventdata, handles)
                 set(handles.slider4,'visible','off')
                 set(handles.pushbutton14,'visible','off')
                 set(handles.text4,'Visible','off','String',['Cardiac Phase #: ',num2str(handles.peak_flow),' of ',num2str(size(handles.veset,3))])
-
+                if exist('SAW/','dir')==7
+                    set(handles.pushbutton84,'visible','on') % Julio Sotelo 20-09-2022
+                end
                 close(h)
                 
                 break
@@ -17569,15 +17583,299 @@ function pushbutton83_Callback(hObject, eventdata, handles)
 %         handles.area                            = getappdata(0,'area'); % Julio Sotelo 28-05-2019
 %         handles.axial_circulation               = getappdata(0,'axial_circulation'); % Julio Sotelo 28-05-2019
         
-        if id_while ==1
+%         if id_while ==1
             
-           g = msgbox('The vWERP data was saved in the Output_vWERP folder ...');
-           pause(2)
-           close(g)
+%            g = msgbox('The vWERP data was saved in the Output_vWERP folder ...');
+%            pause(2)
+%            close(g)
            
-        end
+%         end
     end
 
    
+handles.output = hObject;
+guidata(hObject, handles);
+
+
+% --------------------------------------------------------------------
+function uipushtool10_ClickedCallback(hObject, eventdata, handles)
+% hObject    handle to uipushtool10 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+if handles.exec_fe_mesh == 1
+    
+    VENC_l      = handles.VENC;
+    voxel_MR_l    = handles.voxel_MR;
+    heart_rate_l  = handles.heart_rate;
+    MR_FFE_FH_l   = handles.MR_FFE_FH;
+    MR_FFE_AP_l   = handles.MR_FFE_AP;
+    MR_FFE_RL_l   = handles.MR_FFE_RL;
+    MR_PCA_FH_l   = handles.MR_PCA_FH;
+    MR_PCA_AP_l   = handles.MR_PCA_AP;
+    MR_PCA_RL_l   = handles.MR_PCA_RL;
+    
+    id_while = 0;
+
+    % load data offset error JSOTELO
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    h = msgbox({'Please wait ...','Preprocessing data (isotropic voxel) ...'});
+    [a,b,c,d] = size(MR_FFE_FH_l);
+    MR_FFE_FH_n = zeros(a+2,b+2,c+2,d);
+    MR_FFE_AP_n = zeros(a+2,b+2,c+2,d);
+    MR_FFE_RL_n = zeros(a+2,b+2,c+2,d);
+    MR_PCA_FH_n = zeros(a+2,b+2,c+2,d);
+    MR_PCA_AP_n = zeros(a+2,b+2,c+2,d);
+    MR_PCA_RL_n = zeros(a+2,b+2,c+2,d);
+    MR_FFE_FH_n(2:end-1,2:end-1,2:end-1,:)  = MR_FFE_FH_l;
+    MR_FFE_AP_n(2:end-1,2:end-1,2:end-1,:)  = MR_FFE_AP_l;
+    MR_FFE_RL_n(2:end-1,2:end-1,2:end-1,:)  = MR_FFE_RL_l;
+    MR_PCA_FH_n(2:end-1,2:end-1,2:end-1,:)  = MR_PCA_FH_l;
+    MR_PCA_AP_n(2:end-1,2:end-1,2:end-1,:)  = MR_PCA_AP_l;
+    MR_PCA_RL_n(2:end-1,2:end-1,2:end-1,:)  = MR_PCA_RL_l;
+    MR_FFE_FH_l   = MR_FFE_FH_n;
+    MR_FFE_AP_l   = MR_FFE_AP_n;
+    MR_FFE_RL_l   = MR_FFE_RL_n;
+    MR_PCA_FH_l   = MR_PCA_FH_n;
+    MR_PCA_AP_l   = MR_PCA_AP_n;
+    MR_PCA_RL_l   = MR_PCA_RL_n;
+%     [a,b,c,d] = size(MR_FFE_FH_l);
+
+    % IPCMRA en coordenadas originales
+    IPCMRA_ORI_COOR = (1/d)*sum( (MR_FFE_FH_l.^2).*(MR_PCA_FH_l.^2 + MR_PCA_AP_l.^2 + MR_PCA_RL_l.^2),4);
+    IPCMRA_ORI_COOR = (IPCMRA_ORI_COOR/max(IPCMRA_ORI_COOR(:)))*255;
+    
+    [C,I] = max(squeeze(mean(mean(mean(abs(MR_PCA_FH_l),3),2),1)));
+    FFE_ORI_COOR = MR_FFE_FH_l(:,:,:,I);
+
+    % datos para la imagen de salida
+    MR_FFE_FH_ORI_COOR = MR_FFE_FH_l;
+    MR_PCA_FH_ORI_COOR = MR_PCA_FH_l;
+    MR_PCA_AP_ORI_COOR = MR_PCA_AP_l;
+    MR_PCA_RL_ORI_COOR = MR_PCA_RL_l;
+
+    % generamos un resolucion isotropica para cada una de las variables
+    FOV = [ (size(MR_FFE_FH_l,1)-1)*voxel_MR_l(1),...
+            (size(MR_FFE_FH_l,2)-1)*voxel_MR_l(2),...
+            (size(MR_FFE_FH_l,3)-1)*voxel_MR_l(3)]; % FOV en milimeters
+    
+    % calcule el FOV sobre las imagenes aumentadas
+    % small value in voxel MR
+    min_voxel = min(voxel_MR_l);
+
+    % generamos voxels isotropicos
+    dimx = [0:min_voxel:FOV(1)]; % dimension filas
+    dimy = [0:min_voxel:FOV(2)]; % dimension columnas
+    dimz = [0:min_voxel:FOV(3)]; % dimension slices
+
+    % matrices de salida con magnitud and velocity
+    FFE = zeros(length(dimx),length(dimy),length(dimz),size(MR_FFE_FH_l,4));
+    PCA_FH = zeros(length(dimx),length(dimy),length(dimz),size(MR_PCA_FH_l,4));
+    PCA_RL = zeros(length(dimx),length(dimy),length(dimz),size(MR_PCA_FH_l,4));
+    PCA_AP = zeros(length(dimx),length(dimy),length(dimz),size(MR_PCA_FH_l,4));
+
+    % coordenadas de salida de la imagenes aumentada original
+    [X, Y, Z] = meshgrid(0:size(MR_FFE_FH_l,2)-1,0:size(MR_FFE_FH_l,1)-1,0:size(MR_FFE_FH_l,3)-1);
+    X = X*voxel_MR_l(2);
+    Y = Y*voxel_MR_l(1);
+    Z = Z*voxel_MR_l(3);
+    
+    % coordenadas de la imagen de salida
+    [Xq, Yq, Zq] = meshgrid(0:length(dimy)-1,0:length(dimx)-1,0:length(dimz)-1);
+    Xq = Xq*min_voxel;
+    Yq = Yq*min_voxel;
+    Zq = Zq*min_voxel;
+
+    % imagenes aumentadas esto es como referencia
+    for n=1:size(MR_FFE_FH_l,4)
+        FFE(:,:,:,n) = interp3(X, Y, Z,MR_FFE_FH_l(:,:,:,n),Xq,Yq,Zq,'linear');
+        PCA_FH(:,:,:,n) = interp3(X, Y, Z,MR_PCA_FH_l(:,:,:,n),Xq,Yq,Zq,'linear');
+        PCA_RL(:,:,:,n) = interp3(X, Y, Z,MR_PCA_RL_l(:,:,:,n),Xq,Yq,Zq,'linear');
+        PCA_AP(:,:,:,n) = interp3(X, Y, Z,MR_PCA_AP_l(:,:,:,n),Xq,Yq,Zq,'linear');
+    end
+
+
+    MR_FFE_FH_resize   = FFE;
+    MR_FFE_AP_resize   = FFE;
+    MR_FFE_RL_resize   = FFE;
+    MR_PCA_FH_resize   = PCA_FH;
+    MR_PCA_AP_resize   = PCA_AP;
+    MR_PCA_RL_resize   = PCA_RL;
+    [a_resize,b_resize,c_resize,d_resize] = size(MR_FFE_FH_resize);
+    IPCMRA_resize = (1/d)*sum( (MR_FFE_FH_resize.^2).*(MR_PCA_FH_resize.^2 + MR_PCA_AP_resize.^2 + MR_PCA_RL_resize.^2),4);
+    IPCMRA_resize = (IPCMRA_resize/max(IPCMRA_resize(:)))*255;
+
+    [C,I] = max(squeeze(mean(mean(mean(abs(MR_PCA_FH_resize),3),2),1)));
+    FFE = MR_FFE_FH_resize(:,:,:,I);
+
+    close(h)
+
+    % cortes centrales para cada imagen
+    pos_a = round(a_resize/2);
+    pos_b = round(b_resize/2);
+    pos_c = round(c_resize/2);
+
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % mostramos los cortes a la salida
+    [coordx, coordy, coordz] = meshgrid(0:size(IPCMRA_ORI_COOR,1)-1,...
+                                        0:size(IPCMRA_ORI_COOR,2)-1,...
+                                        0:size(IPCMRA_ORI_COOR,3)-1);
+
+                                                                                 
+    corte_sagital_x = squeeze(coordx(:,:,round(size(IPCMRA_ORI_COOR,3)/2)));
+    corte_sagital_y = squeeze(coordy(:,:,round(size(IPCMRA_ORI_COOR,3)/2)));
+    corte_sagital_z = squeeze(coordz(:,:,round(size(IPCMRA_ORI_COOR,3)/2)));
+
+    corte_coronal_x = squeeze(coordx(:,round(size(IPCMRA_ORI_COOR,2)/2),:));
+    corte_coronal_y = squeeze(coordy(:,round(size(IPCMRA_ORI_COOR,2)/2),:));
+    corte_coronal_z = squeeze(coordz(:,round(size(IPCMRA_ORI_COOR,2)/2),:));
+
+    corte_axial_x = squeeze(coordx(round(size(IPCMRA_ORI_COOR,1)/2),:,:));
+    corte_axial_y = squeeze(coordy(round(size(IPCMRA_ORI_COOR,1)/2),:,:));
+    corte_axial_z = squeeze(coordz(round(size(IPCMRA_ORI_COOR,1)/2),:,:));
+
+    IPCMRA_1 = squeeze(IPCMRA_ORI_COOR(:,:,round(size(IPCMRA_ORI_COOR,3)/2)));
+    IPCMRA_2 = squeeze(IPCMRA_ORI_COOR(:,round(size(IPCMRA_ORI_COOR,2)/2),:));
+    IPCMRA_3 = squeeze(IPCMRA_ORI_COOR(round(size(IPCMRA_ORI_COOR,1)/2),:,:));
+
+    FFE_1 = squeeze(FFE_ORI_COOR(:,:,round(size(FFE_ORI_COOR,3)/2)));
+    FFE_2 = squeeze(FFE_ORI_COOR(:,round(size(FFE_ORI_COOR,2)/2),:));
+    FFE_3 = squeeze(FFE_ORI_COOR(round(size(FFE_ORI_COOR,1)/2),:,:));
+
+    [coordx, coordy, coordz] = meshgrid(0:size(IPCMRA_resize,1)-1,...
+                                        0:size(IPCMRA_resize,2)-1,...
+                                        0:size(IPCMRA_resize,3)-1);
+
+
+    % input values to function
+    input = [];
+    input.VENC_l = VENC_l;
+    input.voxel_MR_l = voxel_MR_l;
+    input.heart_rate_l = heart_rate_l;
+    input.IPCMRA_ORI_COOR = IPCMRA_ORI_COOR;
+    input.FFE_ORI_COOR = FFE_ORI_COOR;
+    input.MR_FFE_FH_ORI_COOR = MR_FFE_FH_ORI_COOR;
+    input.MR_PCA_FH_ORI_COOR = MR_PCA_FH_ORI_COOR;
+    input.MR_PCA_AP_ORI_COOR = MR_PCA_AP_ORI_COOR;
+    input.MR_PCA_RL_ORI_COOR = MR_PCA_RL_ORI_COOR;
+    input.min_voxel = min_voxel;
+    input.MR_FFE_FH_resize = MR_FFE_FH_resize;
+    input.MR_FFE_AP_resize = MR_FFE_AP_resize;
+    input.MR_FFE_RL_resize = MR_FFE_RL_resize;
+    input.MR_PCA_FH_resize = MR_PCA_FH_resize;
+    input.MR_PCA_AP_resize = MR_PCA_AP_resize;
+    input.MR_PCA_RL_resize = MR_PCA_RL_resize;
+    input.IPCMRA_resize = IPCMRA_resize;
+    input.FFE = FFE;
+    input.pos_a = pos_a;
+    input.pos_b = pos_b;
+    input.pos_c = pos_c;
+    input.corte_sagital_x = corte_sagital_x;
+    input.corte_sagital_y = corte_sagital_y;
+    input.corte_sagital_z = corte_sagital_z;
+    input.corte_coronal_x = corte_coronal_x;
+    input.corte_coronal_y = corte_coronal_y;
+    input.corte_coronal_z = corte_coronal_z;
+    input.corte_axial_x = corte_axial_x;
+    input.corte_axial_y = corte_axial_y;
+    input.corte_axial_z = corte_axial_z;
+    input.IPCMRA_1 = IPCMRA_1;
+    input.IPCMRA_2 = IPCMRA_2;
+    input.IPCMRA_3 = IPCMRA_3;
+    input.FFE_1 = FFE_1;
+    input.FFE_2 = FFE_2;
+    input.FFE_3 = FFE_3;
+    input.coordx = coordx;
+    input.coordy = coordy;
+    input.coordz = coordz;
+
+    input.popup5_id = 1;
+    input.popup6_id = 1;
+    input.popup7_id = 1;
+    input.popup8_id = 1;
+
+    % llamamos a la interfaz
+        
+    id_while = 0;
+    while(1)
+
+        while(id_while == 0)
+            
+            GUIDE_REFORMATTING(input)
+            id_while                = getappdata(0,'id_while');
+            input.MR_FFE_FH_resize  = getappdata(0,'MR_FFE_FH_resize');
+            input.MR_FFE_AP_resize  = getappdata(0,'MR_FFE_AP_resize');
+            input.MR_FFE_RL_resize  = getappdata(0,'MR_FFE_RL_resize');
+            input.MR_PCA_FH_resize  = getappdata(0,'MR_PCA_FH_resize');
+            input.MR_PCA_AP_resize  = getappdata(0,'MR_PCA_AP_resize');
+            input.MR_PCA_RL_resize  = getappdata(0,'MR_PCA_RL_resize');
+            input.IPCMRA_resize     = getappdata(0,'IPCMRA_resize');
+            input.FFE               = getappdata(0,'FFE');
+            input.pos_a             = getappdata(0,'pos_a');
+            input.pos_b             = getappdata(0,'pos_b');
+            input.pos_c             = getappdata(0,'pos_c');
+            input.coordx            = getappdata(0,'coordx');
+            input.coordy            = getappdata(0,'coordy');
+            input.coordz            = getappdata(0,'coordz');
+            input.popup5_id         = getappdata(0,'popup5_id');
+            input.popup6_id         = getappdata(0,'popup6_id');
+            input.popup7_id         = getappdata(0,'popup7_id');
+            input.popup8_id         = getappdata(0,'popup8_id');
+
+        end
+
+        break
+    end
+    
+    h = msgbox('The reformatting toolbox was closed ...','none','none');
+    pause(2)
+    close(h)
+
+else
+    msgbox('The tetrahedral mesh need to be generated ...','Warning','warn')
+end
+
+
+handles.output = hObject;
+guidata(hObject, handles);
+
+
+% --- Executes on button press in pushbutton84.
+function pushbutton84_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton84 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+input = [];
+input.VENC = handles.VENC;
+input.voxel_MR = handles.voxel_MR;
+input.heart_rate = handles.heart_rate;
+input.MR_FFE_FH = handles.MR_FFE_FH;
+input.MR_FFE_AP = handles.MR_FFE_AP;
+input.MR_FFE_RL = handles.MR_FFE_RL;
+input.MR_PCA_FH = handles.MR_PCA_FH;
+input.MR_PCA_AP = handles.MR_PCA_AP;
+input.MR_PCA_RL = handles.MR_PCA_RL;
+input.SEG = handles.SEG;
+input.Centerline = handles.centerline; 
+
+% for points location %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+input.faces = handles.faces;
+input.nodes = handles.nodes;
+input.elem = handles.elem;
+input.Laplace = handles.Laplace;
+
+GUIDE_SAW(input)
+
+h = msgbox('The SAW toolbox was closed ...','none','none');
+pause(2)
+close(h)
+
 handles.output = hObject;
 guidata(hObject, handles);
