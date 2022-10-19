@@ -32,6 +32,8 @@ d) To excecute the app go to the app folder and write "run GUIDE_4D_FLOW.m" in t
 
 To include the vWERP module: You can contact to David Marlevi (marlevi@mit.edu), the author of this method and request the "vWERP/" folder that has to go inside the 4D flow APP folder.
 
+To obtain more information about SAW method, please visit (http://cmib.website/resources/#PressMapTk).
+
 If you have some problems to create this structure file, or if you need more assistance, please contact me to the email: julio.sotelo@uv.cl or jasotelo@uc.cl.
 
 # References APP and Hemodynamics Parameters
