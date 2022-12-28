@@ -22,7 +22,7 @@ function varargout = GUIDE_SAW(varargin)
 
 % Edit the above text to modify the response to help GUIDE_SAW
 
-% Last Modified by GUIDE v2.5 18-Oct-2022 11:41:16
+% Last Modified by GUIDE v2.5 24-Nov-2022 23:57:27
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -138,10 +138,30 @@ handles.PM.nPlanes          = ceil( d( end )/min( handles.PM.hd.spacing ) ) + 1;
 handles.PM.PlanesEveryXmm   = d( end ) / ( handles.PM.nPlanes - 1 );
 
 di                  = ( 0 : handles.PM.nPlanes - 1 )*handles.PM.PlanesEveryXmm;
-handles.clPointsi           = interpn( d, handles.clPoints, di, 'linear' )';
-handles.clSlopesi           = interpn( d, handles.clSlopes, di, 'linear' )';
-handles.clSlopesi           = normr( handles.clSlopesi );
 
+disp([min(d),max(d)])
+disp([min(di),max(di)])
+disp(size(handles.clPoints))
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%handles.clPointsi           = interpn( d, handles.clPointsi, di, 'linear' )';
+
+handles.clPointsi                = zeros(length(di),3);
+handles.clPointsi(:,1)           = interp1( d, handles.clPoints(:,1), di, 'linear' )';
+handles.clPointsi(:,2)           = interp1( d, handles.clPoints(:,2), di, 'linear' )';
+handles.clPointsi(:,3)           = interp1( d, handles.clPoints(:,3), di, 'linear' )';
+
+%handles.clSlopesi           = interpn( d, handles.clSlopes, di, 'linear' )';
+
+handles.clSlopesi                = zeros(length(di),3);
+handles.clSlopesi(:,1)           = interp1( d, handles.clSlopes(:,1), di, 'linear' )';
+handles.clSlopesi(:,2)           = interp1( d, handles.clSlopes(:,2), di, 'linear' )';
+handles.clSlopesi(:,3)           = interp1( d, handles.clSlopes(:,3), di, 'linear' )';
+
+handles.clSlopesi           = normr( handles.clSlopesi );
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 %% working with all planes
@@ -201,8 +221,10 @@ list_string1 = {'Segmentation + 3D velocity field (Peak Systole)',...
     'Curvature along the vessel [1/m]'};
 set(handles.popupmenu1,'visible','on','String',list_string1,'value',1);
 set(handles.pushbutton1,'visible','on');
+set(handles.pushbutton2,'visible','off');
 
-
+handles.pressure_recovery_id = 0;
+handles.arch_planes_selection_id = 0;
 
 % Update handles structure
 guidata(hObject, handles);
@@ -248,6 +270,8 @@ switch get(handles.popupmenu1,'Value')
         view(142,39)
         daspect([1 1 1])
         axtoolbar(handles.axes1,{'rotate', 'restoreview'},'Visible','on');
+
+        set(handles.pushbutton2,'visible','off');
         
     case 2
         axes(handles.axes1)
@@ -265,6 +289,8 @@ switch get(handles.popupmenu1,'Value')
         view(142,39)
         daspect([1 1 1])
         axtoolbar(handles.axes1,{'rotate', 'restoreview'},'Visible','on');
+
+        set(handles.pushbutton2,'visible','off');
         
     case 3
         axes(handles.axes1)
@@ -284,6 +310,8 @@ switch get(handles.popupmenu1,'Value')
         view(142,39)
         daspect([1 1 1])
         axtoolbar(handles.axes1,{'rotate', 'restoreview'},'Visible','on');
+
+        set(handles.pushbutton2,'visible','off');
         
     case 4
         iFrame = handles.PM.peakFrame; % Chosen time-frame
@@ -304,9 +332,607 @@ switch get(handles.popupmenu1,'Value')
         view(142,39)
         daspect([1 1 1])
         axtoolbar(handles.axes1,{'rotate', 'restoreview'},'Visible','on');
+
+        set(handles.pushbutton2,'visible','off');
         
     case 5 
+
+        set(handles.pushbutton2,'visible','on','string','ARCH PLANES RE-LOCATION');
         handles.id_case_5 = 1;
+
+        if handles.arch_planes_selection_id == 0
+            handles.idx = 1 : floor(handles.PM.nPlanes/4) : handles.PM.nPlanes;
+        else
+            handles.idx = [1,handles.idx1, handles.idx2, handles.idx3, handles.PM.nPlanes];
+        end
+        
+        axes(handles.axes1)
+        plot(0,0)
+        handles.PM.plotDomain();
+        hold on
+        plot3( handles.clPointsi(:,1), handles.clPointsi(:,2), handles.clPointsi(:,3), 'r-' )
+        plot3( handles.clPointsi(handles.idx,1), handles.clPointsi(handles.idx,2), handles.clPointsi(handles.idx,3), '*g' )
+        optPlotPlane.bPlotVelocityVectors = 0;
+        optPlotPlane.bPlotKeyPoint = 0;
+        optPlotPlane.bPlotKeySlope = 0;
+        P2plot = handles.PM.AllPlanes( handles.idx );
+        for iL = 1 : size( handles.idx, 2 )
+            P = P2plot(iL);
+            handles.PM.plotPlane( P, handles.PM.peakFrame, optPlotPlane )
+        end
+        hold off
+        grid on
+        axis on
+        ylabel('F-H')
+        xlabel('A-P')
+        zlabel('R-L')
+        view(142,39)
+        daspect([1 1 1])
+        axtoolbar(handles.axes1,{'rotate', 'restoreview'},'Visible','on');
+        
+    case 6
+        if handles.id_case_5 == 0
+            handles.idx = 1 : floor(handles.PM.nPlanes/4) : handles.PM.nPlanes;
+            handles.idx(end) = handles.PM.nPlanes;
+        end
+        
+        dist = [ handles.PM.AllPlanes.dist ];
+        D = handles.PM.Q( :, handles.PM.peakFrame )*60;
+        yUnit = '[l/m]';
+        titleStr = 'Flow\nat peak frame';
+        D = smooth( D, length( D )/6,'rlowess');
+        
+        axes(handles.axes1)
+        plot(0,0)
+        plot( dist( handles.idx(1):handles.idx(end) )-dist( handles.idx(1) ), D( handles.idx(1):handles.idx(end) ),  'r', 'LineWidth', 3 );
+        hold on
+        ax = gca;
+        axis( ax, 'tight' )
+        for j = 1 : 2 : size( handles.idx, 2 )-1
+            patch( 'Faces',[1 2 3 4], 'Vertices', ...
+                [ [ dist(handles.idx(j)  -handles.idx(1)+1) ax.YLim(1)  ]; ...
+                [   dist(handles.idx(j+1)-handles.idx(1)+1) ax.YLim(1)  ]; ...
+                [   dist(handles.idx(j+1)-handles.idx(1)+1) ax.YLim(2)  ]; ...
+                [   dist(handles.idx(j)  -handles.idx(1)+1) ax.YLim(2)  ] ], 'FaceAlpha', 0.1, 'EdgeColor', 'none' );
+        end
+        
+        xlabel( 'Aortic Length [mm]' )
+        ylabel( yUnit )
+        ax.Title.String = sprintf( titleStr );
+        
+        ax.FontName = 'Calibri';
+        ax.FontSize = 14;
+        ax.FontWeight = 'normal';
+        axis square
+        
+        ax.XTick = ax.XLim(1) : 25 : ax.XLim(2);
+        hold off
+        
+        axtoolbar(handles.axes1,'Visible','off');
+        set(handles.pushbutton2,'visible','off');
+        
+        
+    case 7
+        set(handles.pushbutton2,'visible','on','string','COMPUTE PRESSURE RECOVERY');
+
+        if handles.pressure_recovery_id == 0
+
+            if handles.id_case_5 == 0
+                handles.idx = 1 : floor(handles.PM.nPlanes/4) : handles.PM.nPlanes;
+                handles.idx(end) = handles.PM.nPlanes;
+            end
+            
+            dist = [ handles.PM.AllPlanes.dist ];
+            D = handles.PM.SAW( :, handles.PM.peakFrame );
+            yUnit = '[mmHg]';
+            titleStr = 'SAW\nat peak frame';
+            D = smooth( D, length( D )/6,'rlowess');
+            
+            axes(handles.axes1)
+            plot(0,0)
+            plot( dist( handles.idx(1):handles.idx(end) )-dist( handles.idx(1) ), D( handles.idx(1):handles.idx(end) ),  'r', 'LineWidth', 3 );
+            hold on
+            ax = gca;
+            axis( ax, 'tight' )
+            for j = 1 : 2 : size( handles.idx, 2 )-1
+                patch( 'Faces',[1 2 3 4], 'Vertices', ...
+                    [ [ dist(handles.idx(j)  -handles.idx(1)+1) ax.YLim(1)  ]; ...
+                    [   dist(handles.idx(j+1)-handles.idx(1)+1) ax.YLim(1)  ]; ...
+                    [   dist(handles.idx(j+1)-handles.idx(1)+1) ax.YLim(2)  ]; ...
+                    [   dist(handles.idx(j)  -handles.idx(1)+1) ax.YLim(2)  ] ], 'FaceAlpha', 0.1, 'EdgeColor', 'none' );
+            end
+            
+            xlabel( 'Aortic Length [mm]' )
+            ylabel( yUnit )
+            ax.Title.String = sprintf( titleStr );
+            
+            ax.FontName = 'Calibri';
+            ax.FontSize = 14;
+            ax.FontWeight = 'normal';
+            axis square
+            
+            ax.XTick = ax.XLim(1) : 25 : ax.XLim(2);
+            hold off
+            axtoolbar(handles.axes1,'Visible','off');
+    
+        else
+            
+            % update the figure when the windows is closed
+            if handles.id_case_5 == 0
+                handles.idx = 1 : floor(handles.PM.nPlanes/4) : handles.PM.nPlanes;
+                handles.idx(end) = handles.PM.nPlanes;
+            end
+            
+            dist = [ handles.PM.AllPlanes.dist ];
+            D = handles.PM.SAW( :, handles.PM.peakFrame );
+            yUnit = '[mmHg]';
+            titleStr = 'SAW\nat peak frame';
+            D = smooth( D, length( D )/6,'rlowess');
+            
+            axes(handles.axes1)
+            plot(0,0)
+            plot( dist( handles.idx(1):handles.idx(end) )-dist( handles.idx(1) ), D( handles.idx(1):handles.idx(end) ),  'r', 'LineWidth', 3 );
+            hold on
+            ax = gca;
+            axis( ax, 'tight' )
+            for j = 1 : 2 : size( handles.idx, 2 )-1
+                patch( 'Faces',[1 2 3 4], 'Vertices', ...
+                    [ [ dist(handles.idx(j)  -handles.idx(1)+1) ax.YLim(1)  ]; ...
+                    [   dist(handles.idx(j+1)-handles.idx(1)+1) ax.YLim(1)  ]; ...
+                    [   dist(handles.idx(j+1)-handles.idx(1)+1) ax.YLim(2)  ]; ...
+                    [   dist(handles.idx(j)  -handles.idx(1)+1) ax.YLim(2)  ] ], 'FaceAlpha', 0.1, 'EdgeColor', 'none' );
+            end
+            
+            xlabel( 'Aortic Length [mm]' )
+            ylabel( yUnit )
+            ax.Title.String = sprintf( titleStr );
+            
+            ax.FontName = 'Calibri';
+            ax.FontSize = 14;
+            ax.FontWeight = 'normal';
+            axis square
+            
+            ax.XTick = ax.XLim(1) : 25 : ax.XLim(2);
+            hold off
+            axtoolbar(handles.axes1,'Visible','off');
+            
+            [~,EOAIdx] = max(D);   
+            handles.EOAdist = dist(EOAIdx);
+            xline(handles.EOAdist, 'g-.','LineWidth', 2 );
+            xline(handles.EOAdist + handles.PM.PrecDist, 'b-.','LineWidth', 2 );
+
+            text(handles.EOAdist + handles.PM.PrecDist, ...
+                ((max(D( handles.idx(1):handles.idx(end) )) + min(D( handles.idx(1):handles.idx(end) )))/2),...
+                ['\leftarrow PR Distance = ', num2str(handles.PM.PrecDist,4), ' [mm]'] ,'FontSize',14)
+
+        end
+        
+    case 8
+        
+        if handles.id_case_5 == 0
+            handles.idx = 1 : floor(handles.PM.nPlanes/4) : handles.PM.nPlanes;
+            handles.idx(end) = handles.PM.nPlanes;
+        end
+        
+        dist = [ handles.PM.AllPlanes.dist ];
+        D = handles.PM.PWV;
+        yUnit = 'PWV [m/s]';
+        titleStr = 'Pulse Wave Velocity';
+        D = smooth( D, length( D )/6,'rlowess');
+        
+        axes(handles.axes1)
+        plot(0,0)
+        plot( dist( handles.idx(1):handles.idx(end) )-dist( handles.idx(1) ), D( handles.idx(1):handles.idx(end) ),  'r', 'LineWidth', 3 );
+        hold on
+        ax = gca;
+        axis( ax, 'tight' )
+        for j = 1 : 2 : size( handles.idx, 2 )-1
+            patch( 'Faces',[1 2 3 4], 'Vertices', ...
+                [ [ dist(handles.idx(j)  -handles.idx(1)+1) ax.YLim(1)  ]; ...
+                [   dist(handles.idx(j+1)-handles.idx(1)+1) ax.YLim(1)  ]; ...
+                [   dist(handles.idx(j+1)-handles.idx(1)+1) ax.YLim(2)  ]; ...
+                [   dist(handles.idx(j)  -handles.idx(1)+1) ax.YLim(2)  ] ], 'FaceAlpha', 0.1, 'EdgeColor', 'none' );
+        end
+        
+        xlabel( 'Aortic Length [mm]' )
+        ylabel( yUnit )
+        ax.Title.String = sprintf( titleStr );
+        
+        ax.FontName = 'Calibri';
+        ax.FontSize = 14;
+        ax.FontWeight = 'normal';
+        axis square
+        
+        ax.XTick = ax.XLim(1) : 25 : ax.XLim(2);
+        hold off
+        axtoolbar(handles.axes1,'Visible','off');
+
+        set(handles.pushbutton2,'visible','off');
+        
+    case 9
+        if handles.id_case_5 == 0
+            handles.idx = 1 : floor(handles.PM.nPlanes/4) : handles.PM.nPlanes;
+            handles.idx(end) = handles.PM.nPlanes;
+        end
+        
+        dist = [ handles.PM.AllPlanes.dist ];
+        D = handles.PM.E;
+        yUnit = 'E [kPa]';
+        titleStr = 'Elastic Modulus';
+        D = smooth( D, length( D )/6,'rlowess');
+        
+        axes(handles.axes1)
+        plot(0,0)
+        plot( dist( handles.idx(1):handles.idx(end) )-dist( handles.idx(1) ), D( handles.idx(1):handles.idx(end) ),  'r', 'LineWidth', 3 );
+        hold on
+        ax = gca;
+        axis( ax, 'tight' )
+        for j = 1 : 2 : size( handles.idx, 2 )-1
+            patch( 'Faces',[1 2 3 4], 'Vertices', ...
+                [ [ dist(handles.idx(j)  -handles.idx(1)+1) ax.YLim(1)  ]; ...
+                [   dist(handles.idx(j+1)-handles.idx(1)+1) ax.YLim(1)  ]; ...
+                [   dist(handles.idx(j+1)-handles.idx(1)+1) ax.YLim(2)  ]; ...
+                [   dist(handles.idx(j)  -handles.idx(1)+1) ax.YLim(2)  ] ], 'FaceAlpha', 0.1, 'EdgeColor', 'none' );
+        end
+        
+        xlabel( 'Aortic Length [mm]' )
+        ylabel( yUnit )
+        ax.Title.String = sprintf( titleStr );
+        
+        ax.FontName = 'Calibri';
+        ax.FontSize = 14;
+        ax.FontWeight = 'normal';
+        axis square
+        
+        ax.XTick = ax.XLim(1) : 25 : ax.XLim(2);
+        hold off
+        axtoolbar(handles.axes1,'Visible','off');
+
+        set(handles.pushbutton2,'visible','off');
+        
+    case 10
+        if handles.id_case_5 == 0
+            handles.idx = 1 : floor(handles.PM.nPlanes/4) : handles.PM.nPlanes;
+            handles.idx(end) = handles.PM.nPlanes;
+        end
+        
+        dist = [ handles.PM.AllPlanes.dist ];
+        D = handles.PM.r * 2;
+        yUnit = 'D [mm]';
+        titleStr = 'Diameter';
+        D = smooth( D, length( D )/6,'rlowess');
+        
+        axes(handles.axes1)
+        plot(0,0)
+        plot( dist( handles.idx(1):handles.idx(end) )-dist( handles.idx(1) ), D( handles.idx(1):handles.idx(end) ),  'r', 'LineWidth', 3 );
+        hold on
+        ax = gca;
+        axis( ax, 'tight' )
+        for j = 1 : 2 : size( handles.idx, 2 )-1
+            patch( 'Faces',[1 2 3 4], 'Vertices', ...
+                [ [ dist(handles.idx(j)  -handles.idx(1)+1) ax.YLim(1)  ]; ...
+                [   dist(handles.idx(j+1)-handles.idx(1)+1) ax.YLim(1)  ]; ...
+                [   dist(handles.idx(j+1)-handles.idx(1)+1) ax.YLim(2)  ]; ...
+                [   dist(handles.idx(j)  -handles.idx(1)+1) ax.YLim(2)  ] ], 'FaceAlpha', 0.1, 'EdgeColor', 'none' );
+        end
+        
+        xlabel( 'Aortic Length [mm]' )
+        ylabel( yUnit )
+        ax.Title.String = sprintf( titleStr );
+        
+        ax.FontName = 'Calibri';
+        ax.FontSize = 14;
+        ax.FontWeight = 'normal';
+        axis square
+        
+        ax.XTick = ax.XLim(1) : 25 : ax.XLim(2);
+        hold off
+        axtoolbar(handles.axes1,'Visible','off');
+
+        set(handles.pushbutton2,'visible','off');
+        
+    case 11
+        if handles.id_case_5 == 0
+            handles.idx = 1 : floor(handles.PM.nPlanes/4) : handles.PM.nPlanes;
+            handles.idx(end) = handles.PM.nPlanes;
+        end
+        
+        dist = [ handles.PM.AllPlanes.dist ];
+        D = [ handles.PM.AllPlanes.curv ];
+        yUnit = '[1/m]';
+        titleStr = 'Curvature';
+        D = smooth( D, length( D )/6,'rlowess');
+        
+        axes(handles.axes1)
+        plot(0,0)
+        plot( dist( handles.idx(1):handles.idx(end) )-dist( handles.idx(1) ), D( handles.idx(1):handles.idx(end) ),  'r', 'LineWidth', 3 );
+        hold on
+        ax = gca;
+        axis( ax, 'tight' )
+        for j = 1 : 2 : size( handles.idx, 2 )-1
+            patch( 'Faces',[1 2 3 4], 'Vertices', ...
+                [ [ dist(handles.idx(j)  -handles.idx(1)+1) ax.YLim(1)  ]; ...
+                [   dist(handles.idx(j+1)-handles.idx(1)+1) ax.YLim(1)  ]; ...
+                [   dist(handles.idx(j+1)-handles.idx(1)+1) ax.YLim(2)  ]; ...
+                [   dist(handles.idx(j)  -handles.idx(1)+1) ax.YLim(2)  ] ], 'FaceAlpha', 0.1, 'EdgeColor', 'none' );
+        end
+        
+        xlabel( 'Aortic Length [mm]' )
+        ylabel( yUnit )
+        ax.Title.String = sprintf( titleStr );
+        
+        ax.FontName = 'Calibri';
+        ax.FontSize = 14;
+        ax.FontWeight = 'normal';
+        axis square
+        
+        ax.XTick = ax.XLim(1) : 25 : ax.XLim(2);
+        hold off
+        axtoolbar(handles.axes1,'Visible','off');
+
+        set(handles.pushbutton2,'visible','off');
+        
+        
+        
+end
+
+handles.output = hObject;
+guidata(hObject, handles);
+
+% --- Executes during object creation, after setting all properties.
+function popupmenu1_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to popuhandles.PMenu1 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: popuhandles.PMenu controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes on button press in pushbutton1.
+function pushbutton1_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton1 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+directory = uigetdir(pwd, 'Select Directory');
+
+PM = handles.PM;
+
+if ~isfield( handles, 'idx' )
+    %  Landmarks
+    idx = 1 : ceil(PM.nPlanes/4) : PM.nPlanes;
+    idx(end+1) = PM.nPlanes;
+else
+    idx = handles.idx;
+end
+
+save([directory,'\PM.mat'],'PM')
+
+ReportGen( PM, idx, directory, handles.pressure_recovery_id)
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+dist = [ PM.AllPlanes.dist ];
+AL = [dist( idx(1):idx(end) )-dist( idx(1) )]';
+FP = PM.Q( :, PM.peakFrame )*60;
+FP = smooth( FP, length( FP )/6,'rlowess');
+
+SP = PM.SAW( :, PM.peakFrame );
+SP = smooth( SP, length( SP )/6,'rlowess');
+
+PW = PM.PWV;
+PW = smooth( PW, length( PW )/6,'rlowess');
+
+EL = PM.E;
+EL = smooth( EL, length( EL )/6,'rlowess');
+
+DI = PM.r * 2;
+DI = smooth( DI, length( DI )/6,'rlowess');
+
+CU = [PM.AllPlanes.curv]';
+CU = smooth( CU, length( CU )/6,'rlowess');
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% table data
+if handles.arch_planes_selection_id == 1
+    handles.idx = [1,handles.idx1, handles.idx2, handles.idx3, length(AL)];
+    sections = zeros(size(AL));
+    for n =1:length(handles.idx)-1
+        sections(handles.idx(n):handles.idx(n+1))= n;
+    end
+    if handles.pressure_recovery_id == 1
+        EOAdist = handles.EOAdist;
+        EOAdist_vect = zeros(size(AL)) + EOAdist;
+
+        PR = ones(size(AL))*handles.PM.PrecDist;
+
+        VV = {'Aortic Length [mm]';...
+              'Flow at peak frame [l/min]';...
+              'SAW at peak frame [mmHg]';...
+              'Pulse Wave Velocity [m/s]';...
+              'Elastic Modulus [KPa]';...
+              'Diameter [mm]';...
+              'Curvature [1/m]';...
+              'EOAdist [mm]';...
+              'Pressure Recovery Distance [mm]';...
+              'Sections [-]'};
+    
+        MM = [AL';FP';SP';PW';EL';DI';CU';EOAdist_vect';PR';sections'];
+        TT = table(VV,MM);
+        TT.Properties.VariableNames = {' ','Point'};
+    
+    else 
+    
+        VV = {'Aortic Length [mm]';...
+              'Flow at peak frame [l/min]';...
+              'SAW at peak frame [mmHg]';...
+              'Pulse Wave Velocity [m/s]';...
+              'Elastic Modulus [KPa]';...
+              'Diameter [mm]';...
+              'Curvature [1/m]';...
+              'Sections [-]'};
+        
+        MM = [AL';FP';SP';PW';EL';DI';CU';sections'];
+        TT = table(VV,MM);
+        TT.Properties.VariableNames = {' ','Point'};
+    
+    end
+
+else
+    handles.idx = 1 : floor(handles.PM.nPlanes/4) : length(AL);
+    sections = zeros(size(AL));
+    for n =1:length(handles.idx)-1
+        sections(handles.idx(n):handles.idx(n+1))= n;
+    end
+    if handles.pressure_recovery_id == 1
+        EOAdist = handles.EOAdist;
+        EOAdist_vect = zeros(size(AL)) + EOAdist;
+
+        PR = ones(size(AL))*handles.PM.PrecDist;
+
+        VV = {'Aortic Length [mm]';...
+              'Flow at peak frame [l/min]';...
+              'SAW at peak frame [mmHg]';...
+              'Pulse Wave Velocity [m/s]';...
+              'Elastic Modulus [KPa]';...
+              'Diameter [mm]';...
+              'Curvature [1/m]';...
+              'EOAdist [mm]';...
+              'Pressure Recovery Distance [mm]';...
+              'Sections [-]'};
+    
+        MM = [AL';FP';SP';PW';EL';DI';CU';EOAdist_vect';PR';sections'];
+        TT = table(VV,MM);
+        TT.Properties.VariableNames = {' ','Point'};
+    
+    else 
+    
+        VV = {'Aortic Length [mm]';...
+              'Flow at peak frame [l/min]';...
+              'SAW at peak frame [mmHg]';...
+              'Pulse Wave Velocity [m/s]';...
+              'Elastic Modulus [KPa]';...
+              'Diameter [mm]';...
+              'Curvature [1/m]';...
+              'Sections [-]'};
+        
+        MM = [AL';FP';SP';PW';EL';DI';CU';sections'];
+        TT = table(VV,MM);
+        TT.Properties.VariableNames = {' ','Point'};
+    
+    end
+
+end
+
+filename = [directory,'/SAW_CURVES.xlsx'];
+writetable(TT,fullfile(filename),'Sheet','SAW','Range','A1')
+
+
+f = msgbox("The data has been successfully saved","Success");
+pause(0.5)
+close(f)
+
+handles.output = hObject;
+guidata(hObject, handles);
+
+
+
+
+% --- Executes when user attempts to close figure1.
+function figure1_CloseRequestFcn(hObject, eventdata, handles)
+% hObject    handle to figure1 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: delete(hObject) closes the figure
+if isequal(get(hObject,'waitstatus'),'waiting')
+    handles.id_while = 1;
+    handles.output = hObject;
+    guidata(hObject, handles);
+    uiresume(hObject);
+else
+    delete(hObject);
+end
+
+
+% --- Executes on button press in pushbutton2.
+function pushbutton2_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton2 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+switch get(handles.popupmenu1,'Value')
+    case 7
+        
+            opts = [];
+            opts.dist         = [ handles.PM.AllPlanes.dist ];
+            opts.bManuPlateau = 1; %manual definition of the threshold
+            opts.bSmooth      = 1; %binary to decide on smoothing (1) or not (0) the SAW trace
+            opts.idx          = handles.idx; 
+            D = handles.PM.SAW( :, handles.PM.peakFrame );
+            D = smooth( D, length( D )/6,'rlowess');
+            opts.D            = D;
+            handles.PM = handles.PM.ComputePrec(opts);
+            
+            
+            % update the figure when the windows is closed
+            if handles.id_case_5 == 0
+                handles.idx = 1 : floor(handles.PM.nPlanes/4) : handles.PM.nPlanes;
+                handles.idx(end) = handles.PM.nPlanes;
+            end
+            
+            dist = [ handles.PM.AllPlanes.dist ];
+            D = handles.PM.SAW( :, handles.PM.peakFrame );
+            yUnit = '[mmHg]';
+            titleStr = 'SAW\nat peak frame';
+            D = smooth( D, length( D )/6,'rlowess');
+            
+            axes(handles.axes1)
+            plot(0,0)
+            plot( dist( handles.idx(1):handles.idx(end) )-dist( handles.idx(1) ), D( handles.idx(1):handles.idx(end) ),  'r', 'LineWidth', 3 );
+            hold on
+            ax = gca;
+            axis( ax, 'tight' )
+            for j = 1 : 2 : size( handles.idx, 2 )-1
+                patch( 'Faces',[1 2 3 4], 'Vertices', ...
+                    [ [ dist(handles.idx(j)  -handles.idx(1)+1) ax.YLim(1)  ]; ...
+                    [   dist(handles.idx(j+1)-handles.idx(1)+1) ax.YLim(1)  ]; ...
+                    [   dist(handles.idx(j+1)-handles.idx(1)+1) ax.YLim(2)  ]; ...
+                    [   dist(handles.idx(j)  -handles.idx(1)+1) ax.YLim(2)  ] ], 'FaceAlpha', 0.1, 'EdgeColor', 'none' );
+            end
+            
+            xlabel( 'Aortic Length [mm]' )
+            ylabel( yUnit )
+            ax.Title.String = sprintf( titleStr );
+            
+            ax.FontName = 'Calibri';
+            ax.FontSize = 14;
+            ax.FontWeight = 'normal';
+            axis square
+            
+            ax.XTick = ax.XLim(1) : 25 : ax.XLim(2);
+            hold off
+            axtoolbar(handles.axes1,'Visible','off');
+            
+            [~,EOAIdx] = max(D);   
+            handles.EOAdist = dist(EOAIdx);
+            xline(handles.EOAdist, 'g-.','LineWidth', 2 );
+            xline(handles.EOAdist + handles.PM.PrecDist, 'b-.','LineWidth', 2 );
+            
+            text(handles.EOAdist + handles.PM.PrecDist, ...
+                ((max(D( handles.idx(1):handles.idx(end) )) + min(D( handles.idx(1):handles.idx(end) )))/2),...
+                ['\leftarrow PR Distance = ', num2str(handles.PM.PrecDist,4), ' [mm]'] ,'FontSize',14)
+            
+            handles.pressure_recovery_id = 1;
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    case 5
+
+        set(handles.pushbutton2,'visible','on','string','ARCH PLANES RE-LOCATION');
+    
         % we create the mip only with the slice that contain the aorta
         [~,I1] = min(abs(squeeze(handles.Z_Pos(1,1,:)) - min(handles.nodes(:,3))));
         [~,I2] = min(abs(squeeze(handles.Z_Pos(1,1,:)) - max(handles.nodes(:,3))));
@@ -437,8 +1063,8 @@ switch get(handles.popupmenu1,'Value')
         d1 =  sqrt(sum((centerline_moved - repmat(position(1,:),size(centerline_moved,1),1)).^2,2));
         d2 =  sqrt(sum((centerline_moved - repmat(position(2,:),size(centerline_moved,1),1)).^2,2));
         
-        [~,idx1] = min(d1); % plane before the arch
-        [~,idx2] = min(d2); % plane after the arch
+        [~,handles.idx1] = min(d1); % plane before the arch
+        [~,handles.idx2] = min(d2); % plane after the arch
         
         % we select point than in F-H direction has 6 mm of distance with
         % respect to the initial point in the centerline
@@ -457,10 +1083,10 @@ switch get(handles.popupmenu1,'Value')
         new_id_pos_sel = id_pos_sel(d>mean_distance);
         d =  sqrt(sum((handles.clPointsi(new_id_pos_sel,:) - repmat(handles.clPointsi(1,:),length(new_id_pos_sel),1)).^2,2));
         [~,selected_plane] = min(d);
-        idx3 = new_id_pos_sel(selected_plane);
+        handles.idx3 = new_id_pos_sel(selected_plane);
         
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        handles.idx = [1,idx1, idx2, idx3, handles.PM.nPlanes];
+        handles.idx = [1,handles.idx1, handles.idx2, handles.idx3, handles.PM.nPlanes];
         
         axes(handles.axes1)
         plot(0,0)
@@ -486,319 +1112,8 @@ switch get(handles.popupmenu1,'Value')
         daspect([1 1 1])
         axtoolbar(handles.axes1,{'rotate', 'restoreview'},'Visible','on');
         
-    case 6
-        if handles.id_case_5 == 0
-            handles.idx = 1 : floor(handles.PM.nPlanes/4) : handles.PM.nPlanes;
-            handles.idx(end) = handles.PM.nPlanes;
-        end
-        
-        dist = [ handles.PM.AllPlanes.dist ];
-        D = handles.PM.Q( :, handles.PM.peakFrame )*60;
-        yUnit = '[l/m]';
-        titleStr = 'Flow\nat peak frame';
-        D = smooth( D, length( D )/6,'rlowess');
-        
-        axes(handles.axes1)
-        plot(0,0)
-        plot( dist( handles.idx(1):handles.idx(end) )-dist( handles.idx(1) ), D( handles.idx(1):handles.idx(end) ),  'r', 'LineWidth', 3 );
-        hold on
-        ax = gca;
-        axis( ax, 'tight' )
-        for j = 1 : 2 : size( handles.idx, 2 )-1
-            patch( 'Faces',[1 2 3 4], 'Vertices', ...
-                [ [ dist(handles.idx(j)  -handles.idx(1)+1) ax.YLim(1)  ]; ...
-                [   dist(handles.idx(j+1)-handles.idx(1)+1) ax.YLim(1)  ]; ...
-                [   dist(handles.idx(j+1)-handles.idx(1)+1) ax.YLim(2)  ]; ...
-                [   dist(handles.idx(j)  -handles.idx(1)+1) ax.YLim(2)  ] ], 'FaceAlpha', 0.1, 'EdgeColor', 'none' );
-        end
-        
-        xlabel( 'Aortic Length [mm]' )
-        ylabel( yUnit )
-        ax.Title.String = sprintf( titleStr );
-        
-        ax.FontName = 'Calibri';
-        ax.FontSize = 14;
-        ax.FontWeight = 'normal';
-        axis square
-        
-        ax.XTick = ax.XLim(1) : 25 : ax.XLim(2);
-        hold off
-        
-        axtoolbar(handles.axes1,'Visible','off');
-        
-        
-    case 7
-        
-        
-        if handles.id_case_5 == 0
-            handles.idx = 1 : floor(handles.PM.nPlanes/4) : handles.PM.nPlanes;
-            handles.idx(end) = handles.PM.nPlanes;
-        end
-        
-        dist = [ handles.PM.AllPlanes.dist ];
-        D = handles.PM.SAW( :, handles.PM.peakFrame );
-        yUnit = '[mmHg]';
-        titleStr = 'SAW\nat peak frame';
-        D = smooth( D, length( D )/6,'rlowess');
-        
-        axes(handles.axes1)
-        plot(0,0)
-        plot( dist( handles.idx(1):handles.idx(end) )-dist( handles.idx(1) ), D( handles.idx(1):handles.idx(end) ),  'r', 'LineWidth', 3 );
-        hold on
-        ax = gca;
-        axis( ax, 'tight' )
-        for j = 1 : 2 : size( handles.idx, 2 )-1
-            patch( 'Faces',[1 2 3 4], 'Vertices', ...
-                [ [ dist(handles.idx(j)  -handles.idx(1)+1) ax.YLim(1)  ]; ...
-                [   dist(handles.idx(j+1)-handles.idx(1)+1) ax.YLim(1)  ]; ...
-                [   dist(handles.idx(j+1)-handles.idx(1)+1) ax.YLim(2)  ]; ...
-                [   dist(handles.idx(j)  -handles.idx(1)+1) ax.YLim(2)  ] ], 'FaceAlpha', 0.1, 'EdgeColor', 'none' );
-        end
-        
-        xlabel( 'Aortic Length [mm]' )
-        ylabel( yUnit )
-        ax.Title.String = sprintf( titleStr );
-        
-        ax.FontName = 'Calibri';
-        ax.FontSize = 14;
-        ax.FontWeight = 'normal';
-        axis square
-        
-        ax.XTick = ax.XLim(1) : 25 : ax.XLim(2);
-        hold off
-        axtoolbar(handles.axes1,'Visible','off');
-        
-    case 8
-        
-        if handles.id_case_5 == 0
-            handles.idx = 1 : floor(handles.PM.nPlanes/4) : handles.PM.nPlanes;
-            handles.idx(end) = handles.PM.nPlanes;
-        end
-        
-        dist = [ handles.PM.AllPlanes.dist ];
-        D = handles.PM.PWV;
-        yUnit = 'PWV [m/s]';
-        titleStr = 'Pulse Wave Velocity';
-        D = smooth( D, length( D )/6,'rlowess');
-        
-        axes(handles.axes1)
-        plot(0,0)
-        plot( dist( handles.idx(1):handles.idx(end) )-dist( handles.idx(1) ), D( handles.idx(1):handles.idx(end) ),  'r', 'LineWidth', 3 );
-        hold on
-        ax = gca;
-        axis( ax, 'tight' )
-        for j = 1 : 2 : size( handles.idx, 2 )-1
-            patch( 'Faces',[1 2 3 4], 'Vertices', ...
-                [ [ dist(handles.idx(j)  -handles.idx(1)+1) ax.YLim(1)  ]; ...
-                [   dist(handles.idx(j+1)-handles.idx(1)+1) ax.YLim(1)  ]; ...
-                [   dist(handles.idx(j+1)-handles.idx(1)+1) ax.YLim(2)  ]; ...
-                [   dist(handles.idx(j)  -handles.idx(1)+1) ax.YLim(2)  ] ], 'FaceAlpha', 0.1, 'EdgeColor', 'none' );
-        end
-        
-        xlabel( 'Aortic Length [mm]' )
-        ylabel( yUnit )
-        ax.Title.String = sprintf( titleStr );
-        
-        ax.FontName = 'Calibri';
-        ax.FontSize = 14;
-        ax.FontWeight = 'normal';
-        axis square
-        
-        ax.XTick = ax.XLim(1) : 25 : ax.XLim(2);
-        hold off
-        axtoolbar(handles.axes1,'Visible','off');
-        
-    case 9
-        if handles.id_case_5 == 0
-            handles.idx = 1 : floor(handles.PM.nPlanes/4) : handles.PM.nPlanes;
-            handles.idx(end) = handles.PM.nPlanes;
-        end
-        
-        dist = [ handles.PM.AllPlanes.dist ];
-        D = handles.PM.E;
-        yUnit = 'E [kPa]';
-        titleStr = 'Elastic Modulus';
-        D = smooth( D, length( D )/6,'rlowess');
-        
-        axes(handles.axes1)
-        plot(0,0)
-        plot( dist( handles.idx(1):handles.idx(end) )-dist( handles.idx(1) ), D( handles.idx(1):handles.idx(end) ),  'r', 'LineWidth', 3 );
-        hold on
-        ax = gca;
-        axis( ax, 'tight' )
-        for j = 1 : 2 : size( handles.idx, 2 )-1
-            patch( 'Faces',[1 2 3 4], 'Vertices', ...
-                [ [ dist(handles.idx(j)  -handles.idx(1)+1) ax.YLim(1)  ]; ...
-                [   dist(handles.idx(j+1)-handles.idx(1)+1) ax.YLim(1)  ]; ...
-                [   dist(handles.idx(j+1)-handles.idx(1)+1) ax.YLim(2)  ]; ...
-                [   dist(handles.idx(j)  -handles.idx(1)+1) ax.YLim(2)  ] ], 'FaceAlpha', 0.1, 'EdgeColor', 'none' );
-        end
-        
-        xlabel( 'Aortic Length [mm]' )
-        ylabel( yUnit )
-        ax.Title.String = sprintf( titleStr );
-        
-        ax.FontName = 'Calibri';
-        ax.FontSize = 14;
-        ax.FontWeight = 'normal';
-        axis square
-        
-        ax.XTick = ax.XLim(1) : 25 : ax.XLim(2);
-        hold off
-        axtoolbar(handles.axes1,'Visible','off');
-        
-    case 10
-        if handles.id_case_5 == 0
-            handles.idx = 1 : floor(handles.PM.nPlanes/4) : handles.PM.nPlanes;
-            handles.idx(end) = handles.PM.nPlanes;
-        end
-        
-        dist = [ handles.PM.AllPlanes.dist ];
-        D = handles.PM.r * 2;
-        yUnit = 'D [mm]';
-        titleStr = 'Diameter';
-        D = smooth( D, length( D )/6,'rlowess');
-        
-        axes(handles.axes1)
-        plot(0,0)
-        plot( dist( handles.idx(1):handles.idx(end) )-dist( handles.idx(1) ), D( handles.idx(1):handles.idx(end) ),  'r', 'LineWidth', 3 );
-        hold on
-        ax = gca;
-        axis( ax, 'tight' )
-        for j = 1 : 2 : size( handles.idx, 2 )-1
-            patch( 'Faces',[1 2 3 4], 'Vertices', ...
-                [ [ dist(handles.idx(j)  -handles.idx(1)+1) ax.YLim(1)  ]; ...
-                [   dist(handles.idx(j+1)-handles.idx(1)+1) ax.YLim(1)  ]; ...
-                [   dist(handles.idx(j+1)-handles.idx(1)+1) ax.YLim(2)  ]; ...
-                [   dist(handles.idx(j)  -handles.idx(1)+1) ax.YLim(2)  ] ], 'FaceAlpha', 0.1, 'EdgeColor', 'none' );
-        end
-        
-        xlabel( 'Aortic Length [mm]' )
-        ylabel( yUnit )
-        ax.Title.String = sprintf( titleStr );
-        
-        ax.FontName = 'Calibri';
-        ax.FontSize = 14;
-        ax.FontWeight = 'normal';
-        axis square
-        
-        ax.XTick = ax.XLim(1) : 25 : ax.XLim(2);
-        hold off
-        axtoolbar(handles.axes1,'Visible','off');
-        
-    case 11
-        if handles.id_case_5 == 0
-            handles.idx = 1 : floor(handles.PM.nPlanes/4) : handles.PM.nPlanes;
-            handles.idx(end) = handles.PM.nPlanes;
-        end
-        
-        dist = [ handles.PM.AllPlanes.dist ];
-        D = [ handles.PM.AllPlanes.curv ];
-        yUnit = '[1/m]';
-        titleStr = 'Curvature';
-        D = smooth( D, length( D )/6,'rlowess');
-        
-        axes(handles.axes1)
-        plot(0,0)
-        plot( dist( handles.idx(1):handles.idx(end) )-dist( handles.idx(1) ), D( handles.idx(1):handles.idx(end) ),  'r', 'LineWidth', 3 );
-        hold on
-        ax = gca;
-        axis( ax, 'tight' )
-        for j = 1 : 2 : size( handles.idx, 2 )-1
-            patch( 'Faces',[1 2 3 4], 'Vertices', ...
-                [ [ dist(handles.idx(j)  -handles.idx(1)+1) ax.YLim(1)  ]; ...
-                [   dist(handles.idx(j+1)-handles.idx(1)+1) ax.YLim(1)  ]; ...
-                [   dist(handles.idx(j+1)-handles.idx(1)+1) ax.YLim(2)  ]; ...
-                [   dist(handles.idx(j)  -handles.idx(1)+1) ax.YLim(2)  ] ], 'FaceAlpha', 0.1, 'EdgeColor', 'none' );
-        end
-        
-        xlabel( 'Aortic Length [mm]' )
-        ylabel( yUnit )
-        ax.Title.String = sprintf( titleStr );
-        
-        ax.FontName = 'Calibri';
-        ax.FontSize = 14;
-        ax.FontWeight = 'normal';
-        axis square
-        
-        ax.XTick = ax.XLim(1) : 25 : ax.XLim(2);
-        hold off
-        axtoolbar(handles.axes1,'Visible','off');
-        
-        
-        
+        handles.arch_planes_selection_id = 1;
 end
 
 handles.output = hObject;
 guidata(hObject, handles);
-
-% --- Executes during object creation, after setting all properties.
-function popupmenu1_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to popuhandles.PMenu1 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: popuhandles.PMenu controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
-
-
-% --- Executes on button press in pushbutton1.
-function pushbutton1_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton1 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-directory = uigetdir(pwd, 'Select Directory');
-
-PM = handles.PM;
-
-if ~isfield( handles, 'idx' )
-    %  Landmarks
-    idx = 1 : ceil(PM.nPlanes/4) : PM.nPlanes;
-    idx(end+1) = PM.nPlanes;
-else
-    idx = handles.idx;
-end
-
-ReportGen( PM, idx )
-
-save([directory,'\PM.mat'],'PM')
-movefile('SAW/IM1.png',[directory,'\'])
-movefile('SAW/IM2.png',[directory,'\'])
-movefile('SAW/IM3.png',[directory,'\'])
-movefile('SAW/IM4.png',[directory,'\'])
-movefile('SAW/IM5.png',[directory,'\'])
-movefile('SAW/IM6.png',[directory,'\'])
-movefile('SAW/SL.png',[directory,'\'])
-movefile('SAW/V.png',[directory,'\'])
-movefile('SAW/Report For TestCase Case.pdf',[directory,'\'])
-
-f = msgbox("The data has been successfully saved","Success");
-pause(2)
-close(f)
-
-handles.output = hObject;
-guidata(hObject, handles);
-
-
-
-
-% --- Executes when user attempts to close figure1.
-function figure1_CloseRequestFcn(hObject, eventdata, handles)
-% hObject    handle to figure1 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-
-% Hint: delete(hObject) closes the figure
-if isequal(get(hObject,'waitstatus'),'waiting')
-    handles.id_while = 1;
-    handles.output = hObject;
-    guidata(hObject, handles);
-    uiresume(hObject);
-else
-    delete(hObject);
-end
