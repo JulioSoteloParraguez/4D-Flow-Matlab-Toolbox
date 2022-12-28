@@ -1,0 +1,160 @@
+/*
+ TOC style names have fixed names, DOM API requires to define the TOC styles in the main template
+*/
+
+p.TOC1 {
+    font-size: 10pt;
+    margin-bottom: 2pt;
+}
+
+p.TOC2 {
+    font-size: 10pt;
+    margin-left: 24pt;
+    margin-bottom: 2pt;
+}
+
+p.TOC3 {
+    font-size: 10pt;
+    margin-left: 48pt;
+    margin-bottom: 2pt;
+}
+
+p.TOC4 {
+    font-size: 10pt;
+    margin-left: 72pt;
+    margin-bottom: 2pt;
+}
+
+p.TOC5 {
+    font-size: 10pt;
+    margin-left: 96pt;
+    margin-bottom: 2pt;
+}
+
+p.TOC6 {
+    font-size: 10pt;
+    margin-left: 120pt;
+    margin-bottom: 2pt;
+}
+
+p.LOC {
+    font-size: 10pt;
+    margin-bottom: 2pt;
+}
+
+ /* The Report API wraps block level link targets in a paragraph
+    of this style. This style sets the line height of the wrapper
+    paragraph to zero so that it does not take up any space in the
+    document.
+ */
+p.LinkTargetWrapper {
+    line-height: 0pt;
+    -fo-keep-with-next.within-page: always;
+}
+
+/* Underline and color links blue */
+a {
+    color: blue;
+    text-decoration: underline;
+}
+
+/* Horizontal Rule */
+hr {
+  border: 0.5pt solid black;
+}
+
+/* Headings */
+h1 {
+    font-family: Cambria, 'Noto Sans', 'Noto Sans CJK JP', 'Noto Sans CJK SC', 'Noto Sans CJK KR', 'Noto Emoji';
+    color: rgb(54,95,145);
+    font-size: 14pt;
+    font-weight: bold;
+    margin-top: 24pt;
+    margin-bottom: 0pt;
+    white-space: pre;
+    -fo-keep-with-next.within-page: always;
+}
+
+h2 {
+    font-family: Cambria, 'Noto Sans', 'Noto Sans CJK JP', 'Noto Sans CJK SC', 'Noto Sans CJK KR', 'Noto Emoji';
+    color: rgb(79,129,189);
+    font-size: 13pt;
+    font-weight: bold;
+    margin-top: 10pt;
+    margin-bottom: 0pt;
+    white-space: pre;
+    -fo-keep-with-next.within-page: always;
+}
+
+h3 {
+    font-family: Cambria, 'Noto Sans', 'Noto Sans CJK JP', 'Noto Sans CJK SC', 'Noto Sans CJK KR', 'Noto Emoji';
+    color: rgb(79,129,189);
+    font-size: 11pt;
+    font-weight: bold;
+    margin-top: 10pt;
+    margin-bottom: 0pt;
+    white-space: pre;
+    -fo-keep-with-next.within-page: always;
+}
+
+h4 {
+    font-family: Cambria, 'Noto Sans', 'Noto Sans CJK JP', 'Noto Sans CJK SC', 'Noto Sans CJK KR', 'Noto Emoji';
+    color: rgb(79,129,189);
+    font-size: 11pt;
+    font-weight: bold;
+    font-style: italic;
+    margin-top: 10pt;
+    margin-bottom: 0pt;
+    white-space: pre;
+    -fo-keep-with-next.within-page: always;
+}
+
+h5 {
+    font-family: Cambria,'Noto Sans', 'Noto Sans CJK JP', 'Noto Sans CJK SC', 'Noto Sans CJK KR', 'Noto Emoji';
+    color: rgb(36,63,96);
+    font-size: 11pt;
+    margin-top: 10pt;
+    margin-bottom: 0pt;
+    white-space: pre;
+    -fo-keep-with-next.within-page: always;
+}
+
+h6 {
+    font-family: Cambria, 'Noto Sans', 'Noto Sans CJK JP', 'Noto Sans CJK SC', 'Noto Sans CJK KR', 'Noto Emoji';
+    color: rgb(36,63,96);
+    font-size: 11pt;
+    font-style: italic;
+    margin-top: 10pt;
+    margin-bottom: 0pt;
+    white-space: pre;
+    -fo-keep-with-next.within-page: always;
+}
+
+/* DOM MATLABTable styles */
+table.rgMATLABTable {
+    -fo-text-align: center;
+    border: none;
+}
+table.rgMATLABTable th p {
+    padding: 0 0 0 0;
+    margin: 0 0 0 0;
+}
+table.rgMATLABTable th {
+    font-weight: bold;
+    padding: 0 0.04in 0.05in 0.04in;
+}
+table.rgMATLABTable td p {
+    padding: 0 0 0 0;
+    margin: 0 0 0 0;
+}
+table.rgMATLABTable td {
+    padding: 0 0.04in 0 0.04in;
+}
+
+/* Default border width. */
+table, th, td {
+  -fo-border-top-width: 1px;
+  -fo-border-bottom-width: 1px;
+  -fo-border-start-width: 1px;
+  -fo-border-end-width: 1px;
+}

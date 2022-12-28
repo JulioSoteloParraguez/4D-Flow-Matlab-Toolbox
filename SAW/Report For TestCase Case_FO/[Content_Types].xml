@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">
+  <Default ContentType="text/css" Extension="css"/>
+  <Default ContentType="application/vnd.mathworks.mlreportgen.dom.fox.section.main+xml" Extension="fo"/>
+  <Override ContentType="application/vnd.mathworks.mlreportgen.dom.fox.document.main+xml" PartName="/root.fo"/>
+</Types>
