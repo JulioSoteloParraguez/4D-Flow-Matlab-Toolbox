@@ -1074,294 +1074,591 @@ guidata(hObject, handles);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function slider1_Callback(hObject, eventdata, handles)
-    pp=1/handles.c;
-    slider_step(1) = pp;
-    slider_step(2) = 0.1;
-    set(handles.slider1,'sliderstep',slider_step,'max',1,'min',0)
-    maxslice = handles.c;
-    handles.slider_value = get(hObject,'Value');
-    if handles.slider_value<=pp
-            handles.slider_value = 1;
-    else
-            handles.slider_value = round(handles.slider_value*maxslice);
+    
+
+    if (handles.id_mag ==1) && (handles.id_ang==0)
+        
+        pp=1/handles.c;
+        slider_step(1) = pp;
+        slider_step(2) = 0.1;
+        set(handles.slider1,'sliderstep',slider_step,'max',1,'min',0)
+        maxslice = handles.c;
+        handles.slider_value = get(hObject,'Value');
+        if handles.slider_value<=pp
+                handles.slider_value = 1;
+        else
+                handles.slider_value = round(handles.slider_value*maxslice);
+        end
+        handles.slider_axes1 = handles.slider_value;
+        if handles.slider_axes1 ==1, handles.slider_axes1_voxel = 0; else, handles.slider_axes1_voxel = (handles.slider_axes1*handles.voxel_MR(3))-handles.voxel_MR(3); end
+        if handles.slider_axes2 ==1, handles.slider_axes2_voxel = 0; else, handles.slider_axes2_voxel = (handles.slider_axes2*handles.voxel_MR(2))-handles.voxel_MR(2); end
+        if handles.slider_axes3 ==1, handles.slider_axes3_voxel = 0; else, handles.slider_axes3_voxel = (handles.slider_axes3*handles.voxel_MR(1))-handles.voxel_MR(1); end
+        axes(handles.axes1);
+        imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.MAG(:,:,handles.slider_axes1)))
+        hold on
+        plot([handles.yd(1,1),handles.yd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
+        plot([handles.slider_axes2_voxel,handles.slider_axes2_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--r','Linewidth',1)
+        if handles.id_seg == 1 && sum(handles.L(:))~=0
+            Lrgb2d = squeeze(handles.Lrgb(:,:,handles.slider_axes1,:));
+            himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            cdata = double(cdata)*0.5;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_vel == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_vel(:,:,handles.slider_axes1,handles.peak_flow,:));
+            himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        % forward velocity
+        if handles.id_fve == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_fve(:,:,handles.slider_axes1,handles.peak_flow,:));
+            himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        % backward velocity
+        if handles.id_bve == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_bve(:,:,handles.slider_axes1,handles.peak_flow,:));
+            himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        % axial angle
+        if handles.id_aan == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_aan(:,:,handles.slider_axes1,handles.peak_flow,:));
+            himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        % forward vortex
+        if handles.id_fov == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_fov(:,:,handles.slider_axes1,handles.peak_flow,:));
+            himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_vor == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_vor(:,:,handles.slider_axes1,handles.peak_flow,:));
+            himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_hd == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_hd(:,:,handles.slider_axes1,handles.peak_flow,:));
+            himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_rhd == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_rhd(:,:,handles.slider_axes1,handles.peak_flow,:));
+            himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_vd == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_vd(:,:,handles.slider_axes1,handles.peak_flow,:));
+            himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_el == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_el(:,:,handles.slider_axes1,handles.peak_flow,:));
+            himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_ke == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_ke(:,:,handles.slider_axes1,handles.peak_flow,:));
+            himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_resizing == 1
+            rectangle('Position',handles.pos1,'LineWidth',1,'EdgeColor','y','LineStyle','-')
+        end
+        hold off
+        axis image
+        colormap(handles.axes1,'gray')
+        axis off
+        daspect([1 1 1])
+        axes(handles.axes2);
+        imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.MAG(:,handles.slider_axes2,:)))
+        hold on
+        plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
+        plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--g','Linewidth',1)
+        if handles.id_seg == 1 && sum(handles.L(:))~=0
+            Lrgb2d = squeeze(handles.Lrgb(:,handles.slider_axes2,:,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            cdata = double(cdata)*0.5;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_vel == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_vel(:,handles.slider_axes2,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        % forward velocity
+        if handles.id_fve == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_fve(:,handles.slider_axes2,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        % backward velocity
+        if handles.id_bve == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_bve(:,handles.slider_axes2,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        % axial angle
+        if handles.id_aan == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_aan(:,handles.slider_axes2,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        % forward vortex
+        if handles.id_fov == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_fov(:,handles.slider_axes2,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_vor == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_vor(:,handles.slider_axes2,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_hd == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_hd(:,handles.slider_axes2,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_rhd == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_rhd(:,handles.slider_axes2,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_vd == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_vd(:,handles.slider_axes2,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_el == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_el(:,handles.slider_axes2,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_ke == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_ke(:,handles.slider_axes2,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_resizing == 1
+            rectangle('Position',handles.pos2,'LineWidth',1,'EdgeColor','y','LineStyle','-')
+        end
+        hold off
+        axis image
+        colormap(handles.axes2,'gray')
+        axis off
+        daspect([1 1 1])
+        axes(handles.axes3);
+        imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',squeeze(handles.MAG(handles.slider_axes3,:,:)))
+        hold on
+        plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes2_voxel,handles.slider_axes2_voxel]','--r','Linewidth',1)
+        plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.yd(1,1),handles.yd(end,end)]','--g','Linewidth',1)
+        if handles.id_seg == 1 && sum(handles.L(:))~=0
+            Lrgb2d = squeeze(handles.Lrgb(handles.slider_axes3,:,:,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            cdata = double(cdata)*0.5;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_vel == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_vel(handles.slider_axes3,:,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        % forward velocity
+        if handles.id_fve == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_fve(handles.slider_axes3,:,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        % backward velocity
+        if handles.id_bve == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_bve(handles.slider_axes3,:,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        % axial angle
+        if handles.id_aan == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_aan(handles.slider_axes3,:,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        % forward vortex
+        if handles.id_fov == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_fov(handles.slider_axes3,:,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_vor == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_vor(handles.slider_axes3,:,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_hd == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_hd(handles.slider_axes3,:,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_rhd == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_rhd(handles.slider_axes3,:,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_vd == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_vd(handles.slider_axes3,:,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_el == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_el(handles.slider_axes3,:,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_ke == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_ke(handles.slider_axes3,:,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_resizing == 1
+            rectangle('Position',handles.pos3,'LineWidth',1,'EdgeColor','y','LineStyle','-')
+        end
+        hold off
+        axis image
+        colormap(handles.axes3,'gray')
+        axis off
+        daspect([1 1 1])
+        set(handles.text1,'visible','on','String',['Image size: ',num2str(size(handles.IPCMRA,1)),' x ',num2str(size(handles.IPCMRA,2)),' Im: ',num2str(round(handles.slider_axes1)),' / ',num2str(handles.c),' Type: ',handles.type])
+        set(handles.text2,'visible','on','String',['Image size: ',num2str(size(handles.IPCMRA,1)),' x ',num2str(size(handles.IPCMRA,3)),' Im: ',num2str(round(handles.slider_axes2)),' / ',num2str(handles.b),' Type: ',handles.type])
+        set(handles.text3,'visible','on','String',['Image size: ',num2str(size(handles.IPCMRA,2)),' x ',num2str(size(handles.IPCMRA,3)),' Im: ',num2str(round(handles.slider_axes3)),' / ',num2str(handles.a),' Type: ',handles.type])
+
+    elseif (handles.id_mag ==0) && (handles.id_ang==1)
+        
+        pp=1/handles.c;
+        slider_step(1) = pp;
+        slider_step(2) = 0.1;
+        set(handles.slider1,'sliderstep',slider_step,'max',1,'min',0)
+        maxslice = handles.c;
+        handles.slider_value = get(hObject,'Value');
+        if handles.slider_value<=pp
+                handles.slider_value = 1;
+        else
+                handles.slider_value = round(handles.slider_value*maxslice);
+        end
+        handles.slider_axes1 = handles.slider_value;
+        if handles.slider_axes1 ==1, handles.slider_axes1_voxel = 0; else, handles.slider_axes1_voxel = (handles.slider_axes1*handles.voxel_MR(3))-handles.voxel_MR(3); end
+        if handles.slider_axes2 ==1, handles.slider_axes2_voxel = 0; else, handles.slider_axes2_voxel = (handles.slider_axes2*handles.voxel_MR(2))-handles.voxel_MR(2); end
+        if handles.slider_axes3 ==1, handles.slider_axes3_voxel = 0; else, handles.slider_axes3_voxel = (handles.slider_axes3*handles.voxel_MR(1))-handles.voxel_MR(1); end
+        axes(handles.axes1);
+        imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.IPCMRA(:,:,handles.slider_axes1)))
+        hold on
+        plot([handles.yd(1,1),handles.yd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
+        plot([handles.slider_axes2_voxel,handles.slider_axes2_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--r','Linewidth',1)
+        if handles.id_seg == 1 && sum(handles.L(:))~=0
+            Lrgb2d = squeeze(handles.Lrgb(:,:,handles.slider_axes1,:));
+            himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            cdata = double(cdata)*0.5;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_vel == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_vel(:,:,handles.slider_axes1,handles.peak_flow,:));
+            himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        % forward velocity
+        if handles.id_fve == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_fve(:,:,handles.slider_axes1,handles.peak_flow,:));
+            himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        % backward velocity
+        if handles.id_bve == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_bve(:,:,handles.slider_axes1,handles.peak_flow,:));
+            himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        % axial angle
+        if handles.id_aan == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_aan(:,:,handles.slider_axes1,handles.peak_flow,:));
+            himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        % forward vortex
+        if handles.id_fov == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_fov(:,:,handles.slider_axes1,handles.peak_flow,:));
+            himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_vor == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_vor(:,:,handles.slider_axes1,handles.peak_flow,:));
+            himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_hd == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_hd(:,:,handles.slider_axes1,handles.peak_flow,:));
+            himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_rhd == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_rhd(:,:,handles.slider_axes1,handles.peak_flow,:));
+            himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_vd == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_vd(:,:,handles.slider_axes1,handles.peak_flow,:));
+            himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_el == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_el(:,:,handles.slider_axes1,handles.peak_flow,:));
+            himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_ke == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_ke(:,:,handles.slider_axes1,handles.peak_flow,:));
+            himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_resizing == 1
+            rectangle('Position',handles.pos1,'LineWidth',1,'EdgeColor','y','LineStyle','-')
+        end
+        hold off
+        axis image
+        colormap(handles.axes1,'gray')
+        axis off
+        daspect([1 1 1])
+        axes(handles.axes2);
+        imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.IPCMRA(:,handles.slider_axes2,:)))
+        hold on
+        plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
+        plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--g','Linewidth',1)
+        if handles.id_seg == 1 && sum(handles.L(:))~=0
+            Lrgb2d = squeeze(handles.Lrgb(:,handles.slider_axes2,:,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            cdata = double(cdata)*0.5;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_vel == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_vel(:,handles.slider_axes2,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        % forward velocity
+        if handles.id_fve == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_fve(:,handles.slider_axes2,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        % backward velocity
+        if handles.id_bve == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_bve(:,handles.slider_axes2,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        % axial angle
+        if handles.id_aan == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_aan(:,handles.slider_axes2,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        % forward vortex
+        if handles.id_fov == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_fov(:,handles.slider_axes2,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_vor == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_vor(:,handles.slider_axes2,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_hd == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_hd(:,handles.slider_axes2,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_rhd == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_rhd(:,handles.slider_axes2,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_vd == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_vd(:,handles.slider_axes2,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_el == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_el(:,handles.slider_axes2,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_ke == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_ke(:,handles.slider_axes2,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_resizing == 1
+            rectangle('Position',handles.pos2,'LineWidth',1,'EdgeColor','y','LineStyle','-')
+        end
+        hold off
+        axis image
+        colormap(handles.axes2,'gray')
+        axis off
+        daspect([1 1 1])
+        axes(handles.axes3);
+        imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',squeeze(handles.IPCMRA(handles.slider_axes3,:,:)))
+        hold on
+        plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes2_voxel,handles.slider_axes2_voxel]','--r','Linewidth',1)
+        plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.yd(1,1),handles.yd(end,end)]','--g','Linewidth',1)
+        if handles.id_seg == 1 && sum(handles.L(:))~=0
+            Lrgb2d = squeeze(handles.Lrgb(handles.slider_axes3,:,:,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            cdata = double(cdata)*0.5;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_vel == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_vel(handles.slider_axes3,:,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        % forward velocity
+        if handles.id_fve == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_fve(handles.slider_axes3,:,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        % backward velocity
+        if handles.id_bve == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_bve(handles.slider_axes3,:,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        % axial angle
+        if handles.id_aan == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_aan(handles.slider_axes3,:,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        % forward vortex
+        if handles.id_fov == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_fov(handles.slider_axes3,:,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_vor == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_vor(handles.slider_axes3,:,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_hd == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_hd(handles.slider_axes3,:,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_rhd == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_rhd(handles.slider_axes3,:,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_vd == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_vd(handles.slider_axes3,:,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_el == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_el(handles.slider_axes3,:,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_ke == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_ke(handles.slider_axes3,:,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_resizing == 1
+            rectangle('Position',handles.pos3,'LineWidth',1,'EdgeColor','y','LineStyle','-')
+        end
+        hold off
+        axis image
+        colormap(handles.axes3,'gray')
+        axis off
+        daspect([1 1 1])
+        set(handles.text1,'visible','on','String',['Image size: ',num2str(size(handles.IPCMRA,1)),' x ',num2str(size(handles.IPCMRA,2)),' Im: ',num2str(round(handles.slider_axes1)),' / ',num2str(handles.c),' Type: ',handles.type])
+        set(handles.text2,'visible','on','String',['Image size: ',num2str(size(handles.IPCMRA,1)),' x ',num2str(size(handles.IPCMRA,3)),' Im: ',num2str(round(handles.slider_axes2)),' / ',num2str(handles.b),' Type: ',handles.type])
+        set(handles.text3,'visible','on','String',['Image size: ',num2str(size(handles.IPCMRA,2)),' x ',num2str(size(handles.IPCMRA,3)),' Im: ',num2str(round(handles.slider_axes3)),' / ',num2str(handles.a),' Type: ',handles.type])
+        
     end
-    handles.slider_axes1 = handles.slider_value;
-    if handles.slider_axes1 ==1, handles.slider_axes1_voxel = 0; else, handles.slider_axes1_voxel = (handles.slider_axes1*handles.voxel_MR(3))-handles.voxel_MR(3); end
-    if handles.slider_axes2 ==1, handles.slider_axes2_voxel = 0; else, handles.slider_axes2_voxel = (handles.slider_axes2*handles.voxel_MR(2))-handles.voxel_MR(2); end
-    if handles.slider_axes3 ==1, handles.slider_axes3_voxel = 0; else, handles.slider_axes3_voxel = (handles.slider_axes3*handles.voxel_MR(1))-handles.voxel_MR(1); end
-    axes(handles.axes1);
-    imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.IPCMRA(:,:,handles.slider_axes1)))
-    hold on
-    plot([handles.yd(1,1),handles.yd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
-    plot([handles.slider_axes2_voxel,handles.slider_axes2_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--r','Linewidth',1)
-    if handles.id_seg == 1 && sum(handles.L(:))~=0
-        Lrgb2d = squeeze(handles.Lrgb(:,:,handles.slider_axes1,:));
-        himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        cdata = double(cdata)*0.5;
-        set(himage, 'AlphaData', cdata);
-    end
-    if handles.id_vel == 1 && handles.id_seg == 0
-        Lrgb2d = squeeze(handles.Lrgb_vel(:,:,handles.slider_axes1,handles.peak_flow,:));
-        himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        set(himage, 'AlphaData', cdata);
-    end
-    % forward velocity
-    if handles.id_fve == 1 && handles.id_seg == 0
-        Lrgb2d = squeeze(handles.Lrgb_fve(:,:,handles.slider_axes1,handles.peak_flow,:));
-        himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        set(himage, 'AlphaData', cdata);
-    end
-    % backward velocity
-    if handles.id_bve == 1 && handles.id_seg == 0
-        Lrgb2d = squeeze(handles.Lrgb_bve(:,:,handles.slider_axes1,handles.peak_flow,:));
-        himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        set(himage, 'AlphaData', cdata);
-    end
-    % axial angle
-    if handles.id_aan == 1 && handles.id_seg == 0
-        Lrgb2d = squeeze(handles.Lrgb_aan(:,:,handles.slider_axes1,handles.peak_flow,:));
-        himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        set(himage, 'AlphaData', cdata);
-    end
-    % forward vortex
-    if handles.id_fov == 1 && handles.id_seg == 0
-        Lrgb2d = squeeze(handles.Lrgb_fov(:,:,handles.slider_axes1,handles.peak_flow,:));
-        himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        set(himage, 'AlphaData', cdata);
-    end
-    if handles.id_vor == 1 && handles.id_seg == 0
-        Lrgb2d = squeeze(handles.Lrgb_vor(:,:,handles.slider_axes1,handles.peak_flow,:));
-        himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        set(himage, 'AlphaData', cdata);
-    end
-    if handles.id_hd == 1 && handles.id_seg == 0
-        Lrgb2d = squeeze(handles.Lrgb_hd(:,:,handles.slider_axes1,handles.peak_flow,:));
-        himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        set(himage, 'AlphaData', cdata);
-    end
-    if handles.id_rhd == 1 && handles.id_seg == 0
-        Lrgb2d = squeeze(handles.Lrgb_rhd(:,:,handles.slider_axes1,handles.peak_flow,:));
-        himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        set(himage, 'AlphaData', cdata);
-    end
-    if handles.id_vd == 1 && handles.id_seg == 0
-        Lrgb2d = squeeze(handles.Lrgb_vd(:,:,handles.slider_axes1,handles.peak_flow,:));
-        himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        set(himage, 'AlphaData', cdata);
-    end
-    if handles.id_el == 1 && handles.id_seg == 0
-        Lrgb2d = squeeze(handles.Lrgb_el(:,:,handles.slider_axes1,handles.peak_flow,:));
-        himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        set(himage, 'AlphaData', cdata);
-    end
-    if handles.id_ke == 1 && handles.id_seg == 0
-        Lrgb2d = squeeze(handles.Lrgb_ke(:,:,handles.slider_axes1,handles.peak_flow,:));
-        himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        set(himage, 'AlphaData', cdata);
-    end
-    if handles.id_resizing == 1
-        rectangle('Position',handles.pos1,'LineWidth',1,'EdgeColor','y','LineStyle','-')
-    end
-    hold off
-    axis image
-    colormap(handles.axes1,'gray')
-    axis off
-    daspect([1 1 1])
-    axes(handles.axes2);
-    imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.IPCMRA(:,handles.slider_axes2,:)))
-    hold on
-    plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
-    plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--g','Linewidth',1)
-    if handles.id_seg == 1 && sum(handles.L(:))~=0
-        Lrgb2d = squeeze(handles.Lrgb(:,handles.slider_axes2,:,:));
-        himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        cdata = double(cdata)*0.5;
-        set(himage, 'AlphaData', cdata);
-    end
-    if handles.id_vel == 1 && handles.id_seg == 0
-        Lrgb2d = squeeze(handles.Lrgb_vel(:,handles.slider_axes2,:,handles.peak_flow,:));
-        himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        set(himage, 'AlphaData', cdata);
-    end
-    % forward velocity
-    if handles.id_fve == 1 && handles.id_seg == 0
-        Lrgb2d = squeeze(handles.Lrgb_fve(:,handles.slider_axes2,:,handles.peak_flow,:));
-        himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        set(himage, 'AlphaData', cdata);
-    end
-    % backward velocity
-    if handles.id_bve == 1 && handles.id_seg == 0
-        Lrgb2d = squeeze(handles.Lrgb_bve(:,handles.slider_axes2,:,handles.peak_flow,:));
-        himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        set(himage, 'AlphaData', cdata);
-    end
-    % axial angle
-    if handles.id_aan == 1 && handles.id_seg == 0
-        Lrgb2d = squeeze(handles.Lrgb_aan(:,handles.slider_axes2,:,handles.peak_flow,:));
-        himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        set(himage, 'AlphaData', cdata);
-    end
-    % forward vortex
-    if handles.id_fov == 1 && handles.id_seg == 0
-        Lrgb2d = squeeze(handles.Lrgb_fov(:,handles.slider_axes2,:,handles.peak_flow,:));
-        himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        set(himage, 'AlphaData', cdata);
-    end
-    if handles.id_vor == 1 && handles.id_seg == 0
-        Lrgb2d = squeeze(handles.Lrgb_vor(:,handles.slider_axes2,:,handles.peak_flow,:));
-        himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        set(himage, 'AlphaData', cdata);
-    end
-    if handles.id_hd == 1 && handles.id_seg == 0
-        Lrgb2d = squeeze(handles.Lrgb_hd(:,handles.slider_axes2,:,handles.peak_flow,:));
-        himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        set(himage, 'AlphaData', cdata);
-    end
-    if handles.id_rhd == 1 && handles.id_seg == 0
-        Lrgb2d = squeeze(handles.Lrgb_rhd(:,handles.slider_axes2,:,handles.peak_flow,:));
-        himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        set(himage, 'AlphaData', cdata);
-    end
-    if handles.id_vd == 1 && handles.id_seg == 0
-        Lrgb2d = squeeze(handles.Lrgb_vd(:,handles.slider_axes2,:,handles.peak_flow,:));
-        himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        set(himage, 'AlphaData', cdata);
-    end
-    if handles.id_el == 1 && handles.id_seg == 0
-        Lrgb2d = squeeze(handles.Lrgb_el(:,handles.slider_axes2,:,handles.peak_flow,:));
-        himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        set(himage, 'AlphaData', cdata);
-    end
-    if handles.id_ke == 1 && handles.id_seg == 0
-        Lrgb2d = squeeze(handles.Lrgb_ke(:,handles.slider_axes2,:,handles.peak_flow,:));
-        himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        set(himage, 'AlphaData', cdata);
-    end
-    if handles.id_resizing == 1
-        rectangle('Position',handles.pos2,'LineWidth',1,'EdgeColor','y','LineStyle','-')
-    end
-    hold off
-    axis image
-    colormap(handles.axes2,'gray')
-    axis off
-    daspect([1 1 1])
-    axes(handles.axes3);
-    imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',squeeze(handles.IPCMRA(handles.slider_axes3,:,:)))
-    hold on
-    plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes2_voxel,handles.slider_axes2_voxel]','--r','Linewidth',1)
-    plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.yd(1,1),handles.yd(end,end)]','--g','Linewidth',1)
-    if handles.id_seg == 1 && sum(handles.L(:))~=0
-        Lrgb2d = squeeze(handles.Lrgb(handles.slider_axes3,:,:,:));
-        himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        cdata = double(cdata)*0.5;
-        set(himage, 'AlphaData', cdata);
-    end
-    if handles.id_vel == 1 && handles.id_seg == 0
-        Lrgb2d = squeeze(handles.Lrgb_vel(handles.slider_axes3,:,:,handles.peak_flow,:));
-        himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        set(himage, 'AlphaData', cdata);
-    end
-    % forward velocity
-    if handles.id_fve == 1 && handles.id_seg == 0
-        Lrgb2d = squeeze(handles.Lrgb_fve(handles.slider_axes3,:,:,handles.peak_flow,:));
-        himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        set(himage, 'AlphaData', cdata);
-    end
-    % backward velocity
-    if handles.id_bve == 1 && handles.id_seg == 0
-        Lrgb2d = squeeze(handles.Lrgb_bve(handles.slider_axes3,:,:,handles.peak_flow,:));
-        himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        set(himage, 'AlphaData', cdata);
-    end
-    % axial angle
-    if handles.id_aan == 1 && handles.id_seg == 0
-        Lrgb2d = squeeze(handles.Lrgb_aan(handles.slider_axes3,:,:,handles.peak_flow,:));
-        himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        set(himage, 'AlphaData', cdata);
-    end
-    % forward vortex
-    if handles.id_fov == 1 && handles.id_seg == 0
-        Lrgb2d = squeeze(handles.Lrgb_fov(handles.slider_axes3,:,:,handles.peak_flow,:));
-        himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        set(himage, 'AlphaData', cdata);
-    end
-    if handles.id_vor == 1 && handles.id_seg == 0
-        Lrgb2d = squeeze(handles.Lrgb_vor(handles.slider_axes3,:,:,handles.peak_flow,:));
-        himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        set(himage, 'AlphaData', cdata);
-    end
-    if handles.id_hd == 1 && handles.id_seg == 0
-        Lrgb2d = squeeze(handles.Lrgb_hd(handles.slider_axes3,:,:,handles.peak_flow,:));
-        himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        set(himage, 'AlphaData', cdata);
-    end
-    if handles.id_rhd == 1 && handles.id_seg == 0
-        Lrgb2d = squeeze(handles.Lrgb_rhd(handles.slider_axes3,:,:,handles.peak_flow,:));
-        himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        set(himage, 'AlphaData', cdata);
-    end
-    if handles.id_vd == 1 && handles.id_seg == 0
-        Lrgb2d = squeeze(handles.Lrgb_vd(handles.slider_axes3,:,:,handles.peak_flow,:));
-        himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        set(himage, 'AlphaData', cdata);
-    end
-    if handles.id_el == 1 && handles.id_seg == 0
-        Lrgb2d = squeeze(handles.Lrgb_el(handles.slider_axes3,:,:,handles.peak_flow,:));
-        himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        set(himage, 'AlphaData', cdata);
-    end
-    if handles.id_ke == 1 && handles.id_seg == 0
-        Lrgb2d = squeeze(handles.Lrgb_ke(handles.slider_axes3,:,:,handles.peak_flow,:));
-        himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        set(himage, 'AlphaData', cdata);
-    end
-    if handles.id_resizing == 1
-        rectangle('Position',handles.pos3,'LineWidth',1,'EdgeColor','y','LineStyle','-')
-    end
-    hold off
-    axis image
-    colormap(handles.axes3,'gray')
-    axis off
-    daspect([1 1 1])
-    set(handles.text1,'visible','on','String',['Image size: ',num2str(size(handles.IPCMRA,1)),' x ',num2str(size(handles.IPCMRA,2)),' Im: ',num2str(round(handles.slider_axes1)),' / ',num2str(handles.c),' Type: ',handles.type])
-    set(handles.text2,'visible','on','String',['Image size: ',num2str(size(handles.IPCMRA,1)),' x ',num2str(size(handles.IPCMRA,3)),' Im: ',num2str(round(handles.slider_axes2)),' / ',num2str(handles.b),' Type: ',handles.type])
-    set(handles.text3,'visible','on','String',['Image size: ',num2str(size(handles.IPCMRA,2)),' x ',num2str(size(handles.IPCMRA,3)),' Im: ',num2str(round(handles.slider_axes3)),' / ',num2str(handles.a),' Type: ',handles.type])
 handles.output = hObject;
 guidata(hObject, handles);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1375,295 +1672,592 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function slider2_Callback(hObject, eventdata, handles)
-    pp=1/handles.b;
-    slider_step(1) = pp;
-    slider_step(2) = 0.1;
-    set(handles.slider2,'sliderstep',slider_step,'max',1,'min',0)
-    maxslice = handles.b;
-    handles.slider_value = get(hObject,'Value');
-    if handles.slider_value<=pp
-            handles.slider_value = 1;
-    else
-            handles.slider_value = round(handles.slider_value*maxslice);
-    end
-    handles.slider_axes2 = handles.slider_value;
-    if handles.slider_axes1 ==1, handles.slider_axes1_voxel = 0; else, handles.slider_axes1_voxel = (handles.slider_axes1*handles.voxel_MR(3))-handles.voxel_MR(3); end
-    if handles.slider_axes2 ==1, handles.slider_axes2_voxel = 0; else, handles.slider_axes2_voxel = (handles.slider_axes2*handles.voxel_MR(2))-handles.voxel_MR(2); end
-    if handles.slider_axes3 ==1, handles.slider_axes3_voxel = 0; else, handles.slider_axes3_voxel = (handles.slider_axes3*handles.voxel_MR(1))-handles.voxel_MR(1); end
-    axes(handles.axes1);
-    imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.IPCMRA(:,:,handles.slider_axes1)))
-    hold on
-    plot([handles.yd(1,1),handles.yd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
-    plot([handles.slider_axes2_voxel,handles.slider_axes2_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--r','Linewidth',1)
-    if handles.id_seg == 1 && sum(handles.L(:))~=0
-        Lrgb2d = squeeze(handles.Lrgb(:,:,handles.slider_axes1,:));
-        himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        cdata = double(cdata)*0.5;
-        set(himage, 'AlphaData', cdata);
-    end
-    if handles.id_vel == 1 && handles.id_seg == 0
-        Lrgb2d = squeeze(handles.Lrgb_vel(:,:,handles.slider_axes1,handles.peak_flow,:));
-        himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        set(himage, 'AlphaData', cdata);
-    end
-    % forward velocity
-    if handles.id_fve == 1 && handles.id_seg == 0
-        Lrgb2d = squeeze(handles.Lrgb_fve(:,:,handles.slider_axes1,handles.peak_flow,:));
-        himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        set(himage, 'AlphaData', cdata);
-    end
-    % backward velocity
-    if handles.id_bve == 1 && handles.id_seg == 0
-        Lrgb2d = squeeze(handles.Lrgb_bve(:,:,handles.slider_axes1,handles.peak_flow,:));
-        himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        set(himage, 'AlphaData', cdata);
-    end
-    % axial angle
-    if handles.id_aan == 1 && handles.id_seg == 0
-        Lrgb2d = squeeze(handles.Lrgb_aan(:,:,handles.slider_axes1,handles.peak_flow,:));
-        himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        set(himage, 'AlphaData', cdata);
-    end
-    % forward vortex
-    if handles.id_fov == 1 && handles.id_seg == 0
-        Lrgb2d = squeeze(handles.Lrgb_fov(:,:,handles.slider_axes1,handles.peak_flow,:));
-        himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        set(himage, 'AlphaData', cdata);
-    end
-    if handles.id_vor == 1 && handles.id_seg == 0
-        Lrgb2d = squeeze(handles.Lrgb_vor(:,:,handles.slider_axes1,handles.peak_flow,:));
-        himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        set(himage, 'AlphaData', cdata);
-    end
-    if handles.id_hd == 1 && handles.id_seg == 0
-        Lrgb2d = squeeze(handles.Lrgb_hd(:,:,handles.slider_axes1,handles.peak_flow,:));
-        himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        set(himage, 'AlphaData', cdata);
-    end
-    if handles.id_rhd == 1 && handles.id_seg == 0
-        Lrgb2d = squeeze(handles.Lrgb_rhd(:,:,handles.slider_axes1,handles.peak_flow,:));
-        himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        set(himage, 'AlphaData', cdata);
-    end
-    if handles.id_vd == 1 && handles.id_seg == 0
-        Lrgb2d = squeeze(handles.Lrgb_vd(:,:,handles.slider_axes1,handles.peak_flow,:));
-        himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        set(himage, 'AlphaData', cdata);
-    end
-    if handles.id_el == 1 && handles.id_seg == 0
-        Lrgb2d = squeeze(handles.Lrgb_el(:,:,handles.slider_axes1,handles.peak_flow,:));
-        himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        set(himage, 'AlphaData', cdata);
-    end
-    if handles.id_ke == 1 && handles.id_seg == 0
-        Lrgb2d = squeeze(handles.Lrgb_ke(:,:,handles.slider_axes1,handles.peak_flow,:));
-        himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        set(himage, 'AlphaData', cdata);
-    end
-    if handles.id_resizing == 1
-        rectangle('Position',handles.pos1,'LineWidth',1,'EdgeColor','y','LineStyle','-')
-    end
-    hold off
-    axis image
-    colormap(handles.axes1,'gray')
-    axis off
-    daspect([1 1 1])
-    axes(handles.axes2);
-    imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.IPCMRA(:,handles.slider_axes2,:)))
-    hold on
-    plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
-    plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--g','Linewidth',1)
-    if handles.id_seg == 1 && sum(handles.L(:))~=0
-        Lrgb2d = squeeze(handles.Lrgb(:,handles.slider_axes2,:,:));
-        himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        cdata = double(cdata)*0.5;
-        set(himage, 'AlphaData', cdata);
-    end
-    if handles.id_vel == 1 && handles.id_seg == 0
-        Lrgb2d = squeeze(handles.Lrgb_vel(:,handles.slider_axes2,:,handles.peak_flow,:));
-        himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        set(himage, 'AlphaData', cdata);
-    end
-    % forward velocity
-    if handles.id_fve == 1 && handles.id_seg == 0
-        Lrgb2d = squeeze(handles.Lrgb_fve(:,handles.slider_axes2,:,handles.peak_flow,:));
-        himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        set(himage, 'AlphaData', cdata);
-    end
-    % backward velocity
-    if handles.id_bve == 1 && handles.id_seg == 0
-        Lrgb2d = squeeze(handles.Lrgb_bve(:,handles.slider_axes2,:,handles.peak_flow,:));
-        himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        set(himage, 'AlphaData', cdata);
-    end
-    % axial angle
-    if handles.id_aan == 1 && handles.id_seg == 0
-        Lrgb2d = squeeze(handles.Lrgb_aan(:,handles.slider_axes2,:,handles.peak_flow,:));
-        himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        set(himage, 'AlphaData', cdata);
-    end
-    % forward vortex
-    if handles.id_fov == 1 && handles.id_seg == 0
-        Lrgb2d = squeeze(handles.Lrgb_fov(:,handles.slider_axes2,:,handles.peak_flow,:));
-        himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        set(himage, 'AlphaData', cdata);
-    end
-    if handles.id_vor == 1 && handles.id_seg == 0
-        Lrgb2d = squeeze(handles.Lrgb_vor(:,handles.slider_axes2,:,handles.peak_flow,:));
-        himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        set(himage, 'AlphaData', cdata);
-    end
-    if handles.id_hd == 1 && handles.id_seg == 0
-        Lrgb2d = squeeze(handles.Lrgb_hd(:,handles.slider_axes2,:,handles.peak_flow,:));
-        himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        set(himage, 'AlphaData', cdata);
-    end
-    if handles.id_rhd == 1 && handles.id_seg == 0
-        Lrgb2d = squeeze(handles.Lrgb_rhd(:,handles.slider_axes2,:,handles.peak_flow,:));
-        himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        set(himage, 'AlphaData', cdata);
-    end
-    if handles.id_vd == 1 && handles.id_seg == 0
-        Lrgb2d = squeeze(handles.Lrgb_vd(:,handles.slider_axes2,:,handles.peak_flow,:));
-        himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        set(himage, 'AlphaData', cdata);
-    end
-    if handles.id_el == 1 && handles.id_seg == 0
-        Lrgb2d = squeeze(handles.Lrgb_el(:,handles.slider_axes2,:,handles.peak_flow,:));
-        himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        set(himage, 'AlphaData', cdata);
-    end
-    if handles.id_ke == 1 && handles.id_seg == 0
-        Lrgb2d = squeeze(handles.Lrgb_ke(:,handles.slider_axes2,:,handles.peak_flow,:));
-        himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        set(himage, 'AlphaData', cdata);
-    end
-    if handles.id_resizing == 1
-        rectangle('Position',handles.pos2,'LineWidth',1,'EdgeColor','y','LineStyle','-')
-    end
-    hold off
-    axis image
-    colormap(handles.axes2,'gray')
-    axis off
-    daspect([1 1 1])
-    axes(handles.axes3);
-    imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',squeeze(handles.IPCMRA(handles.slider_axes3,:,:)))
-    hold on
-    plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes2_voxel,handles.slider_axes2_voxel]','--r','Linewidth',1)
-    plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.yd(1,1),handles.yd(end,end)]','--g','Linewidth',1)
-    if handles.id_seg == 1 && sum(handles.L(:))~=0
-        Lrgb2d = squeeze(handles.Lrgb(handles.slider_axes3,:,:,:));
-        himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        cdata = double(cdata)*0.5;
-        set(himage, 'AlphaData', cdata);
-    end
-    if handles.id_vel == 1 && handles.id_seg == 0
-        Lrgb2d = squeeze(handles.Lrgb_vel(handles.slider_axes3,:,:,handles.peak_flow,:));
-        himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        set(himage, 'AlphaData', cdata);
-    end
-    % forward velocity
-    if handles.id_fve == 1 && handles.id_seg == 0
-        Lrgb2d = squeeze(handles.Lrgb_fve(handles.slider_axes3,:,:,handles.peak_flow,:));
-        himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        set(himage, 'AlphaData', cdata);
-    end
-    % backward velocity
-    if handles.id_bve == 1 && handles.id_seg == 0
-        Lrgb2d = squeeze(handles.Lrgb_bve(handles.slider_axes3,:,:,handles.peak_flow,:));
-        himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        set(himage, 'AlphaData', cdata);
-    end
-    % axial angle
-    if handles.id_aan == 1 && handles.id_seg == 0
-        Lrgb2d = squeeze(handles.Lrgb_aan(handles.slider_axes3,:,:,handles.peak_flow,:));
-        himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        set(himage, 'AlphaData', cdata);
-    end
-    % forward vortex
-    if handles.id_fov == 1 && handles.id_seg == 0
-        Lrgb2d = squeeze(handles.Lrgb_fov(handles.slider_axes3,:,:,handles.peak_flow,:));
-        himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        set(himage, 'AlphaData', cdata);
-    end
-    if handles.id_vor == 1 && handles.id_seg == 0
-        Lrgb2d = squeeze(handles.Lrgb_vor(handles.slider_axes3,:,:,handles.peak_flow,:));
-        himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        set(himage, 'AlphaData', cdata);
-    end
-    if handles.id_hd == 1 && handles.id_seg == 0
-        Lrgb2d = squeeze(handles.Lrgb_hd(handles.slider_axes3,:,:,handles.peak_flow,:));
-        himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        set(himage, 'AlphaData', cdata);
-    end
-    if handles.id_rhd == 1 && handles.id_seg == 0
-        Lrgb2d = squeeze(handles.Lrgb_rhd(handles.slider_axes3,:,:,handles.peak_flow,:));
-        himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        set(himage, 'AlphaData', cdata);
-    end
-    if handles.id_vd == 1 && handles.id_seg == 0
-        Lrgb2d = squeeze(handles.Lrgb_vd(handles.slider_axes3,:,:,handles.peak_flow,:));
-        himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        set(himage, 'AlphaData', cdata);
-    end
-    if handles.id_el == 1 && handles.id_seg == 0
-        Lrgb2d = squeeze(handles.Lrgb_el(handles.slider_axes3,:,:,handles.peak_flow,:));
-        himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        set(himage, 'AlphaData', cdata);
-    end
-    if handles.id_ke == 1 && handles.id_seg == 0
-        Lrgb2d = squeeze(handles.Lrgb_ke(handles.slider_axes3,:,:,handles.peak_flow,:));
-        himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        set(himage, 'AlphaData', cdata);
-    end
-    if handles.id_resizing == 1
-        rectangle('Position',handles.pos3,'LineWidth',1,'EdgeColor','y','LineStyle','-')
-    end
-    hold off
-    axis image
-    colormap(handles.axes3,'gray')
-    axis off
-    daspect([1 1 1])
-    set(handles.text1,'visible','on','String',['Image size: ',num2str(size(handles.IPCMRA,1)),' x ',num2str(size(handles.IPCMRA,2)),' Im: ',num2str(round(handles.slider_axes1)),' / ',num2str(handles.c),' Type: ',handles.type])
-    set(handles.text2,'visible','on','String',['Image size: ',num2str(size(handles.IPCMRA,1)),' x ',num2str(size(handles.IPCMRA,3)),' Im: ',num2str(round(handles.slider_axes2)),' / ',num2str(handles.b),' Type: ',handles.type])
-    set(handles.text3,'visible','on','String',['Image size: ',num2str(size(handles.IPCMRA,2)),' x ',num2str(size(handles.IPCMRA,3)),' Im: ',num2str(round(handles.slider_axes3)),' / ',num2str(handles.a),' Type: ',handles.type])
 
+
+    if (handles.id_mag ==1) && (handles.id_ang==0)
+        
+        pp=1/handles.b;
+        slider_step(1) = pp;
+        slider_step(2) = 0.1;
+        set(handles.slider2,'sliderstep',slider_step,'max',1,'min',0)
+        maxslice = handles.b;
+        handles.slider_value = get(hObject,'Value');
+        if handles.slider_value<=pp
+                handles.slider_value = 1;
+        else
+                handles.slider_value = round(handles.slider_value*maxslice);
+        end
+        handles.slider_axes2 = handles.slider_value;
+        if handles.slider_axes1 ==1, handles.slider_axes1_voxel = 0; else, handles.slider_axes1_voxel = (handles.slider_axes1*handles.voxel_MR(3))-handles.voxel_MR(3); end
+        if handles.slider_axes2 ==1, handles.slider_axes2_voxel = 0; else, handles.slider_axes2_voxel = (handles.slider_axes2*handles.voxel_MR(2))-handles.voxel_MR(2); end
+        if handles.slider_axes3 ==1, handles.slider_axes3_voxel = 0; else, handles.slider_axes3_voxel = (handles.slider_axes3*handles.voxel_MR(1))-handles.voxel_MR(1); end
+        axes(handles.axes1);
+        imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.MAG(:,:,handles.slider_axes1)))
+        hold on
+        plot([handles.yd(1,1),handles.yd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
+        plot([handles.slider_axes2_voxel,handles.slider_axes2_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--r','Linewidth',1)
+        if handles.id_seg == 1 && sum(handles.L(:))~=0
+            Lrgb2d = squeeze(handles.Lrgb(:,:,handles.slider_axes1,:));
+            himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            cdata = double(cdata)*0.5;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_vel == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_vel(:,:,handles.slider_axes1,handles.peak_flow,:));
+            himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        % forward velocity
+        if handles.id_fve == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_fve(:,:,handles.slider_axes1,handles.peak_flow,:));
+            himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        % backward velocity
+        if handles.id_bve == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_bve(:,:,handles.slider_axes1,handles.peak_flow,:));
+            himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        % axial angle
+        if handles.id_aan == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_aan(:,:,handles.slider_axes1,handles.peak_flow,:));
+            himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        % forward vortex
+        if handles.id_fov == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_fov(:,:,handles.slider_axes1,handles.peak_flow,:));
+            himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_vor == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_vor(:,:,handles.slider_axes1,handles.peak_flow,:));
+            himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_hd == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_hd(:,:,handles.slider_axes1,handles.peak_flow,:));
+            himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_rhd == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_rhd(:,:,handles.slider_axes1,handles.peak_flow,:));
+            himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_vd == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_vd(:,:,handles.slider_axes1,handles.peak_flow,:));
+            himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_el == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_el(:,:,handles.slider_axes1,handles.peak_flow,:));
+            himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_ke == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_ke(:,:,handles.slider_axes1,handles.peak_flow,:));
+            himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_resizing == 1
+            rectangle('Position',handles.pos1,'LineWidth',1,'EdgeColor','y','LineStyle','-')
+        end
+        hold off
+        axis image
+        colormap(handles.axes1,'gray')
+        axis off
+        daspect([1 1 1])
+        axes(handles.axes2);
+        imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.MAG(:,handles.slider_axes2,:)))
+        hold on
+        plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
+        plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--g','Linewidth',1)
+        if handles.id_seg == 1 && sum(handles.L(:))~=0
+            Lrgb2d = squeeze(handles.Lrgb(:,handles.slider_axes2,:,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            cdata = double(cdata)*0.5;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_vel == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_vel(:,handles.slider_axes2,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        % forward velocity
+        if handles.id_fve == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_fve(:,handles.slider_axes2,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        % backward velocity
+        if handles.id_bve == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_bve(:,handles.slider_axes2,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        % axial angle
+        if handles.id_aan == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_aan(:,handles.slider_axes2,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        % forward vortex
+        if handles.id_fov == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_fov(:,handles.slider_axes2,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_vor == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_vor(:,handles.slider_axes2,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_hd == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_hd(:,handles.slider_axes2,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_rhd == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_rhd(:,handles.slider_axes2,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_vd == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_vd(:,handles.slider_axes2,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_el == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_el(:,handles.slider_axes2,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_ke == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_ke(:,handles.slider_axes2,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_resizing == 1
+            rectangle('Position',handles.pos2,'LineWidth',1,'EdgeColor','y','LineStyle','-')
+        end
+        hold off
+        axis image
+        colormap(handles.axes2,'gray')
+        axis off
+        daspect([1 1 1])
+        axes(handles.axes3);
+        imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',squeeze(handles.MAG(handles.slider_axes3,:,:)))
+        hold on
+        plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes2_voxel,handles.slider_axes2_voxel]','--r','Linewidth',1)
+        plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.yd(1,1),handles.yd(end,end)]','--g','Linewidth',1)
+        if handles.id_seg == 1 && sum(handles.L(:))~=0
+            Lrgb2d = squeeze(handles.Lrgb(handles.slider_axes3,:,:,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            cdata = double(cdata)*0.5;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_vel == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_vel(handles.slider_axes3,:,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        % forward velocity
+        if handles.id_fve == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_fve(handles.slider_axes3,:,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        % backward velocity
+        if handles.id_bve == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_bve(handles.slider_axes3,:,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        % axial angle
+        if handles.id_aan == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_aan(handles.slider_axes3,:,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        % forward vortex
+        if handles.id_fov == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_fov(handles.slider_axes3,:,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_vor == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_vor(handles.slider_axes3,:,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_hd == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_hd(handles.slider_axes3,:,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_rhd == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_rhd(handles.slider_axes3,:,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_vd == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_vd(handles.slider_axes3,:,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_el == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_el(handles.slider_axes3,:,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_ke == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_ke(handles.slider_axes3,:,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_resizing == 1
+            rectangle('Position',handles.pos3,'LineWidth',1,'EdgeColor','y','LineStyle','-')
+        end
+        hold off
+        axis image
+        colormap(handles.axes3,'gray')
+        axis off
+        daspect([1 1 1])
+        set(handles.text1,'visible','on','String',['Image size: ',num2str(size(handles.IPCMRA,1)),' x ',num2str(size(handles.IPCMRA,2)),' Im: ',num2str(round(handles.slider_axes1)),' / ',num2str(handles.c),' Type: ',handles.type])
+        set(handles.text2,'visible','on','String',['Image size: ',num2str(size(handles.IPCMRA,1)),' x ',num2str(size(handles.IPCMRA,3)),' Im: ',num2str(round(handles.slider_axes2)),' / ',num2str(handles.b),' Type: ',handles.type])
+        set(handles.text3,'visible','on','String',['Image size: ',num2str(size(handles.IPCMRA,2)),' x ',num2str(size(handles.IPCMRA,3)),' Im: ',num2str(round(handles.slider_axes3)),' / ',num2str(handles.a),' Type: ',handles.type])
+
+    elseif (handles.id_mag ==0) && (handles.id_ang==1)
+        
+        pp=1/handles.b;
+        slider_step(1) = pp;
+        slider_step(2) = 0.1;
+        set(handles.slider2,'sliderstep',slider_step,'max',1,'min',0)
+        maxslice = handles.b;
+        handles.slider_value = get(hObject,'Value');
+        if handles.slider_value<=pp
+                handles.slider_value = 1;
+        else
+                handles.slider_value = round(handles.slider_value*maxslice);
+        end
+        handles.slider_axes2 = handles.slider_value;
+        if handles.slider_axes1 ==1, handles.slider_axes1_voxel = 0; else, handles.slider_axes1_voxel = (handles.slider_axes1*handles.voxel_MR(3))-handles.voxel_MR(3); end
+        if handles.slider_axes2 ==1, handles.slider_axes2_voxel = 0; else, handles.slider_axes2_voxel = (handles.slider_axes2*handles.voxel_MR(2))-handles.voxel_MR(2); end
+        if handles.slider_axes3 ==1, handles.slider_axes3_voxel = 0; else, handles.slider_axes3_voxel = (handles.slider_axes3*handles.voxel_MR(1))-handles.voxel_MR(1); end
+        axes(handles.axes1);
+        imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.IPCMRA(:,:,handles.slider_axes1)))
+        hold on
+        plot([handles.yd(1,1),handles.yd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
+        plot([handles.slider_axes2_voxel,handles.slider_axes2_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--r','Linewidth',1)
+        if handles.id_seg == 1 && sum(handles.L(:))~=0
+            Lrgb2d = squeeze(handles.Lrgb(:,:,handles.slider_axes1,:));
+            himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            cdata = double(cdata)*0.5;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_vel == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_vel(:,:,handles.slider_axes1,handles.peak_flow,:));
+            himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        % forward velocity
+        if handles.id_fve == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_fve(:,:,handles.slider_axes1,handles.peak_flow,:));
+            himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        % backward velocity
+        if handles.id_bve == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_bve(:,:,handles.slider_axes1,handles.peak_flow,:));
+            himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        % axial angle
+        if handles.id_aan == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_aan(:,:,handles.slider_axes1,handles.peak_flow,:));
+            himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        % forward vortex
+        if handles.id_fov == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_fov(:,:,handles.slider_axes1,handles.peak_flow,:));
+            himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_vor == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_vor(:,:,handles.slider_axes1,handles.peak_flow,:));
+            himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_hd == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_hd(:,:,handles.slider_axes1,handles.peak_flow,:));
+            himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_rhd == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_rhd(:,:,handles.slider_axes1,handles.peak_flow,:));
+            himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_vd == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_vd(:,:,handles.slider_axes1,handles.peak_flow,:));
+            himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_el == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_el(:,:,handles.slider_axes1,handles.peak_flow,:));
+            himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_ke == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_ke(:,:,handles.slider_axes1,handles.peak_flow,:));
+            himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_resizing == 1
+            rectangle('Position',handles.pos1,'LineWidth',1,'EdgeColor','y','LineStyle','-')
+        end
+        hold off
+        axis image
+        colormap(handles.axes1,'gray')
+        axis off
+        daspect([1 1 1])
+        axes(handles.axes2);
+        imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.IPCMRA(:,handles.slider_axes2,:)))
+        hold on
+        plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
+        plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--g','Linewidth',1)
+        if handles.id_seg == 1 && sum(handles.L(:))~=0
+            Lrgb2d = squeeze(handles.Lrgb(:,handles.slider_axes2,:,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            cdata = double(cdata)*0.5;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_vel == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_vel(:,handles.slider_axes2,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        % forward velocity
+        if handles.id_fve == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_fve(:,handles.slider_axes2,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        % backward velocity
+        if handles.id_bve == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_bve(:,handles.slider_axes2,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        % axial angle
+        if handles.id_aan == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_aan(:,handles.slider_axes2,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        % forward vortex
+        if handles.id_fov == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_fov(:,handles.slider_axes2,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_vor == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_vor(:,handles.slider_axes2,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_hd == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_hd(:,handles.slider_axes2,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_rhd == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_rhd(:,handles.slider_axes2,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_vd == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_vd(:,handles.slider_axes2,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_el == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_el(:,handles.slider_axes2,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_ke == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_ke(:,handles.slider_axes2,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_resizing == 1
+            rectangle('Position',handles.pos2,'LineWidth',1,'EdgeColor','y','LineStyle','-')
+        end
+        hold off
+        axis image
+        colormap(handles.axes2,'gray')
+        axis off
+        daspect([1 1 1])
+        axes(handles.axes3);
+        imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',squeeze(handles.IPCMRA(handles.slider_axes3,:,:)))
+        hold on
+        plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes2_voxel,handles.slider_axes2_voxel]','--r','Linewidth',1)
+        plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.yd(1,1),handles.yd(end,end)]','--g','Linewidth',1)
+        if handles.id_seg == 1 && sum(handles.L(:))~=0
+            Lrgb2d = squeeze(handles.Lrgb(handles.slider_axes3,:,:,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            cdata = double(cdata)*0.5;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_vel == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_vel(handles.slider_axes3,:,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        % forward velocity
+        if handles.id_fve == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_fve(handles.slider_axes3,:,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        % backward velocity
+        if handles.id_bve == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_bve(handles.slider_axes3,:,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        % axial angle
+        if handles.id_aan == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_aan(handles.slider_axes3,:,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        % forward vortex
+        if handles.id_fov == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_fov(handles.slider_axes3,:,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_vor == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_vor(handles.slider_axes3,:,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_hd == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_hd(handles.slider_axes3,:,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_rhd == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_rhd(handles.slider_axes3,:,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_vd == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_vd(handles.slider_axes3,:,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_el == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_el(handles.slider_axes3,:,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_ke == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_ke(handles.slider_axes3,:,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_resizing == 1
+            rectangle('Position',handles.pos3,'LineWidth',1,'EdgeColor','y','LineStyle','-')
+        end
+        hold off
+        axis image
+        colormap(handles.axes3,'gray')
+        axis off
+        daspect([1 1 1])
+        set(handles.text1,'visible','on','String',['Image size: ',num2str(size(handles.IPCMRA,1)),' x ',num2str(size(handles.IPCMRA,2)),' Im: ',num2str(round(handles.slider_axes1)),' / ',num2str(handles.c),' Type: ',handles.type])
+        set(handles.text2,'visible','on','String',['Image size: ',num2str(size(handles.IPCMRA,1)),' x ',num2str(size(handles.IPCMRA,3)),' Im: ',num2str(round(handles.slider_axes2)),' / ',num2str(handles.b),' Type: ',handles.type])
+        set(handles.text3,'visible','on','String',['Image size: ',num2str(size(handles.IPCMRA,2)),' x ',num2str(size(handles.IPCMRA,3)),' Im: ',num2str(round(handles.slider_axes3)),' / ',num2str(handles.a),' Type: ',handles.type])
+
+        
+    end
 handles.output = hObject;
 guidata(hObject, handles);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1677,294 +2271,591 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function slider3_Callback(hObject, eventdata, handles)
-    pp=1/handles.a;
-    slider_step(1) = pp;
-    slider_step(2) = 0.1;
-    set(handles.slider3,'sliderstep',slider_step,'max',1,'min',0)
-    maxslice = handles.a;
-    handles.slider_value = get(hObject,'Value');
-    if handles.slider_value<=pp
-            handles.slider_value = 1;
-    else
-            handles.slider_value = round(handles.slider_value*maxslice);
+
+
+    if (handles.id_mag ==1) && (handles.id_ang==0)
+        
+        pp=1/handles.a;
+        slider_step(1) = pp;
+        slider_step(2) = 0.1;
+        set(handles.slider3,'sliderstep',slider_step,'max',1,'min',0)
+        maxslice = handles.a;
+        handles.slider_value = get(hObject,'Value');
+        if handles.slider_value<=pp
+                handles.slider_value = 1;
+        else
+                handles.slider_value = round(handles.slider_value*maxslice);
+        end
+        handles.slider_axes3 = handles.slider_value;
+        if handles.slider_axes1 ==1, handles.slider_axes1_voxel = 0; else, handles.slider_axes1_voxel = (handles.slider_axes1*handles.voxel_MR(3))-handles.voxel_MR(3); end
+        if handles.slider_axes2 ==1, handles.slider_axes2_voxel = 0; else, handles.slider_axes2_voxel = (handles.slider_axes2*handles.voxel_MR(2))-handles.voxel_MR(2); end
+        if handles.slider_axes3 ==1, handles.slider_axes3_voxel = 0; else, handles.slider_axes3_voxel = (handles.slider_axes3*handles.voxel_MR(1))-handles.voxel_MR(1); end
+        axes(handles.axes1);
+        imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.MAG(:,:,handles.slider_axes1)))
+        hold on
+        plot([handles.yd(1,1),handles.yd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
+        plot([handles.slider_axes2_voxel,handles.slider_axes2_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--r','Linewidth',1)
+        if handles.id_seg == 1 && sum(handles.L(:))~=0
+            Lrgb2d = squeeze(handles.Lrgb(:,:,handles.slider_axes1,:));
+            himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            cdata = double(cdata)*0.5;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_vel == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_vel(:,:,handles.slider_axes1,handles.peak_flow,:));
+            himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        % forward velocity
+        if handles.id_fve == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_fve(:,:,handles.slider_axes1,handles.peak_flow,:));
+            himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        % backward velocity
+        if handles.id_bve == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_bve(:,:,handles.slider_axes1,handles.peak_flow,:));
+            himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        % axial angle
+        if handles.id_aan == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_aan(:,:,handles.slider_axes1,handles.peak_flow,:));
+            himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        % forward vortex
+        if handles.id_fov == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_fov(:,:,handles.slider_axes1,handles.peak_flow,:));
+            himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_vor == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_vor(:,:,handles.slider_axes1,handles.peak_flow,:));
+            himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_hd == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_hd(:,:,handles.slider_axes1,handles.peak_flow,:));
+            himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_rhd == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_rhd(:,:,handles.slider_axes1,handles.peak_flow,:));
+            himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_vd == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_vd(:,:,handles.slider_axes1,handles.peak_flow,:));
+            himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_el == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_el(:,:,handles.slider_axes1,handles.peak_flow,:));
+            himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_ke == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_ke(:,:,handles.slider_axes1,handles.peak_flow,:));
+            himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_resizing == 1
+            rectangle('Position',handles.pos1,'LineWidth',1,'EdgeColor','y','LineStyle','-')
+        end
+        hold off
+        axis image
+        colormap(handles.axes1,'gray')
+        axis off
+        daspect([1 1 1])
+        axes(handles.axes2);
+        imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.MAG(:,handles.slider_axes2,:)))
+        hold on
+        plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
+        plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--g','Linewidth',1)
+        if handles.id_seg == 1 && sum(handles.L(:))~=0
+            Lrgb2d = squeeze(handles.Lrgb(:,handles.slider_axes2,:,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            cdata = double(cdata)*0.5;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_vel == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_vel(:,handles.slider_axes2,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        % forward velocity
+        if handles.id_fve == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_fve(:,handles.slider_axes2,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        % backward velocity
+        if handles.id_bve == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_bve(:,handles.slider_axes2,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        % axial angle
+        if handles.id_aan == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_aan(:,handles.slider_axes2,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        % forward vortex
+        if handles.id_fov == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_fov(:,handles.slider_axes2,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_vor == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_vor(:,handles.slider_axes2,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_hd == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_hd(:,handles.slider_axes2,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_rhd == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_rhd(:,handles.slider_axes2,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_vd == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_vd(:,handles.slider_axes2,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_el == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_el(:,handles.slider_axes2,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_ke == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_ke(:,handles.slider_axes2,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_resizing == 1
+            rectangle('Position',handles.pos2,'LineWidth',1,'EdgeColor','y','LineStyle','-')
+        end
+        hold off
+        axis image
+        colormap(handles.axes2,'gray')
+        axis off
+        daspect([1 1 1])
+        axes(handles.axes3);
+        imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',squeeze(handles.MAG(handles.slider_axes3,:,:)))
+        hold on
+        plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes2_voxel,handles.slider_axes2_voxel]','--r','Linewidth',1)
+        plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.yd(1,1),handles.yd(end,end)]','--g','Linewidth',1)
+        if handles.id_seg == 1 && sum(handles.L(:))~=0
+            Lrgb2d = squeeze(handles.Lrgb(handles.slider_axes3,:,:,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            cdata = double(cdata)*0.5;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_vel == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_vel(handles.slider_axes3,:,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        % forward velocity
+        if handles.id_fve == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_fve(handles.slider_axes3,:,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        % backward velocity
+        if handles.id_bve == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_bve(handles.slider_axes3,:,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        % axial angle
+        if handles.id_aan == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_aan(handles.slider_axes3,:,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        % forward vortex
+        if handles.id_fov == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_fov(handles.slider_axes3,:,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_vor == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_vor(handles.slider_axes3,:,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_hd == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_hd(handles.slider_axes3,:,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_rhd == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_rhd(handles.slider_axes3,:,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_vd == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_vd(handles.slider_axes3,:,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_el == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_el(handles.slider_axes3,:,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_ke == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_ke(handles.slider_axes3,:,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_resizing == 1
+            rectangle('Position',handles.pos3,'LineWidth',1,'EdgeColor','y','LineStyle','-')
+        end
+        hold off
+        axis image
+        colormap(handles.axes3,'gray')
+        axis off
+        daspect([1 1 1])
+        set(handles.text1,'visible','on','String',['Image size: ',num2str(size(handles.IPCMRA,1)),' x ',num2str(size(handles.IPCMRA,2)),' Im: ',num2str(round(handles.slider_axes1)),' / ',num2str(handles.c),' Type: ',handles.type])
+        set(handles.text2,'visible','on','String',['Image size: ',num2str(size(handles.IPCMRA,1)),' x ',num2str(size(handles.IPCMRA,3)),' Im: ',num2str(round(handles.slider_axes2)),' / ',num2str(handles.b),' Type: ',handles.type])
+        set(handles.text3,'visible','on','String',['Image size: ',num2str(size(handles.IPCMRA,2)),' x ',num2str(size(handles.IPCMRA,3)),' Im: ',num2str(round(handles.slider_axes3)),' / ',num2str(handles.a),' Type: ',handles.type])
+
+    elseif (handles.id_mag ==0) && (handles.id_ang==1)
+        
+        pp=1/handles.a;
+        slider_step(1) = pp;
+        slider_step(2) = 0.1;
+        set(handles.slider3,'sliderstep',slider_step,'max',1,'min',0)
+        maxslice = handles.a;
+        handles.slider_value = get(hObject,'Value');
+        if handles.slider_value<=pp
+                handles.slider_value = 1;
+        else
+                handles.slider_value = round(handles.slider_value*maxslice);
+        end
+        handles.slider_axes3 = handles.slider_value;
+        if handles.slider_axes1 ==1, handles.slider_axes1_voxel = 0; else, handles.slider_axes1_voxel = (handles.slider_axes1*handles.voxel_MR(3))-handles.voxel_MR(3); end
+        if handles.slider_axes2 ==1, handles.slider_axes2_voxel = 0; else, handles.slider_axes2_voxel = (handles.slider_axes2*handles.voxel_MR(2))-handles.voxel_MR(2); end
+        if handles.slider_axes3 ==1, handles.slider_axes3_voxel = 0; else, handles.slider_axes3_voxel = (handles.slider_axes3*handles.voxel_MR(1))-handles.voxel_MR(1); end
+        axes(handles.axes1);
+        imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.IPCMRA(:,:,handles.slider_axes1)))
+        hold on
+        plot([handles.yd(1,1),handles.yd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
+        plot([handles.slider_axes2_voxel,handles.slider_axes2_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--r','Linewidth',1)
+        if handles.id_seg == 1 && sum(handles.L(:))~=0
+            Lrgb2d = squeeze(handles.Lrgb(:,:,handles.slider_axes1,:));
+            himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            cdata = double(cdata)*0.5;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_vel == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_vel(:,:,handles.slider_axes1,handles.peak_flow,:));
+            himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        % forward velocity
+        if handles.id_fve == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_fve(:,:,handles.slider_axes1,handles.peak_flow,:));
+            himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        % backward velocity
+        if handles.id_bve == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_bve(:,:,handles.slider_axes1,handles.peak_flow,:));
+            himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        % axial angle
+        if handles.id_aan == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_aan(:,:,handles.slider_axes1,handles.peak_flow,:));
+            himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        % forward vortex
+        if handles.id_fov == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_fov(:,:,handles.slider_axes1,handles.peak_flow,:));
+            himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_vor == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_vor(:,:,handles.slider_axes1,handles.peak_flow,:));
+            himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_hd == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_hd(:,:,handles.slider_axes1,handles.peak_flow,:));
+            himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_rhd == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_rhd(:,:,handles.slider_axes1,handles.peak_flow,:));
+            himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_vd == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_vd(:,:,handles.slider_axes1,handles.peak_flow,:));
+            himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_el == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_el(:,:,handles.slider_axes1,handles.peak_flow,:));
+            himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_ke == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_ke(:,:,handles.slider_axes1,handles.peak_flow,:));
+            himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_resizing == 1
+            rectangle('Position',handles.pos1,'LineWidth',1,'EdgeColor','y','LineStyle','-')
+        end
+        hold off
+        axis image
+        colormap(handles.axes1,'gray')
+        axis off
+        daspect([1 1 1])
+        axes(handles.axes2);
+        imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.IPCMRA(:,handles.slider_axes2,:)))
+        hold on
+        plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
+        plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--g','Linewidth',1)
+        if handles.id_seg == 1 && sum(handles.L(:))~=0
+            Lrgb2d = squeeze(handles.Lrgb(:,handles.slider_axes2,:,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            cdata = double(cdata)*0.5;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_vel == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_vel(:,handles.slider_axes2,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        % forward velocity
+        if handles.id_fve == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_fve(:,handles.slider_axes2,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        % backward velocity
+        if handles.id_bve == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_bve(:,handles.slider_axes2,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        % axial angle
+        if handles.id_aan == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_aan(:,handles.slider_axes2,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        % forward vortex
+        if handles.id_fov == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_fov(:,handles.slider_axes2,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_vor == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_vor(:,handles.slider_axes2,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_hd == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_hd(:,handles.slider_axes2,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_rhd == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_rhd(:,handles.slider_axes2,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_vd == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_vd(:,handles.slider_axes2,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_el == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_el(:,handles.slider_axes2,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_ke == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_ke(:,handles.slider_axes2,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_resizing == 1
+            rectangle('Position',handles.pos2,'LineWidth',1,'EdgeColor','y','LineStyle','-')
+        end
+        hold off
+        axis image
+        colormap(handles.axes2,'gray')
+        axis off
+        daspect([1 1 1])
+        axes(handles.axes3);
+        imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',squeeze(handles.IPCMRA(handles.slider_axes3,:,:)))
+        hold on
+        plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes2_voxel,handles.slider_axes2_voxel]','--r','Linewidth',1)
+        plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.yd(1,1),handles.yd(end,end)]','--g','Linewidth',1)
+        if handles.id_seg == 1 && sum(handles.L(:))~=0
+            Lrgb2d = squeeze(handles.Lrgb(handles.slider_axes3,:,:,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            cdata = double(cdata)*0.5;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_vel == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_vel(handles.slider_axes3,:,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        % forward velocity
+        if handles.id_fve == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_fve(handles.slider_axes3,:,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        % backward velocity
+        if handles.id_bve == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_bve(handles.slider_axes3,:,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        % axial angle
+        if handles.id_aan == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_aan(handles.slider_axes3,:,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        % forward vortex
+        if handles.id_fov == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_fov(handles.slider_axes3,:,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_vor == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_vor(handles.slider_axes3,:,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_hd == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_hd(handles.slider_axes3,:,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_rhd == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_rhd(handles.slider_axes3,:,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_vd == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_vd(handles.slider_axes3,:,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_el == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_el(handles.slider_axes3,:,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_ke == 1 && handles.id_seg == 0
+            Lrgb2d = squeeze(handles.Lrgb_ke(handles.slider_axes3,:,:,handles.peak_flow,:));
+            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
+            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+            set(himage, 'AlphaData', cdata);
+        end
+        if handles.id_resizing == 1
+            rectangle('Position',handles.pos3,'LineWidth',1,'EdgeColor','y','LineStyle','-')
+        end
+        hold off
+        axis image
+        colormap(handles.axes3,'gray')
+        axis off
+        daspect([1 1 1])
+        set(handles.text1,'visible','on','String',['Image size: ',num2str(size(handles.IPCMRA,1)),' x ',num2str(size(handles.IPCMRA,2)),' Im: ',num2str(round(handles.slider_axes1)),' / ',num2str(handles.c),' Type: ',handles.type])
+        set(handles.text2,'visible','on','String',['Image size: ',num2str(size(handles.IPCMRA,1)),' x ',num2str(size(handles.IPCMRA,3)),' Im: ',num2str(round(handles.slider_axes2)),' / ',num2str(handles.b),' Type: ',handles.type])
+        set(handles.text3,'visible','on','String',['Image size: ',num2str(size(handles.IPCMRA,2)),' x ',num2str(size(handles.IPCMRA,3)),' Im: ',num2str(round(handles.slider_axes3)),' / ',num2str(handles.a),' Type: ',handles.type])
+
     end
-    handles.slider_axes3 = handles.slider_value;
-    if handles.slider_axes1 ==1, handles.slider_axes1_voxel = 0; else, handles.slider_axes1_voxel = (handles.slider_axes1*handles.voxel_MR(3))-handles.voxel_MR(3); end
-    if handles.slider_axes2 ==1, handles.slider_axes2_voxel = 0; else, handles.slider_axes2_voxel = (handles.slider_axes2*handles.voxel_MR(2))-handles.voxel_MR(2); end
-    if handles.slider_axes3 ==1, handles.slider_axes3_voxel = 0; else, handles.slider_axes3_voxel = (handles.slider_axes3*handles.voxel_MR(1))-handles.voxel_MR(1); end
-    axes(handles.axes1);
-    imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.IPCMRA(:,:,handles.slider_axes1)))
-    hold on
-    plot([handles.yd(1,1),handles.yd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
-    plot([handles.slider_axes2_voxel,handles.slider_axes2_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--r','Linewidth',1)
-    if handles.id_seg == 1 && sum(handles.L(:))~=0
-        Lrgb2d = squeeze(handles.Lrgb(:,:,handles.slider_axes1,:));
-        himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        cdata = double(cdata)*0.5;
-        set(himage, 'AlphaData', cdata);
-    end
-    if handles.id_vel == 1 && handles.id_seg == 0
-        Lrgb2d = squeeze(handles.Lrgb_vel(:,:,handles.slider_axes1,handles.peak_flow,:));
-        himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        set(himage, 'AlphaData', cdata);
-    end
-    % forward velocity
-    if handles.id_fve == 1 && handles.id_seg == 0
-        Lrgb2d = squeeze(handles.Lrgb_fve(:,:,handles.slider_axes1,handles.peak_flow,:));
-        himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        set(himage, 'AlphaData', cdata);
-    end
-    % backward velocity
-    if handles.id_bve == 1 && handles.id_seg == 0
-        Lrgb2d = squeeze(handles.Lrgb_bve(:,:,handles.slider_axes1,handles.peak_flow,:));
-        himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        set(himage, 'AlphaData', cdata);
-    end
-    % axial angle
-    if handles.id_aan == 1 && handles.id_seg == 0
-        Lrgb2d = squeeze(handles.Lrgb_aan(:,:,handles.slider_axes1,handles.peak_flow,:));
-        himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        set(himage, 'AlphaData', cdata);
-    end
-    % forward vortex
-    if handles.id_fov == 1 && handles.id_seg == 0
-        Lrgb2d = squeeze(handles.Lrgb_fov(:,:,handles.slider_axes1,handles.peak_flow,:));
-        himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        set(himage, 'AlphaData', cdata);
-    end
-    if handles.id_vor == 1 && handles.id_seg == 0
-        Lrgb2d = squeeze(handles.Lrgb_vor(:,:,handles.slider_axes1,handles.peak_flow,:));
-        himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        set(himage, 'AlphaData', cdata);
-    end
-    if handles.id_hd == 1 && handles.id_seg == 0
-        Lrgb2d = squeeze(handles.Lrgb_hd(:,:,handles.slider_axes1,handles.peak_flow,:));
-        himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        set(himage, 'AlphaData', cdata);
-    end
-    if handles.id_rhd == 1 && handles.id_seg == 0
-        Lrgb2d = squeeze(handles.Lrgb_rhd(:,:,handles.slider_axes1,handles.peak_flow,:));
-        himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        set(himage, 'AlphaData', cdata);
-    end
-    if handles.id_vd == 1 && handles.id_seg == 0
-        Lrgb2d = squeeze(handles.Lrgb_vd(:,:,handles.slider_axes1,handles.peak_flow,:));
-        himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        set(himage, 'AlphaData', cdata);
-    end
-    if handles.id_el == 1 && handles.id_seg == 0
-        Lrgb2d = squeeze(handles.Lrgb_el(:,:,handles.slider_axes1,handles.peak_flow,:));
-        himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        set(himage, 'AlphaData', cdata);
-    end
-    if handles.id_ke == 1 && handles.id_seg == 0
-        Lrgb2d = squeeze(handles.Lrgb_ke(:,:,handles.slider_axes1,handles.peak_flow,:));
-        himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        set(himage, 'AlphaData', cdata);
-    end
-    if handles.id_resizing == 1
-        rectangle('Position',handles.pos1,'LineWidth',1,'EdgeColor','y','LineStyle','-')
-    end
-    hold off
-    axis image
-    colormap(handles.axes1,'gray')
-    axis off
-    daspect([1 1 1])
-    axes(handles.axes2);
-    imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.IPCMRA(:,handles.slider_axes2,:)))
-    hold on
-    plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
-    plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--g','Linewidth',1)
-    if handles.id_seg == 1 && sum(handles.L(:))~=0
-        Lrgb2d = squeeze(handles.Lrgb(:,handles.slider_axes2,:,:));
-        himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        cdata = double(cdata)*0.5;
-        set(himage, 'AlphaData', cdata);
-    end
-    if handles.id_vel == 1 && handles.id_seg == 0
-        Lrgb2d = squeeze(handles.Lrgb_vel(:,handles.slider_axes2,:,handles.peak_flow,:));
-        himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        set(himage, 'AlphaData', cdata);
-    end
-    % forward velocity
-    if handles.id_fve == 1 && handles.id_seg == 0
-        Lrgb2d = squeeze(handles.Lrgb_fve(:,handles.slider_axes2,:,handles.peak_flow,:));
-        himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        set(himage, 'AlphaData', cdata);
-    end
-    % backward velocity
-    if handles.id_bve == 1 && handles.id_seg == 0
-        Lrgb2d = squeeze(handles.Lrgb_bve(:,handles.slider_axes2,:,handles.peak_flow,:));
-        himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        set(himage, 'AlphaData', cdata);
-    end
-    % axial angle
-    if handles.id_aan == 1 && handles.id_seg == 0
-        Lrgb2d = squeeze(handles.Lrgb_aan(:,handles.slider_axes2,:,handles.peak_flow,:));
-        himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        set(himage, 'AlphaData', cdata);
-    end
-    % forward vortex
-    if handles.id_fov == 1 && handles.id_seg == 0
-        Lrgb2d = squeeze(handles.Lrgb_fov(:,handles.slider_axes2,:,handles.peak_flow,:));
-        himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        set(himage, 'AlphaData', cdata);
-    end
-    if handles.id_vor == 1 && handles.id_seg == 0
-        Lrgb2d = squeeze(handles.Lrgb_vor(:,handles.slider_axes2,:,handles.peak_flow,:));
-        himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        set(himage, 'AlphaData', cdata);
-    end
-    if handles.id_hd == 1 && handles.id_seg == 0
-        Lrgb2d = squeeze(handles.Lrgb_hd(:,handles.slider_axes2,:,handles.peak_flow,:));
-        himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        set(himage, 'AlphaData', cdata);
-    end
-    if handles.id_rhd == 1 && handles.id_seg == 0
-        Lrgb2d = squeeze(handles.Lrgb_rhd(:,handles.slider_axes2,:,handles.peak_flow,:));
-        himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        set(himage, 'AlphaData', cdata);
-    end
-    if handles.id_vd == 1 && handles.id_seg == 0
-        Lrgb2d = squeeze(handles.Lrgb_vd(:,handles.slider_axes2,:,handles.peak_flow,:));
-        himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        set(himage, 'AlphaData', cdata);
-    end
-    if handles.id_el == 1 && handles.id_seg == 0
-        Lrgb2d = squeeze(handles.Lrgb_el(:,handles.slider_axes2,:,handles.peak_flow,:));
-        himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        set(himage, 'AlphaData', cdata);
-    end
-    if handles.id_ke == 1 && handles.id_seg == 0
-        Lrgb2d = squeeze(handles.Lrgb_ke(:,handles.slider_axes2,:,handles.peak_flow,:));
-        himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        set(himage, 'AlphaData', cdata);
-    end
-    if handles.id_resizing == 1
-        rectangle('Position',handles.pos2,'LineWidth',1,'EdgeColor','y','LineStyle','-')
-    end
-    hold off
-    axis image
-    colormap(handles.axes2,'gray')
-    axis off
-    daspect([1 1 1])
-    axes(handles.axes3);
-    imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',squeeze(handles.IPCMRA(handles.slider_axes3,:,:)))
-    hold on
-    plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes2_voxel,handles.slider_axes2_voxel]','--r','Linewidth',1)
-    plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.yd(1,1),handles.yd(end,end)]','--g','Linewidth',1)
-    if handles.id_seg == 1 && sum(handles.L(:))~=0
-        Lrgb2d = squeeze(handles.Lrgb(handles.slider_axes3,:,:,:));
-        himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        cdata = double(cdata)*0.5;
-        set(himage, 'AlphaData', cdata);
-    end
-    if handles.id_vel == 1 && handles.id_seg == 0
-        Lrgb2d = squeeze(handles.Lrgb_vel(handles.slider_axes3,:,:,handles.peak_flow,:));
-        himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        set(himage, 'AlphaData', cdata);
-    end
-    % forward velocity
-    if handles.id_fve == 1 && handles.id_seg == 0
-        Lrgb2d = squeeze(handles.Lrgb_fve(handles.slider_axes3,:,:,handles.peak_flow,:));
-        himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        set(himage, 'AlphaData', cdata);
-    end
-    % backward velocity
-    if handles.id_bve == 1 && handles.id_seg == 0
-        Lrgb2d = squeeze(handles.Lrgb_bve(handles.slider_axes3,:,:,handles.peak_flow,:));
-        himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        set(himage, 'AlphaData', cdata);
-    end
-    % axial angle
-    if handles.id_aan == 1 && handles.id_seg == 0
-        Lrgb2d = squeeze(handles.Lrgb_aan(handles.slider_axes3,:,:,handles.peak_flow,:));
-        himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        set(himage, 'AlphaData', cdata);
-    end
-    % forward vortex
-    if handles.id_fov == 1 && handles.id_seg == 0
-        Lrgb2d = squeeze(handles.Lrgb_fov(handles.slider_axes3,:,:,handles.peak_flow,:));
-        himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        set(himage, 'AlphaData', cdata);
-    end
-    if handles.id_vor == 1 && handles.id_seg == 0
-        Lrgb2d = squeeze(handles.Lrgb_vor(handles.slider_axes3,:,:,handles.peak_flow,:));
-        himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        set(himage, 'AlphaData', cdata);
-    end
-    if handles.id_hd == 1 && handles.id_seg == 0
-        Lrgb2d = squeeze(handles.Lrgb_hd(handles.slider_axes3,:,:,handles.peak_flow,:));
-        himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        set(himage, 'AlphaData', cdata);
-    end
-    if handles.id_rhd == 1 && handles.id_seg == 0
-        Lrgb2d = squeeze(handles.Lrgb_rhd(handles.slider_axes3,:,:,handles.peak_flow,:));
-        himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        set(himage, 'AlphaData', cdata);
-    end
-    if handles.id_vd == 1 && handles.id_seg == 0
-        Lrgb2d = squeeze(handles.Lrgb_vd(handles.slider_axes3,:,:,handles.peak_flow,:));
-        himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        set(himage, 'AlphaData', cdata);
-    end
-    if handles.id_el == 1 && handles.id_seg == 0
-        Lrgb2d = squeeze(handles.Lrgb_el(handles.slider_axes3,:,:,handles.peak_flow,:));
-        himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        set(himage, 'AlphaData', cdata);
-    end
-    if handles.id_ke == 1 && handles.id_seg == 0
-        Lrgb2d = squeeze(handles.Lrgb_ke(handles.slider_axes3,:,:,handles.peak_flow,:));
-        himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
-        cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-        set(himage, 'AlphaData', cdata);
-    end
-    if handles.id_resizing == 1
-        rectangle('Position',handles.pos3,'LineWidth',1,'EdgeColor','y','LineStyle','-')
-    end
-    hold off
-    axis image
-    colormap(handles.axes3,'gray')
-    axis off
-    daspect([1 1 1])
-    set(handles.text1,'visible','on','String',['Image size: ',num2str(size(handles.IPCMRA,1)),' x ',num2str(size(handles.IPCMRA,2)),' Im: ',num2str(round(handles.slider_axes1)),' / ',num2str(handles.c),' Type: ',handles.type])
-    set(handles.text2,'visible','on','String',['Image size: ',num2str(size(handles.IPCMRA,1)),' x ',num2str(size(handles.IPCMRA,3)),' Im: ',num2str(round(handles.slider_axes2)),' / ',num2str(handles.b),' Type: ',handles.type])
-    set(handles.text3,'visible','on','String',['Image size: ',num2str(size(handles.IPCMRA,2)),' x ',num2str(size(handles.IPCMRA,3)),' Im: ',num2str(round(handles.slider_axes3)),' / ',num2str(handles.a),' Type: ',handles.type])
 handles.output = hObject;
 guidata(hObject, handles);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -9570,6 +10461,7 @@ function Load_Folder_Callback(hObject, eventdata, handles)
                 input.MR_PCA_FH = getappdata(0,'MR_PCA_FH');
                 input.MR_PCA_AP = getappdata(0,'MR_PCA_AP');
                 input.MR_PCA_RL = getappdata(0,'MR_PCA_RL');
+                input.IPCMRA = getappdata(0,'IPCMRA');
                 input.id = getappdata(0,'id');
                 id_while = getappdata(0,'id_while');
             end
@@ -9583,6 +10475,7 @@ function Load_Folder_Callback(hObject, eventdata, handles)
             handles.MR_PCA_FH = getappdata(0,'MR_PCA_FH');
             handles.MR_PCA_AP = getappdata(0,'MR_PCA_AP');
             handles.MR_PCA_RL = getappdata(0,'MR_PCA_RL');
+            handles.IPCMRA = getappdata(0,'IPCMRA');
             break
         end
         % load data offset error JSOTELO
@@ -9601,24 +10494,27 @@ function Load_Folder_Callback(hObject, eventdata, handles)
         MR_PCA_FH_n = zeros(handles.a+2,handles.b+2,handles.c+2,handles.d);
         MR_PCA_AP_n = zeros(handles.a+2,handles.b+2,handles.c+2,handles.d);
         MR_PCA_RL_n = zeros(handles.a+2,handles.b+2,handles.c+2,handles.d);
+        IPCMRA_n = zeros(handles.a+2,handles.b+2,handles.c+2);
         MR_FFE_FH_n(2:end-1,2:end-1,2:end-1,:)  = handles.MR_FFE_FH;
         MR_FFE_AP_n(2:end-1,2:end-1,2:end-1,:)  = handles.MR_FFE_AP;
         MR_FFE_RL_n(2:end-1,2:end-1,2:end-1,:)  = handles.MR_FFE_RL;
         MR_PCA_FH_n(2:end-1,2:end-1,2:end-1,:)  = handles.MR_PCA_FH;
         MR_PCA_AP_n(2:end-1,2:end-1,2:end-1,:)  = handles.MR_PCA_AP;
         MR_PCA_RL_n(2:end-1,2:end-1,2:end-1,:)  = handles.MR_PCA_RL;
+        IPCMRA_n(2:end-1,2:end-1,2:end-1)  = handles.IPCMRA;
         handles.MR_FFE_FH   = MR_FFE_FH_n;
         handles.MR_FFE_AP   = MR_FFE_AP_n;
         handles.MR_FFE_RL   = MR_FFE_RL_n;
         handles.MR_PCA_FH   = MR_PCA_FH_n;
         handles.MR_PCA_AP   = MR_PCA_AP_n;
         handles.MR_PCA_RL   = MR_PCA_RL_n;
+        handles.IPCMRA   = IPCMRA_n;
         [a,b,c,d] = size(handles.MR_FFE_FH);
         handles.a = a;
         handles.b = b;
         handles.c = c;
         handles.d = d;
-        handles.IPCMRA = (1/d)*sum( (handles.MR_FFE_FH.^2).*(handles.MR_PCA_FH.^2 + handles.MR_PCA_AP.^2 + handles.MR_PCA_RL.^2),4);
+%         handles.IPCMRA = (1/d)*sum( (handles.MR_FFE_FH.^2).*(handles.MR_PCA_FH.^2 + handles.MR_PCA_AP.^2 + handles.MR_PCA_RL.^2),4);
         handles.IPCMRA = (handles.IPCMRA/max(handles.IPCMRA(:)))*255;
         
         
@@ -9824,6 +10720,7 @@ function Load_Folder_Callback(hObject, eventdata, handles)
                 input.MR_PCA_FH = getappdata(0,'MR_PCA_FH');
                 input.MR_PCA_AP = getappdata(0,'MR_PCA_AP');
                 input.MR_PCA_RL = getappdata(0,'MR_PCA_RL');
+                input.IPCMRA = getappdata(0,'IPCMRA');
                 input.id = getappdata(0,'id');
                 id_while = getappdata(0,'id_while');
             end
@@ -9837,6 +10734,7 @@ function Load_Folder_Callback(hObject, eventdata, handles)
             handles.MR_PCA_FH = getappdata(0,'MR_PCA_FH');
             handles.MR_PCA_AP = getappdata(0,'MR_PCA_AP');
             handles.MR_PCA_RL = getappdata(0,'MR_PCA_RL');
+            handles.IPCMRA = getappdata(0,'IPCMRA');
             break
         end
         % load data offset error JSOTELO
@@ -9878,26 +10776,29 @@ function Load_Folder_Callback(hObject, eventdata, handles)
         MR_PCA_FH_n = zeros(handles.a+2,handles.b+2,handles.c+2,handles.d);
         MR_PCA_AP_n = zeros(handles.a+2,handles.b+2,handles.c+2,handles.d);
         MR_PCA_RL_n = zeros(handles.a+2,handles.b+2,handles.c+2,handles.d);
+        IPCMRA_n = zeros(handles.a+2,handles.b+2,handles.c+2);
         MR_FFE_FH_n(2:end-1,2:end-1,2:end-1,:)  = handles.MR_FFE_FH;
         MR_FFE_AP_n(2:end-1,2:end-1,2:end-1,:)  = handles.MR_FFE_AP;
         MR_FFE_RL_n(2:end-1,2:end-1,2:end-1,:)  = handles.MR_FFE_RL;
         MR_PCA_FH_n(2:end-1,2:end-1,2:end-1,:)  = handles.MR_PCA_FH;
         MR_PCA_AP_n(2:end-1,2:end-1,2:end-1,:)  = handles.MR_PCA_AP;
         MR_PCA_RL_n(2:end-1,2:end-1,2:end-1,:)  = handles.MR_PCA_RL;
+        IPCMRA_n(2:end-1,2:end-1,2:end-1)  = handles.IPCMRA;
         handles.MR_FFE_FH   = MR_FFE_FH_n;
         handles.MR_FFE_AP   = MR_FFE_AP_n;
         handles.MR_FFE_RL   = MR_FFE_RL_n;
         handles.MR_PCA_FH   = MR_PCA_FH_n;
         handles.MR_PCA_AP   = MR_PCA_AP_n;
         handles.MR_PCA_RL   = MR_PCA_RL_n;
+        handles.IPCMRA   = IPCMRA_n;
         [a,b,c,d] = size(handles.MR_FFE_FH);
         handles.a = a;
         handles.b = b;
         handles.c = c;
         handles.d = d;
-        handles.IPCMRA = (1/d)*sum( (handles.MR_FFE_FH.^2).*(handles.MR_PCA_FH.^2 + handles.MR_PCA_AP.^2 + handles.MR_PCA_RL.^2),4);
+%         handles.IPCMRA = (1/d)*sum( (handles.MR_FFE_FH.^2).*(handles.MR_PCA_FH.^2 + handles.MR_PCA_AP.^2 + handles.MR_PCA_RL.^2),4);
         handles.IPCMRA = (handles.IPCMRA/max(handles.IPCMRA(:)))*255;
-        
+
     elseif isempty(files_names_dcm)==0
         
         
@@ -10318,6 +11219,7 @@ function Load_Folder_Callback(hObject, eventdata, handles)
                         input.MR_PCA_FH = getappdata(0,'MR_PCA_FH');
                         input.MR_PCA_AP = getappdata(0,'MR_PCA_AP');
                         input.MR_PCA_RL = getappdata(0,'MR_PCA_RL');
+                        input.IPCMRA = getappdata(0,'IPCMRA');
                         input.id = getappdata(0,'id');
                         id_while = getappdata(0,'id_while');
                     end
@@ -10331,6 +11233,7 @@ function Load_Folder_Callback(hObject, eventdata, handles)
                     handles.MR_PCA_FH = getappdata(0,'MR_PCA_FH');
                     handles.MR_PCA_AP = getappdata(0,'MR_PCA_AP');
                     handles.MR_PCA_RL = getappdata(0,'MR_PCA_RL');
+                    handles.IPCMRA = getappdata(0,'IPCMRA');
                     break
                 end
                 % load data offset error JSOTELO
@@ -10349,24 +11252,27 @@ function Load_Folder_Callback(hObject, eventdata, handles)
                 MR_PCA_FH_n = zeros(handles.a+2,handles.b+2,handles.c+2,handles.d);
                 MR_PCA_AP_n = zeros(handles.a+2,handles.b+2,handles.c+2,handles.d);
                 MR_PCA_RL_n = zeros(handles.a+2,handles.b+2,handles.c+2,handles.d);
+                IPCMRA_n = zeros(handles.a+2,handles.b+2,handles.c+2);
                 MR_FFE_FH_n(2:end-1,2:end-1,2:end-1,:)  = handles.MR_FFE_FH;
                 MR_FFE_AP_n(2:end-1,2:end-1,2:end-1,:)  = handles.MR_FFE_AP;
                 MR_FFE_RL_n(2:end-1,2:end-1,2:end-1,:)  = handles.MR_FFE_RL;
                 MR_PCA_FH_n(2:end-1,2:end-1,2:end-1,:)  = handles.MR_PCA_FH;
                 MR_PCA_AP_n(2:end-1,2:end-1,2:end-1,:)  = handles.MR_PCA_AP;
                 MR_PCA_RL_n(2:end-1,2:end-1,2:end-1,:)  = handles.MR_PCA_RL;
+                IPCMRA_n(2:end-1,2:end-1,2:end-1)  = handles.IPCMRA;
                 handles.MR_FFE_FH   = MR_FFE_FH_n;
                 handles.MR_FFE_AP   = MR_FFE_AP_n;
                 handles.MR_FFE_RL   = MR_FFE_RL_n;
                 handles.MR_PCA_FH   = MR_PCA_FH_n;
                 handles.MR_PCA_AP   = MR_PCA_AP_n;
                 handles.MR_PCA_RL   = MR_PCA_RL_n;
+                handles.IPCMRA   = IPCMRA_n;
                 [a,b,c,d] = size(handles.MR_FFE_FH);
                 handles.a = a;
                 handles.b = b;
                 handles.c = c;
                 handles.d = d;
-                handles.IPCMRA = (1/d)*sum( (handles.MR_FFE_FH.^2).*(handles.MR_PCA_FH.^2 + handles.MR_PCA_AP.^2 + handles.MR_PCA_RL.^2),4);
+        %         handles.IPCMRA = (1/d)*sum( (handles.MR_FFE_FH.^2).*(handles.MR_PCA_FH.^2 + handles.MR_PCA_AP.^2 + handles.MR_PCA_RL.^2),4);
                 handles.IPCMRA = (handles.IPCMRA/max(handles.IPCMRA(:)))*255;
                 
             end
@@ -10467,6 +11373,7 @@ function Load_Folder_Callback(hObject, eventdata, handles)
                 input.MR_PCA_FH = getappdata(0,'MR_PCA_FH');
                 input.MR_PCA_AP = getappdata(0,'MR_PCA_AP');
                 input.MR_PCA_RL = getappdata(0,'MR_PCA_RL');
+                input.IPCMRA = getappdata(0,'IPCMRA');
                 input.id = getappdata(0,'id');
                 id_while = getappdata(0,'id_while');
             end
@@ -10480,6 +11387,7 @@ function Load_Folder_Callback(hObject, eventdata, handles)
             handles.MR_PCA_FH = getappdata(0,'MR_PCA_FH');
             handles.MR_PCA_AP = getappdata(0,'MR_PCA_AP');
             handles.MR_PCA_RL = getappdata(0,'MR_PCA_RL');
+            handles.IPCMRA = getappdata(0,'IPCMRA');
             break
         end
         % load data offset error JSOTELO
@@ -10492,9 +11400,9 @@ function Load_Folder_Callback(hObject, eventdata, handles)
         handles.b = b;
         handles.c = c;
         handles.d = d;
-        handles.IPCMRA = squeeze(handles.MR_FFE_FH(:,:,:,1));
+        %handles.IPCMRA = (1/d)*sum( (handles.MR_FFE_FH.^2).*(handles.MR_PCA_FH.^2 + handles.MR_PCA_AP.^2 + handles.MR_PCA_RL.^2),4);
         handles.IPCMRA = (handles.IPCMRA/max(handles.IPCMRA(:)))*255;
-        
+
     end
     [X,Y,Z] = meshgrid(0:size(handles.IPCMRA,1)-1,0:size(handles.IPCMRA,2)-1,0:size(handles.IPCMRA,3)-1);
     handles.xd = X*handles.voxel_MR(1);
@@ -12455,88 +13363,162 @@ guidata(hObject, handles);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function uipushtool1_ClickedCallback(hObject, eventdata, handles)
-    handles.input1 = (handles.IPCMRA/max(handles.IPCMRA(:)))*255;
-    handles.input2 = (handles.IPCMRA/max(handles.IPCMRA(:)))*255;
-    id_while = 0;
-    while(id_while == 0)
-        GUIDE_CONTRAST(handles.input1, handles.input2);
-        handles.input1 = getappdata(0,'OUT');
-        id_while = getappdata(0,'closed_loop');
-        handles.IPCMRA = handles.input1;
-        handles.IPCMRA = (handles.IPCMRA/max(handles.IPCMRA(:)))*255;
 
-        % Julio Sotelo 23-11-2018
-        if handles.id_ang == 1% Julio Sotelo 23-11-2018
-            handles.ANG = handles.IPCMRA;% Julio Sotelo 23-11-2018
-        elseif handles.id_mag == 1% Julio Sotelo 23-11-2018
-            handles.MAG = handles.IPCMRA;% Julio Sotelo 23-11-2018
-        end% Julio Sotelo 23-11-2018
+    if (handles.id_ang == 1) && (handles.id_mag == 0)% Julio Sotelo 23-11-2018
 
-        if handles.slider_axes1 ==1, handles.slider_axes1_voxel = 0; else, handles.slider_axes1_voxel = (handles.slider_axes1*handles.voxel_MR(3))-handles.voxel_MR(3); end
-        if handles.slider_axes2 ==1, handles.slider_axes2_voxel = 0; else, handles.slider_axes2_voxel = (handles.slider_axes2*handles.voxel_MR(2))-handles.voxel_MR(2); end
-        if handles.slider_axes3 ==1, handles.slider_axes3_voxel = 0; else, handles.slider_axes3_voxel = (handles.slider_axes3*handles.voxel_MR(1))-handles.voxel_MR(1); end
-        axes(handles.axes1);
-        imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.IPCMRA(:,:,handles.slider_axes1)))
-        hold on
-        plot([handles.yd(1,1),handles.yd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
-        plot([handles.slider_axes2_voxel,handles.slider_axes2_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--r','Linewidth',1)
-        if handles.id_seg == 1 && sum(handles.L(:))~=0
-            Lrgb2d = squeeze(handles.Lrgb(:,:,handles.slider_axes1,:));
-            himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
-            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-            cdata = double(cdata)*0.5;
-            set(himage, 'AlphaData', cdata);
+        handles.input1 = (handles.IPCMRA/max(handles.IPCMRA(:)))*255;
+        handles.input2 = (handles.IPCMRA/max(handles.IPCMRA(:)))*255;
+        id_while = 0;
+        while(id_while == 0)
+            GUIDE_CONTRAST(handles.input1, handles.input2);
+            handles.input1 = getappdata(0,'OUT');
+            id_while = getappdata(0,'closed_loop');
+            handles.IPCMRA = handles.input1;
+            handles.IPCMRA = (handles.IPCMRA/max(handles.IPCMRA(:)))*255;
+
+            if handles.slider_axes1 ==1, handles.slider_axes1_voxel = 0; else, handles.slider_axes1_voxel = (handles.slider_axes1*handles.voxel_MR(3))-handles.voxel_MR(3); end
+            if handles.slider_axes2 ==1, handles.slider_axes2_voxel = 0; else, handles.slider_axes2_voxel = (handles.slider_axes2*handles.voxel_MR(2))-handles.voxel_MR(2); end
+            if handles.slider_axes3 ==1, handles.slider_axes3_voxel = 0; else, handles.slider_axes3_voxel = (handles.slider_axes3*handles.voxel_MR(1))-handles.voxel_MR(1); end
+            axes(handles.axes1);
+            imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.IPCMRA(:,:,handles.slider_axes1)))
+            hold on
+            plot([handles.yd(1,1),handles.yd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
+            plot([handles.slider_axes2_voxel,handles.slider_axes2_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--r','Linewidth',1)
+            if handles.id_seg == 1 && sum(handles.L(:))~=0
+                Lrgb2d = squeeze(handles.Lrgb(:,:,handles.slider_axes1,:));
+                himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+                cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+                cdata = double(cdata)*0.5;
+                set(himage, 'AlphaData', cdata);
+            end
+            if handles.id_resizing == 1
+                rectangle('Position',handles.pos1,'LineWidth',1,'EdgeColor','y','LineStyle','-')
+            end
+            hold off
+            axis image
+            colormap gray
+            axis off
+            daspect([1 1 1])
+            axes(handles.axes2);
+            imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.IPCMRA(:,handles.slider_axes2,:)))
+            hold on
+            plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
+            plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--g','Linewidth',1)
+            if handles.id_seg == 1 && sum(handles.L(:))~=0
+                Lrgb2d = squeeze(handles.Lrgb(:,handles.slider_axes2,:,:));
+                himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+                cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+                cdata = double(cdata)*0.5;
+                set(himage, 'AlphaData', cdata);
+            end
+            if handles.id_resizing == 1
+                rectangle('Position',handles.pos2,'LineWidth',1,'EdgeColor','y','LineStyle','-')
+            end
+            hold off
+            axis image
+            colormap gray
+            axis off
+            daspect([1 1 1])
+            axes(handles.axes3);
+            imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',squeeze(handles.IPCMRA(handles.slider_axes3,:,:)))
+            hold on
+            plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes2_voxel,handles.slider_axes2_voxel]','--r','Linewidth',1)
+            plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.yd(1,1),handles.yd(end,end)]','--g','Linewidth',1)
+            if handles.id_seg == 1 && sum(handles.L(:))~=0
+                Lrgb2d = squeeze(handles.Lrgb(handles.slider_axes3,:,:,:));
+                himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
+                cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+                cdata = double(cdata)*0.5;
+                set(himage, 'AlphaData', cdata);
+            end
+            if handles.id_resizing == 1
+                rectangle('Position',handles.pos3,'LineWidth',1,'EdgeColor','y','LineStyle','-')
+            end
+            hold off
+            axis image
+            colormap gray
+            axis off
+            daspect([1 1 1])
         end
-        if handles.id_resizing == 1
-            rectangle('Position',handles.pos1,'LineWidth',1,'EdgeColor','y','LineStyle','-')
+        
+    elseif (handles.id_ang == 0) && (handles.id_mag == 1)% Julio Sotelo 23-11-2018
+        
+        handles.input1 = (handles.MAG/max(handles.MAG(:)))*255;
+        handles.input2 = (handles.MAG/max(handles.MAG(:)))*255;
+        id_while = 0;
+        while(id_while == 0)
+            GUIDE_CONTRAST(handles.input1, handles.input2);
+            handles.input1 = getappdata(0,'OUT');
+            id_while = getappdata(0,'closed_loop');
+            handles.MAG = handles.input1;
+            handles.MAG = (handles.MAG/max(handles.MAG(:)))*255;
+
+            if handles.slider_axes1 ==1, handles.slider_axes1_voxel = 0; else, handles.slider_axes1_voxel = (handles.slider_axes1*handles.voxel_MR(3))-handles.voxel_MR(3); end
+            if handles.slider_axes2 ==1, handles.slider_axes2_voxel = 0; else, handles.slider_axes2_voxel = (handles.slider_axes2*handles.voxel_MR(2))-handles.voxel_MR(2); end
+            if handles.slider_axes3 ==1, handles.slider_axes3_voxel = 0; else, handles.slider_axes3_voxel = (handles.slider_axes3*handles.voxel_MR(1))-handles.voxel_MR(1); end
+            axes(handles.axes1);
+            imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.MAG(:,:,handles.slider_axes1)))
+            hold on
+            plot([handles.yd(1,1),handles.yd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
+            plot([handles.slider_axes2_voxel,handles.slider_axes2_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--r','Linewidth',1)
+            if handles.id_seg == 1 && sum(handles.L(:))~=0
+                Lrgb2d = squeeze(handles.Lrgb(:,:,handles.slider_axes1,:));
+                himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+                cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+                cdata = double(cdata)*0.5;
+                set(himage, 'AlphaData', cdata);
+            end
+            if handles.id_resizing == 1
+                rectangle('Position',handles.pos1,'LineWidth',1,'EdgeColor','y','LineStyle','-')
+            end
+            hold off
+            axis image
+            colormap gray
+            axis off
+            daspect([1 1 1])
+            axes(handles.axes2);
+            imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.MAG(:,handles.slider_axes2,:)))
+            hold on
+            plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
+            plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--g','Linewidth',1)
+            if handles.id_seg == 1 && sum(handles.L(:))~=0
+                Lrgb2d = squeeze(handles.Lrgb(:,handles.slider_axes2,:,:));
+                himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+                cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+                cdata = double(cdata)*0.5;
+                set(himage, 'AlphaData', cdata);
+            end
+            if handles.id_resizing == 1
+                rectangle('Position',handles.pos2,'LineWidth',1,'EdgeColor','y','LineStyle','-')
+            end
+            hold off
+            axis image
+            colormap gray
+            axis off
+            daspect([1 1 1])
+            axes(handles.axes3);
+            imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',squeeze(handles.MAG(handles.slider_axes3,:,:)))
+            hold on
+            plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes2_voxel,handles.slider_axes2_voxel]','--r','Linewidth',1)
+            plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.yd(1,1),handles.yd(end,end)]','--g','Linewidth',1)
+            if handles.id_seg == 1 && sum(handles.L(:))~=0
+                Lrgb2d = squeeze(handles.Lrgb(handles.slider_axes3,:,:,:));
+                himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
+                cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+                cdata = double(cdata)*0.5;
+                set(himage, 'AlphaData', cdata);
+            end
+            if handles.id_resizing == 1
+                rectangle('Position',handles.pos3,'LineWidth',1,'EdgeColor','y','LineStyle','-')
+            end
+            hold off
+            axis image
+            colormap gray
+            axis off
+            daspect([1 1 1])
         end
-        hold off
-        axis image
-        colormap gray
-        axis off
-        daspect([1 1 1])
-        axes(handles.axes2);
-        imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.IPCMRA(:,handles.slider_axes2,:)))
-        hold on
-        plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
-        plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--g','Linewidth',1)
-        if handles.id_seg == 1 && sum(handles.L(:))~=0
-            Lrgb2d = squeeze(handles.Lrgb(:,handles.slider_axes2,:,:));
-            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
-            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-            cdata = double(cdata)*0.5;
-            set(himage, 'AlphaData', cdata);
-        end
-        if handles.id_resizing == 1
-            rectangle('Position',handles.pos2,'LineWidth',1,'EdgeColor','y','LineStyle','-')
-        end
-        hold off
-        axis image
-        colormap gray
-        axis off
-        daspect([1 1 1])
-        axes(handles.axes3);
-        imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',squeeze(handles.IPCMRA(handles.slider_axes3,:,:)))
-        hold on
-        plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes2_voxel,handles.slider_axes2_voxel]','--r','Linewidth',1)
-        plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.yd(1,1),handles.yd(end,end)]','--g','Linewidth',1)
-        if handles.id_seg == 1 && sum(handles.L(:))~=0
-            Lrgb2d = squeeze(handles.Lrgb(handles.slider_axes3,:,:,:));
-            himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
-            cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
-            cdata = double(cdata)*0.5;
-            set(himage, 'AlphaData', cdata);
-        end
-        if handles.id_resizing == 1
-            rectangle('Position',handles.pos3,'LineWidth',1,'EdgeColor','y','LineStyle','-')
-        end
-        hold off
-        axis image
-        colormap gray
-        axis off
-        daspect([1 1 1])
+        
     end
-    
 handles.output = hObject;
 guidata(hObject, handles);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -14625,10 +15607,10 @@ function uipushtool7_ClickedCallback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-    handles.IPCMRA = (1/handles.d)*sum( (handles.MR_FFE_FH.^2).*(handles.MR_PCA_FH.^2 + handles.MR_PCA_AP.^2 + handles.MR_PCA_RL.^2),4);
-    handles.IPCMRA = (handles.IPCMRA/max(handles.IPCMRA(:)))*255;
-
-    handles.ANG = handles.IPCMRA;
+%     handles.IPCMRA = (1/handles.d)*sum( (handles.MR_FFE_FH.^2).*(handles.MR_PCA_FH.^2 + handles.MR_PCA_AP.^2 + handles.MR_PCA_RL.^2),4);
+%     handles.IPCMRA = (handles.IPCMRA/max(handles.IPCMRA(:)))*255;
+    handles.IPCMRA = handles.IPCMRA;
+%     handles.ANG = handles.IPCMRA;
     handles.id_ang = 1;
     handles.id_mag = 0;
 
@@ -14836,7 +15818,7 @@ function uipushtool6_ClickedCallback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
     handles.MAG = mean(handles.MR_FFE_AP,4);
-    handles.IPCMRA = handles.MAG;
+    %handles.IPCMRA = handles.MAG;
     handles.id_ang = 0;
     handles.id_mag = 1;
 
@@ -14844,7 +15826,7 @@ function uipushtool6_ClickedCallback(hObject, eventdata, handles)
     if handles.slider_axes2 ==1, handles.slider_axes2_voxel = 0; else, handles.slider_axes2_voxel = (handles.slider_axes2*handles.voxel_MR(2))-handles.voxel_MR(2); end
     if handles.slider_axes3 ==1, handles.slider_axes3_voxel = 0; else, handles.slider_axes3_voxel = (handles.slider_axes3*handles.voxel_MR(1))-handles.voxel_MR(1); end
     axes(handles.axes1);
-    imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.IPCMRA(:,:,handles.slider_axes1)))
+    imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.MAG(:,:,handles.slider_axes1)))
     hold on
     plot([handles.yd(1,1),handles.yd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
     plot([handles.slider_axes2_voxel,handles.slider_axes2_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--r','Linewidth',1)
@@ -14906,7 +15888,7 @@ function uipushtool6_ClickedCallback(hObject, eventdata, handles)
     axis off
     daspect([1 1 1])
     axes(handles.axes2);
-    imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.IPCMRA(:,handles.slider_axes2,:)))
+    imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.MAG(:,handles.slider_axes2,:)))
     hold on
     plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
     plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--g','Linewidth',1)
@@ -14968,7 +15950,7 @@ function uipushtool6_ClickedCallback(hObject, eventdata, handles)
     axis off
     daspect([1 1 1])
     axes(handles.axes3);
-    imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',squeeze(handles.IPCMRA(handles.slider_axes3,:,:)))
+    imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',squeeze(handles.MAG(handles.slider_axes3,:,:)))
     hold on
     plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes2_voxel,handles.slider_axes2_voxel]','--r','Linewidth',1)
     plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.yd(1,1),handles.yd(end,end)]','--g','Linewidth',1)
@@ -17871,11 +18853,12 @@ input.nodes = handles.nodes;
 input.elem = handles.elem;
 input.Laplace = handles.Laplace;
 
-GUIDE_SAW(input)
+f = GUIDE_SAW(input);
 
 h = msgbox('The SAW toolbox was closed ...','none','none');
-pause(2)
+pause(0.5)
 close(h)
+close(f)
 
 handles.output = hObject;
 guidata(hObject, handles);
