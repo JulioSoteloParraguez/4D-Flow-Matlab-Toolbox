@@ -12940,7 +12940,7 @@ function Save_Data_Callback(hObject, eventdata, handles)
                 aci_values = handles.axial_circulation(:,:); % Julio Sotelo 28-05-2019
 
                 %%% Parameter names
-                Parameter = {   'Velocity [m/s]';...
+                Parameter = [{   'Velocity [m/s]';...
                                 'WSS [N/m^2]';...
                                 'WSSA [N/m^2]';...
                                 'WSSC [N/m^2]';...
@@ -12965,7 +12965,7 @@ function Save_Data_Callback(hObject, eventdata, handles)
                                 'Flattering [-]';...
                                 'Area [cm^2]';...
                                 'Axial Circulation [cm^2/s]';...
-                                'Peak Systole CP#'};
+                                'Peak Systole CP#'}];
 
 
 
@@ -13040,14 +13040,14 @@ function Save_Data_Callback(hObject, eventdata, handles)
                 st = steps;
 
                 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-                VV = {'Time [s]';...
+                VV = [{'Time [s]';...
                       'Flow [ml/s]';...
                       'Net Flow [ml]';...
                       'Maximum Velocity [cm/s]';...
-                      'Minimum Velocity [cm/s]'};
+                      'Minimum Velocity [cm/s]'}];
                 MM = [handles.time';handles.flow';handles.net_flow';handles.max_velocity';handles.min_velocity'];
                 TT = table(VV,MM);
-                TT.Properties.VariableNames = {'Parameter','Cardiac_Phase'};
+                TT.Properties.VariableNames = [{'Parameter','Cardiac_Phase'}];
 
                 filename = [directory,'/XLS FILES/RESULTS_SECTIONS_MEAN_VALUES.xls'];
                 writetable(TT,fullfile(filename),'Sheet','2D Flow','Range','A1')
@@ -13056,7 +13056,7 @@ function Save_Data_Callback(hObject, eventdata, handles)
                 for n=1:size(handles.veset,3)
                     eval(['Sections_from_1_to_',num2str(handles.number_of_sections),' = MAT(:,:,n);']);
                     T = table(Parameter,eval(['Sections_from_1_to_',num2str(handles.number_of_sections)]));
-                    T.Properties.VariableNames = {'Parameter','Section'};
+                    T.Properties.VariableNames = [{'Parameter','Section'}];
 
                     filename = [directory,'/XLS FILES/RESULTS_SECTIONS_MEAN_VALUES.xls'];
                     writetable(T,fullfile(filename),'Sheet',['Cardiac Phase #',num2str(n)],'Range','A1')
@@ -13136,14 +13136,14 @@ function Save_Data_Callback(hObject, eventdata, handles)
                 steps = 1;
                 st = steps;
                  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-                VV = {'Time [s]';...
+                VV = [{'Time [s]';...
                       'Flow [ml/s]';...
                       'Net Flow [ml]';...
                       'Maximum Velocity [cm/s]';...
-                      'Minimum Velocity [cm/s]'};
+                      'Minimum Velocity [cm/s]'}];
                 MM = [handles.time';handles.flow';handles.net_flow';handles.max_velocity';handles.min_velocity'];
                 TT = table(VV,MM);
-                TT.Properties.VariableNames = {'Parameter','Cardiac_Phase'};
+                TT.Properties.VariableNames = [{'Parameter','Cardiac_Phase'}];
 
                 filename = [directory,'/XLS FILES/RESULTS_SECTIONS_MAX_VALUES.xls'];
                 writetable(TT,fullfile(filename),'Sheet','2D Flow','Range','A1')
@@ -13152,7 +13152,7 @@ function Save_Data_Callback(hObject, eventdata, handles)
                 for n=1:size(handles.veset,3)
                     eval(['Sections_from_1_to_',num2str(handles.number_of_sections),' = MAT(:,:,n);']);
                     T = table(Parameter,eval(['Sections_from_1_to_',num2str(handles.number_of_sections)]));
-                    T.Properties.VariableNames = {'Parameter','Section'};
+                    T.Properties.VariableNames = [{'Parameter','Section'}];
 
                     filename = [directory,'/XLS FILES/RESULTS_SECTIONS_MAX_VALUES.xls'];
                     writetable(T,fullfile(filename),'Sheet',['Cardiac Phase #',num2str(n)],'Range','A1')
@@ -13232,14 +13232,14 @@ function Save_Data_Callback(hObject, eventdata, handles)
                 steps = 1;
                 st = steps;
                  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-                VV = {'Time [s]';...
+                VV = [{'Time [s]';...
                       'Flow [ml/s]';...
                       'Net Flow [ml]';...
                       'Maximum Velocity [cm/s]';...
-                      'Minimum Velocity [cm/s]'};
+                      'Minimum Velocity [cm/s]'}];
                 MM = [handles.time';handles.flow';handles.net_flow';handles.max_velocity';handles.min_velocity'];
                 TT = table(VV,MM);
-                TT.Properties.VariableNames = {'Parameter','Cardiac_Phase'};
+                TT.Properties.VariableNames = [{'Parameter','Cardiac_Phase'}];
 
                 filename = [directory,'/XLS FILES/RESULTS_SECTIONS_MIN_VALUES.xls'];
                 writetable(TT,fullfile(filename),'Sheet','2D Flow','Range','A1')
@@ -13247,7 +13247,7 @@ function Save_Data_Callback(hObject, eventdata, handles)
                 for n=1:size(handles.veset,3)
                     eval(['Sections_from_1_to_',num2str(handles.number_of_sections),' = MAT(:,:,n);']);
                     T = table(Parameter,eval(['Sections_from_1_to_',num2str(handles.number_of_sections)]));
-                    T.Properties.VariableNames = {'Parameter','Section'};
+                    T.Properties.VariableNames = [{'Parameter','Section'}];
 
                     filename = [directory,'/XLS FILES/RESULTS_SECTIONS_MIN_VALUES.xls'];
                     writetable(T,fullfile(filename),'Sheet',['Cardiac Phase #',num2str(n)],'Range','A1')
