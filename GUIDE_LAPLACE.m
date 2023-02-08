@@ -22,7 +22,7 @@ function varargout = GUIDE_LAPLACE(varargin)
 
 % Edit the above text to modify the response to help GUIDE_LAPLACE
 
-% Last Modified by GUIDE v2.5 20-Sep-2022 16:45:55
+% Last Modified by GUIDE v2.5 17-Jan-2023 17:29:55
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -14982,3 +14982,17 @@ function pushbutton7_Callback(hObject, eventdata, handles)
 
 handles.output = hObject;
 guidata(hObject, handles);
+
+
+% --- Executes on button press in pushbutton10.
+function pushbutton10_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton10 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --- Executes on button press in pushbutton11.
+function pushbutton11_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton11 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)

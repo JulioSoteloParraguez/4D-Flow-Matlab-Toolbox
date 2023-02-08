@@ -11939,175 +11939,108 @@ function Save_Data_Callback(hObject, eventdata, handles)
                 input.save_id_mav_csv       = handles.save_id_mav_mat; % Julio Sotelo 28-05-2019 max_velocity
                 input.save_id_miv_csv       = handles.save_id_miv_mat; % Julio Sotelo 28-05-2019 min_velocity
         
-                while(1)
-                    
-                    handles.id_csv_save = 1;
+                handles.id_csv_save = 1;
+                
+                %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                input.id_while = 0; % incorporated 25012023
+                input.azimuth = 0;% incorporated 25012023
+                input.elevation = -90;% incorporated 25012023
+                input.elem = handles.elem;% incorporated 25012023
+                input.faces = handles.faces;% incorporated 25012023
+                input.nodes = handles.nodes;% incorporated 25012023
+                input.Laplace = handles.Laplace;% incorporated 25012023
+                input.length_vessel = handles.length_vessel;% incorporated 25012023
+                
+                %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                % We azume that only one section was selected.
+                ID_nodes = [1:size(handles.nodes,1)]';
+                ID_selected = zeros(2,1);
+                min_value = min(handles.Laplace(handles.Laplace>0));
+                I = ID_nodes(handles.Laplace==min_value);
+                ID_selected(1) = ID_nodes(I(1));
 
-                    prompt = {'Enter the number of sections:'};
-                    dlgtitle = 'Input';
-                    dims = [1 35];
-                    definput = {'1'};
-                    answer = inputdlg(prompt,dlgtitle,dims,definput);
-                    if isempty(answer)==1
-                        input.save_id_vel_csv       = 0;
-                        input.save_id_wss_csv       = 0;
-                        input.save_id_osi_csv       = 0;
-                        input.save_id_vor_csv       = 0;
-                        input.save_id_hd_csv        = 0;
-                        input.save_id_rhd_csv       = 0;
-                        input.save_id_vd_csv        = 0;
-                        input.save_id_el_csv        = 0;
-                        input.save_id_ke_csv        = 0;
-                        input.save_id_rad_csv       = 0;
-                        input.save_id_dia_csv       = 0;
-                        input.save_id_wssa_csv      = 0;
-                        input.save_id_wssc_csv      = 0;
-                        input.save_id_aan_csv       = 0;
-                        input.save_id_fve_csv       = 0;
-                        input.save_id_bve_csv       = 0;
-                        input.save_id_ref_csv       = 0;
-                        input.save_id_ecc_csv       = 0;
+                [~,I] = max(handles.length_vessel);
+                ID_selected(end) = ID_nodes(I);
 
-                        input.save_id_cur_csv       = 0; % Julio Sotelo 28-05-2018
-                        input.save_id_ell_csv       = 0; % Julio Sotelo 28-05-2018
-                        input.save_id_len_csv       = 0; % Julio Sotelo 28-05-2018
-%                         input.save_id_cir_csv       = 0; % Julio Sotelo 28-05-2018
-                        input.save_id_fov_csv       = 0; % Julio Sotelo 28-05-2018
-                        input.save_id_fla_csv       = 0; % Julio Sotelo 28-05-2018
-                        input.save_id_are_csv       = 0; % Julio Sotelo 28-05-2018
-                        input.save_id_aci_csv       = 0; % Julio Sotelo 28-05-2018
-                        
-                        input.save_id_tim_csv       = 0; % Julio Sotelo 28-05-2019 time
-                        input.save_id_flo_csv       = 0; % Julio Sotelo 28-05-2019 flow
-                        input.save_id_nfl_csv       = 0; % Julio Sotelo 28-05-2019 net_flow
-                        input.save_id_mav_csv       = 0; % Julio Sotelo 28-05-2019 max_velocity
-                        input.save_id_miv_csv       = 0; % Julio Sotelo 28-05-2019 min_velocity
-                        
-                        waitfor(msgbox('Sections will not be generated ...','Warning','warn'))
-                    else
-                        handles.number_of_sections = str2num(answer{1});
-                        %%% include the sections here %%%%%%%%%%%%%%%
-                        % handles.centerline
-                        % handles.nodes
-                        % handles.faces
-                        % handles.elem
-
-                        if handles.number_of_sections > 1
-
-                            dd = cumsum(sqrt(sum((handles.centerline(1:end-1,:)-handles.centerline(2:end,:)).^2,2)));
-                            total_length = dd(end);
-                            step_sec = total_length/handles.number_of_sections;
-                            vect_sec = 1:handles.number_of_sections-1;
-                            sec_val = vect_sec.*step_sec;
-
-                            lap_selection = zeros(handles.number_of_sections-1,1);
-                            for n=1:length(sec_val)
-                                di = abs(dd-sec_val(n));
-                                [~,I] = min(di);
-                                lap_selection(n)=handles.centerline_lapid(I);
-                            end
-
-
-                            % volume sections
-                            ID_V = [1:size(handles.nodes,1)]';
-                            handles.SECTIONS_V{1} = ID_V(handles.Laplace>0 & handles.Laplace<=lap_selection(1));
-                            for n=2:length(lap_selection)
-                                handles.SECTIONS_V{n} = ID_V(handles.Laplace>lap_selection(n-1) & handles.Laplace<=lap_selection(n));
-                            end
-                            handles.SECTIONS_V{handles.number_of_sections} = ID_V(handles.Laplace>lap_selection(end) & handles.Laplace<1);
-
-
-                            % surface sections
-                            ID_S = sort(unique(handles.faces(:)));
-                            Laplace_S = handles.Laplace(ID_S);
-                            handles.SECTIONS_S{1} = ID_S(Laplace_S>0 & Laplace_S<=lap_selection(1));
-                            for n=2:length(lap_selection)
-                                handles.SECTIONS_S{n} = ID_S(Laplace_S>lap_selection(n-1) & Laplace_S<=lap_selection(n));
-                            end
-                            handles.SECTIONS_S{handles.number_of_sections} = ID_S(Laplace_S>lap_selection(end) & Laplace_S<1);
-
-
-                            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-                            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-                            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-                            g = figure(1);
-                            set(g,'Color','k','Name','Sections')
-                            patch('faces',handles.faces,'vertices',handles.nodes,'facecolor','none','edgecolor',[0.5 0.5 0.5])
-                            hold on
-                            for n=1:length(lap_selection)+1
-                                if mod(n,2)==0
-                                    plot3(handles.nodes(handles.SECTIONS_V{n},1),handles.nodes(handles.SECTIONS_V{n},2),handles.nodes(handles.SECTIONS_V{n},3),'*r','LineWidth',2)
-                                else
-                                    plot3(handles.nodes(handles.SECTIONS_V{n},1),handles.nodes(handles.SECTIONS_V{n},2),handles.nodes(handles.SECTIONS_V{n},3),'*b','LineWidth',2)
-                                end
-                            end
-                            hold off
-                            axis vis3d
-                            daspect([1,1,1])
-                            axis off
-                            view([-34,-51])
-                            title('\color{white}Suface Sections')
-                            waitfor(g)
-
-                            answer2 = questdlg('Do you agree with the sections generated? ', 'Question','Yes','No','No');
-
-                            switch answer2
-                                case 'Yes'
-                                    handles.segments = zeros(size(handles.nodes(:,1)));
-                                    for n=1:length(handles.SECTIONS_V)
-                                        handles.segments(handles.SECTIONS_V{n}) = handles.segments(handles.SECTIONS_V{n})+n;
-                                    end
-%                                     close(g)
-                                    break
-                                case 'No'
-
-                            end
-
-                        else
-                            
-                            ID_V = [1:size(handles.nodes,1)]';
-                            handles.SECTIONS_V{1} = ID_V(handles.Laplace>0 & handles.Laplace<1);
-                            
-                            % surface sections
-                            ID_S = sort(unique(handles.faces(:)));
-                            Laplace_S = handles.Laplace(ID_S);
-                            handles.SECTIONS_S{1} = ID_S(Laplace_S>0 & Laplace_S<1);
-                            
-                            
-                            
-                            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-                            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-                            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-                            g = figure(1);
-                            set(g,'Color','k','Name','Sections')
-                            patch('faces',handles.faces,'vertices',handles.nodes,'facecolor','none','edgecolor',[0.5 0.5 0.5])
-                            hold on
-                            plot3(handles.nodes(handles.SECTIONS_V{1},1),handles.nodes(handles.SECTIONS_V{1},2),handles.nodes(handles.SECTIONS_V{1},3),'*r','LineWidth',2)
-                            hold off
-                            axis vis3d
-                            daspect([1,1,1])
-                            axis off
-                            view([-34,-51])
-                            title('\color{white}Suface Sections')
-                            waitfor(g)
-                            
-                            answer2 = questdlg('Do you agree with the sections generated? ', 'Question','Yes','No','No');
-                            
-                            switch answer2
-                                case 'Yes'
-                                    handles.segments = zeros(size(handles.nodes(:,1)));
-                                    for n=1:length(handles.SECTIONS_V)
-                                        handles.segments(handles.SECTIONS_V{n}) = handles.segments(handles.SECTIONS_V{n})+n;
-                                    end
-                                    break
-                                case 'No'
-                            end
-                        end
-                    end
+                % section of nodes.
+                handles.NODES_SECTION = [];
+                for n = 1:length(ID_selected)-1
+                    handles.NODES_SECTION{n} = ID_nodes( (handles.Laplace >= handles.Laplace(ID_selected(n))) & (handles.Laplace <= handles.Laplace(ID_selected(n+1))) );
                 end
+                
+                input.NODES_SECTION = handles.NODES_SECTION;% incorporated 25012023
+                
+                while(input.id_while==0)
+
+                    GUIDE_SECTIONS_LAPLACE(input) % incorporated 25012023
+                    
+                    input.id_while = getappdata(0,'id_while');% incorporated 25012023
+                    input.azimuth = getappdata(0,'azimuth');% incorporated 25012023
+                    input.elevation = getappdata(0,'elevation');% incorporated 25012023
+                    input.elem = getappdata(0,'elem');% incorporated 25012023
+                    input.faces = getappdata(0,'faces');% incorporated 25012023
+                    input.nodes = getappdata(0,'nodes');% incorporated 25012023
+                    input.Laplace = getappdata(0,'Laplace');% incorporated 25012023
+                    input.length_vessel = getappdata(0,'length_vessel');% incorporated 25012023
+                    input.NODES_SECTION = getappdata(0,'NODES_SECTION');% incorporated 25012023
+                    
+                    handles.NODES_SECTION = input.NODES_SECTION;
+
+                end
+                
+                % SECTION OF VOLUME
+                handles.SECTIONS_V = handles.NODES_SECTION;
+
+                % SECTIONS OF SURFACE
+                handles.SECTIONS_S = [];
+                handles.segments = zeros(size(handles.Laplace));
+                for n = 1:size(handles.SECTIONS_V,1)
+                    handles.SECTIONS_S{n} = intersect(handles.SECTIONS_V{n},unique(handles.faces(:)));
+                    handles.segments(handles.SECTIONS_V{n}) = handles.segments(handles.SECTIONS_V{n}) + n;
+                end
+
             case 'No'
                 
                 handles.id_csv_save = 0;
+                handles.segments = zeros(size(handles.Laplace));
+                
+                input.save_id_vel_csv       = 0;
+                input.save_id_wss_csv       = 0;
+                input.save_id_osi_csv       = 0;
+                input.save_id_vor_csv       = 0;
+                input.save_id_hd_csv        = 0;
+                input.save_id_rhd_csv       = 0;
+                input.save_id_vd_csv        = 0;
+                input.save_id_el_csv        = 0;
+                input.save_id_ke_csv        = 0;
+                input.save_id_rad_csv       = 0;
+                input.save_id_dia_csv       = 0;
+                input.save_id_wssa_csv      = 0;
+                input.save_id_wssc_csv      = 0;
+                input.save_id_aan_csv       = 0;
+                input.save_id_fve_csv       = 0;
+                input.save_id_bve_csv       = 0;
+                input.save_id_ref_csv       = 0;
+                input.save_id_ecc_csv       = 0;
+
+                input.save_id_cur_csv       = 0; % Julio Sotelo 28-05-2018
+                input.save_id_ell_csv       = 0; % Julio Sotelo 28-05-2018
+                input.save_id_len_csv       = 0; % Julio Sotelo 28-05-2018
+%                         input.save_id_cir_csv       = 0; % Julio Sotelo 28-05-2018
+                input.save_id_fov_csv       = 0; % Julio Sotelo 28-05-2018
+                input.save_id_fla_csv       = 0; % Julio Sotelo 28-05-2018
+                input.save_id_are_csv       = 0; % Julio Sotelo 28-05-2018
+                input.save_id_aci_csv       = 0; % Julio Sotelo 28-05-2018
+
+                input.save_id_tim_csv       = 0; % Julio Sotelo 28-05-2019 time
+                input.save_id_flo_csv       = 0; % Julio Sotelo 28-05-2019 flow
+                input.save_id_nfl_csv       = 0; % Julio Sotelo 28-05-2019 net_flow
+                input.save_id_mav_csv       = 0; % Julio Sotelo 28-05-2019 max_velocity
+                input.save_id_miv_csv       = 0; % Julio Sotelo 28-05-2019 min_velocity
+
+                waitfor(msgbox('Sections will not be generated ...','Warning','warn'))
 
         end
     end
@@ -12836,7 +12769,7 @@ function Save_Data_Callback(hObject, eventdata, handles)
                     ID = [1:length(handles.centerline(:,1))]-1;
                     M = [ID(1:end-1)',ID(2:end)'];
                     pp = zeros(1,size(handles.centerline,1)-1)'+2;
-                    cell = [pp,M];
+                    cell_new = [pp,M];
 
                     cell_type = zeros(1,size(handles.centerline,1)-1)'+3;
 
@@ -12848,9 +12781,9 @@ function Save_Data_Callback(hObject, eventdata, handles)
                     fprintf(fileID,'%s\n','DATASET UNSTRUCTURED_GRID');
                     fprintf(fileID,'%s\n',['POINTS ',num2str(length(handles.centerline(:,1))),' float']);
                     fprintf(fileID,'%f %f %f\n',(handles.centerline/1000)');
-                    fprintf(fileID,'%s\n',['CELLS ',num2str(size(cell,1)),' ',num2str(size(cell,1)*size(cell,2))]);
-                    fprintf(fileID,'%d %d %d\n',cell');
-                    fprintf(fileID,'%s\n',['CELL_TYPES ',num2str(size(cell,1))]);
+                    fprintf(fileID,'%s\n',['CELLS ',num2str(size(cell_new,1)),' ',num2str(size(cell_new,1)*size(cell_new,2))]);
+                    fprintf(fileID,'%d %d %d\n',cell_new');
+                    fprintf(fileID,'%s\n',['CELL_TYPES ',num2str(size(cell_new,1))]);
                     fprintf(fileID,'%d\n',cell_type');
 
                 end
@@ -12860,7 +12793,7 @@ function Save_Data_Callback(hObject, eventdata, handles)
                     ID = [1:length(handles.centerline_flow(:,1))]-1;
                     M = [ID(1:end-1)',ID(2:end)'];
                     pp = zeros(1,size(handles.centerline_flow,1)-1)'+2;
-                    cell = [pp,M];
+                    cell_new = [pp,M];
 
                     cell_type = zeros(1,size(handles.centerline_flow,1)-1)'+3;
 
@@ -12872,9 +12805,9 @@ function Save_Data_Callback(hObject, eventdata, handles)
                     fprintf(fileID,'%s\n','DATASET UNSTRUCTURED_GRID');
                     fprintf(fileID,'%s\n',['POINTS ',num2str(length(handles.centerline_flow(:,1))),' float']);
                     fprintf(fileID,'%f %f %f\n',(handles.centerline_flow/1000)');
-                    fprintf(fileID,'%s\n',['CELLS ',num2str(size(cell,1)),' ',num2str(size(cell,1)*size(cell,2))]);
-                    fprintf(fileID,'%d %d %d\n',cell');
-                    fprintf(fileID,'%s\n',['CELL_TYPES ',num2str(size(cell,1))]);
+                    fprintf(fileID,'%s\n',['CELLS ',num2str(size(cell_new,1)),' ',num2str(size(cell_new,1)*size(cell_new,2))]);
+                    fprintf(fileID,'%d %d %d\n',cell_new');
+                    fprintf(fileID,'%s\n',['CELL_TYPES ',num2str(size(cell_new,1))]);
                     fprintf(fileID,'%d\n',cell_type');
 
                 end
@@ -12895,7 +12828,7 @@ function Save_Data_Callback(hObject, eventdata, handles)
                 vol_S = [];
                 id_vol_V_n =[];
 
-                for n=1:handles.number_of_sections
+                for n=1:size(handles.SECTIONS_V,1)
                     vol_V{n} = nodevol(handles.SECTIONS_V{n})  /sum(nodevol(handles.SECTIONS_V{n}));
                     vol_S{n} = nodevol(handles.SECTIONS_S{n})  /sum(nodevol(handles.SECTIONS_S{n}));
 
@@ -12971,9 +12904,9 @@ function Save_Data_Callback(hObject, eventdata, handles)
 
 
                 %%% Mean Values
-                MAT = zeros(26,handles.number_of_sections,size(handles.veset,3));
+                MAT = zeros(26,size(handles.SECTIONS_V,1),size(handles.veset,3));
                 for m=1:size(handles.veset,3)
-                    for n=1:handles.number_of_sections
+                    for n=1:size(handles.SECTIONS_V,1)
 
                         MAT(1,n,m) = sum(squeeze(mag_velocity(handles.SECTIONS_V{n},m)).*vol_V{n});
                         MAT(2,n,m) = sum(squeeze(mag_wss(handles.SECTIONS_S{n},m)).*vol_S{n});
@@ -13054,8 +12987,8 @@ function Save_Data_Callback(hObject, eventdata, handles)
 
                 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
                 for n=1:size(handles.veset,3)
-                    eval(['Sections_from_1_to_',num2str(handles.number_of_sections),' = MAT(:,:,n);']);
-                    T = table(Parameter,eval(['Sections_from_1_to_',num2str(handles.number_of_sections)]));
+                    eval(['Sections_from_1_to_',num2str(size(handles.SECTIONS_V,1)),' = MAT(:,:,n);']);
+                    T = table(Parameter,eval(['Sections_from_1_to_',num2str(size(handles.SECTIONS_V,1))]));
                     T.Properties.VariableNames = [{'Parameter','Section'}];
 
                     filename = [directory,'/XLS FILES/RESULTS_SECTIONS_MEAN_VALUES.xls'];
@@ -13069,9 +13002,9 @@ function Save_Data_Callback(hObject, eventdata, handles)
                 close(h)
 
                 %%% Maximun Values
-                MAT = zeros(26,handles.number_of_sections,size(handles.veset,3));
+                MAT = zeros(26,size(handles.SECTIONS_V,1),size(handles.veset,3));
                 for m=1:size(handles.veset,3)
-                    for n=1:handles.number_of_sections
+                    for n=1:size(handles.SECTIONS_V,1)
 
                         MAT(1,n,m) = max(mag_velocity(handles.SECTIONS_V{n},m));
                         MAT(2,n,m) = max(mag_wss(handles.SECTIONS_S{n},m));
@@ -13150,8 +13083,8 @@ function Save_Data_Callback(hObject, eventdata, handles)
 
                 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
                 for n=1:size(handles.veset,3)
-                    eval(['Sections_from_1_to_',num2str(handles.number_of_sections),' = MAT(:,:,n);']);
-                    T = table(Parameter,eval(['Sections_from_1_to_',num2str(handles.number_of_sections)]));
+                    eval(['Sections_from_1_to_',num2str(size(handles.SECTIONS_V,1)),' = MAT(:,:,n);']);
+                    T = table(Parameter,eval(['Sections_from_1_to_',num2str(size(handles.SECTIONS_V,1))]));
                     T.Properties.VariableNames = [{'Parameter','Section'}];
 
                     filename = [directory,'/XLS FILES/RESULTS_SECTIONS_MAX_VALUES.xls'];
@@ -13165,9 +13098,9 @@ function Save_Data_Callback(hObject, eventdata, handles)
                 close(h)
 
                 %%% Minimun Values
-                MAT = zeros(26,handles.number_of_sections,size(handles.veset,3));
+                MAT = zeros(26,size(handles.SECTIONS_V,1),size(handles.veset,3));
                 for m=1:size(handles.veset,3)
-                    for n=1:handles.number_of_sections
+                    for n=1:size(handles.SECTIONS_V,1)
 
                         MAT(1,n,m) = min(mag_velocity(handles.SECTIONS_V{n},m));
                         MAT(2,n,m) = min(mag_wss(handles.SECTIONS_S{n},m));
@@ -13245,8 +13178,8 @@ function Save_Data_Callback(hObject, eventdata, handles)
                 writetable(TT,fullfile(filename),'Sheet','2D Flow','Range','A1')
                 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
                 for n=1:size(handles.veset,3)
-                    eval(['Sections_from_1_to_',num2str(handles.number_of_sections),' = MAT(:,:,n);']);
-                    T = table(Parameter,eval(['Sections_from_1_to_',num2str(handles.number_of_sections)]));
+                    eval(['Sections_from_1_to_',num2str(size(handles.SECTIONS_V,1)),' = MAT(:,:,n);']);
+                    T = table(Parameter,eval(['Sections_from_1_to_',num2str(size(handles.SECTIONS_V,1))]));
                     T.Properties.VariableNames = [{'Parameter','Section'}];
 
                     filename = [directory,'/XLS FILES/RESULTS_SECTIONS_MIN_VALUES.xls'];
@@ -18484,9 +18417,9 @@ function pushbutton83_Callback(hObject, eventdata, handles)
     input.d                     = handles.d;
     input.slider_id_axes1       = handles.slider_axes1;
     input.MR_FFE_FH             = handles.MR_FFE_FH;
-    input.MR_PCA_AP             = handles.MR_PCA_AP;
-    input.MR_PCA_FH             = handles.MR_PCA_FH;
-    input.MR_PCA_RL             = handles.MR_PCA_RL;
+    input.MR_PCA_AP             = handles.MR_PCA_AP_smooth;
+    input.MR_PCA_FH             = handles.MR_PCA_FH_smooth;
+    input.MR_PCA_RL             = handles.MR_PCA_RL_smooth;
     input.faces                 = handles.faces;
     input.nodes                 = handles.nodes;
     input.elem                  = handles.elem;

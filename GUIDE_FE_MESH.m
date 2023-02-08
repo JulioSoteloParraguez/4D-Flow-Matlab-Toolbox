@@ -293,6 +293,9 @@ function GUIDE_FE_MESH_OpeningFcn(hObject, eventdata, handles, varargin)
 %         set(handles.text11,'Visible','on')
 %     end
     
+    handles.id_mod = 0;
+    handles.kernel_size = 3;
+
 guidata(hObject, handles);
 uiwait(handles.figure1);
 
@@ -772,15 +775,15 @@ guidata(hObject, handles);
 function pushbutton4_Callback(hObject, eventdata, handles)
     
     % answer finite element mesh
-    answer = questdlg(  '¿Do you want to smooth the velocities field before interpolating it to the mesh?','Question','Yes','No','No');
-    switch answer
+    handles.answer1 = questdlg(  '¿Do you want to smooth the velocities field before interpolating it to the mesh?','Question','Yes','No','No');
+    switch handles.answer1
         case 'Yes'
             
             prompt = {'Select the kernel size to smooth the velocities (one odd number):'};
             dlgtitle = 'Kernel size';
             definput = {'3'};
             dims = [1 40];
-            kernel_size = str2double(cell2mat(inputdlg(prompt,dlgtitle,dims,definput)));
+            handles.kernel_size = str2double(cell2mat(inputdlg(prompt,dlgtitle,dims,definput)));
             handles.id_kernel = 1;
         
         case 'No'   
@@ -790,8 +793,8 @@ function pushbutton4_Callback(hObject, eventdata, handles)
     end
     
     % answer finite element mesh
-    answer = questdlg(  '¿Which interpolation method you want to use to interpolate the data to the finite element mesh?','Question','linear','nearest','cubic','cubic');
-    switch answer
+    handles.answer2 = questdlg(  '¿Which interpolation method you want to use to interpolate the data to the finite element mesh?','Question','linear','nearest','cubic','cubic');
+    switch handles.answer2
         case 'linear'
             
             handles.int_method = 'linear';
@@ -812,9 +815,9 @@ function pushbutton4_Callback(hObject, eventdata, handles)
     
     if handles.id_kernel == 1 
         for n=1:handles.d
-            handles.MR_PCA_FH(:,:,:,n)=smooth3(squeeze(handles.MR_PCA_FH(:,:,:,n)),'box',kernel_size);
-            handles.MR_PCA_AP(:,:,:,n)=smooth3(squeeze(handles.MR_PCA_AP(:,:,:,n)),'box',kernel_size);
-            handles.MR_PCA_RL(:,:,:,n)=smooth3(squeeze(handles.MR_PCA_RL(:,:,:,n)),'box',kernel_size);
+            handles.MR_PCA_FH(:,:,:,n)=smooth3(squeeze(handles.MR_PCA_FH(:,:,:,n)),'box',handles.kernel_size);
+            handles.MR_PCA_AP(:,:,:,n)=smooth3(squeeze(handles.MR_PCA_AP(:,:,:,n)),'box',handles.kernel_size);
+            handles.MR_PCA_RL(:,:,:,n)=smooth3(squeeze(handles.MR_PCA_RL(:,:,:,n)),'box',handles.kernel_size);
         end
     end
     
@@ -932,7 +935,9 @@ function pushbutton4_Callback(hObject, eventdata, handles)
     set(handles.pushbutton8,'visible','on')
     set(handles.pushbutton9,'visible','on')
     set(handles.pushbutton10,'visible','on')
-    
+    set(handles.pushbutton12,'visible','on')
+
+
 handles.output = hObject;
 guidata(hObject, handles);
   
@@ -963,6 +968,7 @@ function radiobutton1_Callback(hObject, eventdata, handles)
         set(handles.pushbutton8,'Visible','off')
         set(handles.pushbutton9,'Visible','off')
         set(handles.pushbutton10,'Visible','off')
+        set(handles.pushbutton12,'Visible','off')
                
         
     elseif rb1 == 0
@@ -1005,6 +1011,7 @@ function radiobutton2_Callback(hObject, eventdata, handles)
         set(handles.pushbutton8,'Visible','off')
         set(handles.pushbutton9,'Visible','off')
         set(handles.pushbutton10,'Visible','off')
+        set(handles.pushbutton12,'Visible','off')
         
     elseif rb2 == 0
         cla(handles.axes1)
@@ -1042,6 +1049,7 @@ function radiobutton3_Callback(hObject, eventdata, handles)
         set(handles.pushbutton8,'Visible','off')
         set(handles.pushbutton9,'Visible','off')
         set(handles.pushbutton10,'Visible','off')
+        set(handles.pushbutton12,'Visible','off')
         
     elseif rb3 == 0
         cla(handles.axes1)
@@ -1081,6 +1089,7 @@ function radiobutton4_Callback(hObject, eventdata, handles)
         set(handles.pushbutton8,'Visible','on')
         set(handles.pushbutton9,'Visible','on')
         set(handles.pushbutton10,'Visible','on')
+        set(handles.pushbutton12,'Visible','on')
         
         cla(handles.axes1)
         axes(handles.axes1);
@@ -1278,6 +1287,7 @@ function figure1_SizeChangedFcn(hObject, eventdata, handles)
     set(handles.pushbutton8,'FontUnits','Normalized','FontSize',0.57)
     set(handles.pushbutton9,'FontUnits','Normalized','FontSize',0.57)
     set(handles.pushbutton10,'FontUnits','Normalized','FontSize',0.57)
+    set(handles.pushbutton12,'FontUnits','Normalized','FontSize',0.24)
     set(handles.pushbutton2,'FontUnits','Normalized','FontSize',0.24)
     set(handles.pushbutton3,'FontUnits','Normalized','FontSize',0.24)
 
@@ -1973,5 +1983,280 @@ function pushbutton10_Callback(hObject, eventdata, handles)
     axis off
     view([-34,-51])
     
+handles.output = hObject;
+guidata(hObject, handles);
+
+
+% --- Executes on button press in pushbutton12.
+function pushbutton12_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton12 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % answer finite element mesh        
+    prompt = sprintf('¿How many voxels (thickness) do you want to smooth at the wall?\n (This is only applied for vWERP):');
+    dlgtitle = 'Voxels (thickness)';
+    definput = {'2'};
+    dims = [1 80];
+    out_dialog = inputdlg(prompt,dlgtitle,dims,definput);
+    kernel_radius = str2double(cell2mat(out_dialog));
+    nhood = strel("sphere",kernel_radius);
+    handles.id_smooth_wall = 1;
+    
+    J1 = imdilate(handles.SEG,nhood.Neighborhood);
+    J2 = imerode(handles.SEG,nhood.Neighborhood);
+    handles.SEG_WALL = double((J1-J2)>0);
+    
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % smooth step decide how many 
+    kernel_size = handles.kernel_size;
+    
+    MR_PCA_FH_temp = handles.MR_PCA_FH;
+    MR_PCA_AP_temp = handles.MR_PCA_AP;
+    MR_PCA_RL_temp = handles.MR_PCA_RL;
+    
+    for n=1:size(handles.MR_PCA_FH,4)
+        MR_PCA_FH_temp(:,:,:,n) = smooth3(squeeze(handles.MR_PCA_FH(:,:,:,n)),'box',kernel_size);
+        MR_PCA_AP_temp(:,:,:,n) = smooth3(squeeze(handles.MR_PCA_AP(:,:,:,n)),'box',kernel_size);
+        MR_PCA_RL_temp(:,:,:,n) = smooth3(squeeze(handles.MR_PCA_RL(:,:,:,n)),'box',kernel_size);
+    end
+    
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % new velocities
+    
+    % remove values from velocities
+    MR_PCA_FH_old = handles.MR_PCA_FH.*repmat((abs(handles.SEG_WALL-1)),1,1,1,size(handles.MR_PCA_FH,4));
+    MR_PCA_AP_old = handles.MR_PCA_AP.*repmat((abs(handles.SEG_WALL-1)),1,1,1,size(handles.MR_PCA_FH,4));
+    MR_PCA_RL_old = handles.MR_PCA_RL.*repmat((abs(handles.SEG_WALL-1)),1,1,1,size(handles.MR_PCA_FH,4));
+    
+    % add values from wall smoothed
+    MR_PCA_FH_old = MR_PCA_FH_old + MR_PCA_FH_temp.*repmat(handles.SEG_WALL,1,1,1,size(handles.MR_PCA_FH,4));
+    MR_PCA_AP_old = MR_PCA_AP_old + MR_PCA_AP_temp.*repmat(handles.SEG_WALL,1,1,1,size(handles.MR_PCA_FH,4));
+    MR_PCA_RL_old = MR_PCA_RL_old + MR_PCA_RL_temp.*repmat(handles.SEG_WALL,1,1,1,size(handles.MR_PCA_FH,4));
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    f = waitbar(0,'Please wait: Interpolating the velocity field ...');
+    
+    [handles.a,handles.b,handles.c,handles.d] = size(handles.MR_PCA_FH);
+    nodes_n = [(handles.nodes(:,2)./handles.voxel_MR(2))+handles.voxel_MR(2)/2,(handles.nodes(:,1)./handles.voxel_MR(1))+handles.voxel_MR(1)/2,(handles.nodes(:,3)./handles.voxel_MR(3))+handles.voxel_MR(3)/2];
+    
+    [X,Y,Z] = meshgrid(1:handles.b,1:handles.a,1:handles.c);
+    X=double(X);
+    Y=double(Y);
+    Z=double(Z);
+    handles.veset_new = zeros(size(nodes_n(:,1),1),3,handles.d);
+        
+    for m=1:handles.d
+        handles.veset_new(:,:,m)=[  interp3(X,Y,Z,squeeze(MR_PCA_AP_old(:,:,:,m)),nodes_n(:,1),nodes_n(:,2),nodes_n(:,3),handles.int_method),...
+                                interp3(X,Y,Z,squeeze(MR_PCA_FH_old(:,:,:,m)),nodes_n(:,1),nodes_n(:,2),nodes_n(:,3),handles.int_method)*-1,...
+                                interp3(X,Y,Z,squeeze(MR_PCA_RL_old(:,:,:,m)),nodes_n(:,1),nodes_n(:,2),nodes_n(:,3),handles.int_method)*-1];
+    end
+    
+    handles.veset_new = handles.veset_new/100;    
+    handles.veset_new(unique(handles.faces(:)),:,:) = handles.veset_new(unique(handles.faces(:)),:,:)*0; %% Julio Sotelo
+    
+    
+    cc = sum(sqrt(sum(handles.veset_new.^2,2)),1);
+    [C,I] = max(cc);
+    handles.peak_flow = I;
+    handles.min_vel = min(min(sqrt(sum(handles.veset_new(1:end,:,:).^2,2))));
+    handles.max_vel = max(max(sqrt(sum(handles.veset_new(1:end,:,:).^2,2))));
+    handles.mags_vol = squeeze(sqrt(sum(handles.veset_new.^2,2)));
+    currentColormap = colormap(handles.axes1,jet(128));
+    [~, ~, ind] = histcounts(handles.mags_vol(:), size(currentColormap, 1));
+    ind = reshape(ind,[size(handles.veset_new,1) size(handles.veset_new,3)]);
+    cmap_vol = uint8(ind2rgb(ind, currentColormap) * 255);
+    rgb_vel = cmap_vol/255;
+
+    handles.Lrgb_vel = ones(size(handles.MR_PCA_FH,1),size(handles.MR_PCA_FH,2),size(handles.MR_PCA_FH,3),size(handles.MR_PCA_FH,4),3);
+    
+    MASK = permute(double(abs(sum(handles.Lrgb,4)-3)>0),[1,2,3]);
+    MASK(1:2,:,:) = 0; MASK(:,1:2,:) = 0; MASK(:,:,1:2) = 0; MASK(end-1:end,:,:) = 0; MASK(:,end-1:end,:) = 0; MASK(:,:,end-1:end) = 0;
+    xd_seg = MASK.*handles.xd;
+    yd_seg = MASK.*handles.yd;
+    zd_seg = MASK.*handles.zd;
+    xd_seg(MASK==0) = [];
+    yd_seg(MASK==0) = [];
+    zd_seg(MASK==0) = [];
+    pos_voxel = [xd_seg(:),yd_seg(:),zd_seg(:)];
+    [X,Y,Z] = meshgrid(1:size(handles.IPCMRA,2),1:size(handles.IPCMRA,1),1:size(handles.IPCMRA,3));
+    X_seg = MASK.*X;
+    Y_seg = MASK.*Y;
+    Z_seg = MASK.*Z;
+    X_seg(MASK==0) = [];
+    Y_seg(MASK==0) = [];
+    Z_seg(MASK==0) = [];
+    pos_v = [X_seg(:),Y_seg(:),Z_seg(:)];
+    for n=1:length(pos_voxel(:,1))
+        d = sqrt(sum((handles.nodes-repmat(pos_voxel(n,:),[length(handles.nodes(:,1)), 1])).^2,2));
+        handles.Lrgb_vel(pos_v(n,2),pos_v(n,1),pos_v(n,3),:,:) = mean(rgb_vel(d<mean(handles.voxel_MR)*2,:,:),1);
+    end
+    
+    
+    cla(handles.axes1)
+    delete('handles.cmap')
+    pause(0.1)
+    axes(handles.axes1);
+    patch('faces',handles.faces,'vertices',handles.nodes,'edgecolor','k','facecolor',[0.5 0.5 0.5],'facealpha',0.1)
+    hold on
+    q = quiver3(handles.nodes(1:end,1),handles.nodes(1:end,2),handles.nodes(1:end,3),handles.veset_new(1:end,1,handles.peak_flow),handles.veset_new(1:end,2,handles.peak_flow),handles.veset_new(1:end,3,handles.peak_flow),handles.vector_size,'Linewidth',1);
+    handles.mags = squeeze(sqrt(sum(handles.veset_new(1:end,:,:).^2,2)));
+    currentColormap = colormap(handles.axes1,jet(128));
+    [~, ~, ind] = histcounts(handles.mags(:), size(currentColormap, 1));
+    ind = reshape(ind,[size(handles.veset_new(1:end,1,1),1) size(handles.veset_new,3)]);
+    handles.cmap = uint8(ind2rgb(ind(:,handles.peak_flow), currentColormap) * 255);
+    handles.cmap(:,:,4) = 255;
+    handles.cmap = permute(repmat(handles.cmap, [1 3 1]), [2 1 3]);
+    set(q.Head, 'ColorBinding', 'interpolated', 'ColorData', reshape(handles.cmap(1:3,:,:), [], 4).');
+    set(q.Tail, 'ColorBinding', 'interpolated', 'ColorData', reshape(handles.cmap(1:2,:,:), [], 4).');
+    c = colorbar(handles.axes1);
+    handles.min_vel = min(handles.mags(:));
+    handles.max_vel = max(handles.mags(:));
+    handles.mean_vel = (handles.min_vel + handles.max_vel)/2;
+    c.LimitsMode = 'manual';
+    c.Limits = [handles.min_vel handles.max_vel];
+    c.Ticks = [handles.min_vel, (handles.min_vel + handles.mean_vel)/2, handles.mean_vel, (handles.max_vel + handles.mean_vel)/2, handles.max_vel];
+    c.TickLabels = {num2str(handles.min_vel,'%0.2f'), num2str((handles.min_vel + handles.mean_vel)/2,'%0.2f'), num2str(handles.mean_vel,'%0.2f'), num2str((handles.max_vel + handles.mean_vel)/2,'%0.2f'), num2str(handles.max_vel,'%0.2f')};
+    c.Color = [1 1 1];
+    c.Location = 'manual';
+    c.Position = [0.2 0.2 0.02 0.3];
+    c.FontWeight = 'bold';
+    c.Label.String = 'Velocity [m/s]';
+    c.FontSize = 12;
+    c.Label.FontSize = 14;
+    c.Label.FontWeight = 'bold';
+    c.Label.Color = [1 1 1];
+    caxis(handles.axes1, [handles.min_vel handles.max_vel]);
+    hold off
+    axis vis3d
+    daspect([1,1,1])
+    axis off
+    view([-34,-51])
+    set(handles.radiobutton4,'Visible','on','Value',1);
+    set(handles.radiobutton1,'Value',0);
+    set(handles.radiobutton2,'Value',0);
+    set(handles.radiobutton3,'Value',0);
+%     handles.nodes = [handles.nodes(:,1)-(2*handles.voxel_MR(1)),handles.nodes(:,2)-(2*handles.voxel_MR(2)),handles.nodes(:,3)-(2*handles.voxel_MR(3))];
+    
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    pp=1/100;
+    slider_step(1) = pp;
+    slider_step(2) = 0.1;
+    set(handles.slider1,'Value', 5/100,'sliderstep',slider_step,'max',1,'min',0)
+    set(handles.slider1,'visible','on')
+    
+    set(handles.text30,'visible','on')
+    set(handles.text31,'visible','on')
+    set(handles.text32,'visible','on')
+    set(handles.pushbutton8,'visible','on')
+    set(handles.pushbutton9,'visible','on')
+    set(handles.pushbutton10,'visible','on')
+    set(handles.pushbutton12,'visible','on')
+
+    close(f)
+
+    % answer finite element mesh
+    handles.answer1 = questdlg(  '¿Do you agree with the smoothing result?','Question','Yes','No','No');
+    switch handles.answer1
+        case 'Yes'
+            
+            handles.MR_PCA_FH = MR_PCA_FH_old;
+            handles.MR_PCA_RL = MR_PCA_RL_old;
+            handles.MR_PCA_AP = MR_PCA_AP_old;
+            handles.veset = handles.veset_new;
+            handles.id_mod = 1;
+        
+        case 'No'   
+
+            f = waitbar(0,'Please wait: Velocities has not been changed ...');
+
+            handles.id_mod = 0;
+            cc = sum(sqrt(sum(handles.veset.^2,2)),1);
+            [C,I] = max(cc);
+            handles.peak_flow = I;
+            handles.min_vel = min(min(sqrt(sum(handles.veset(1:end,:,:).^2,2))));
+            handles.max_vel = max(max(sqrt(sum(handles.veset(1:end,:,:).^2,2))));
+            handles.mags_vol = squeeze(sqrt(sum(handles.veset.^2,2)));
+            currentColormap = colormap(handles.axes1,jet(128));
+            [~, ~, ind] = histcounts(handles.mags_vol(:), size(currentColormap, 1));
+            ind = reshape(ind,[size(handles.veset,1) size(handles.veset,3)]);
+            cmap_vol = uint8(ind2rgb(ind, currentColormap) * 255);
+            rgb_vel = cmap_vol/255;
+        
+            handles.Lrgb_vel = ones(size(handles.MR_PCA_FH,1),size(handles.MR_PCA_FH,2),size(handles.MR_PCA_FH,3),size(handles.MR_PCA_FH,4),3);
+            
+            MASK = permute(double(abs(sum(handles.Lrgb,4)-3)>0),[1,2,3]);
+            MASK(1:2,:,:) = 0; MASK(:,1:2,:) = 0; MASK(:,:,1:2) = 0; MASK(end-1:end,:,:) = 0; MASK(:,end-1:end,:) = 0; MASK(:,:,end-1:end) = 0;
+            xd_seg = MASK.*handles.xd;
+            yd_seg = MASK.*handles.yd;
+            zd_seg = MASK.*handles.zd;
+            xd_seg(MASK==0) = [];
+            yd_seg(MASK==0) = [];
+            zd_seg(MASK==0) = [];
+            pos_voxel = [xd_seg(:),yd_seg(:),zd_seg(:)];
+            [X,Y,Z] = meshgrid(1:size(handles.IPCMRA,2),1:size(handles.IPCMRA,1),1:size(handles.IPCMRA,3));
+            X_seg = MASK.*X;
+            Y_seg = MASK.*Y;
+            Z_seg = MASK.*Z;
+            X_seg(MASK==0) = [];
+            Y_seg(MASK==0) = [];
+            Z_seg(MASK==0) = [];
+            pos_v = [X_seg(:),Y_seg(:),Z_seg(:)];
+            for n=1:length(pos_voxel(:,1))
+                d = sqrt(sum((handles.nodes-repmat(pos_voxel(n,:),[length(handles.nodes(:,1)), 1])).^2,2));
+                handles.Lrgb_vel(pos_v(n,2),pos_v(n,1),pos_v(n,3),:,:) = mean(rgb_vel(d<mean(handles.voxel_MR)*2,:,:),1);
+            end
+
+            cla(handles.axes1)
+            delete('handles.cmap')
+            pause(0.1)
+            axes(handles.axes1);
+            patch('faces',handles.faces,'vertices',handles.nodes,'edgecolor','k','facecolor',[0.5 0.5 0.5],'facealpha',0.1)
+            hold on
+            q = quiver3(handles.nodes(1:end,1),handles.nodes(1:end,2),handles.nodes(1:end,3),handles.veset(1:end,1,handles.peak_flow),handles.veset(1:end,2,handles.peak_flow),handles.veset(1:end,3,handles.peak_flow),handles.vector_size,'Linewidth',1);
+            handles.mags = squeeze(sqrt(sum(handles.veset(1:end,:,:).^2,2)));
+            currentColormap = colormap(handles.axes1,jet(128));
+            [~, ~, ind] = histcounts(handles.mags(:), size(currentColormap, 1));
+            ind = reshape(ind,[size(handles.veset(1:end,1,1),1) size(handles.veset,3)]);
+            handles.cmap = uint8(ind2rgb(ind(:,handles.peak_flow), currentColormap) * 255);
+            handles.cmap(:,:,4) = 255;
+            handles.cmap = permute(repmat(handles.cmap, [1 3 1]), [2 1 3]);
+            set(q.Head, 'ColorBinding', 'interpolated', 'ColorData', reshape(handles.cmap(1:3,:,:), [], 4).');
+            set(q.Tail, 'ColorBinding', 'interpolated', 'ColorData', reshape(handles.cmap(1:2,:,:), [], 4).');
+            c = colorbar(handles.axes1);
+            handles.min_vel = min(handles.mags(:));
+            handles.max_vel = max(handles.mags(:));
+            handles.mean_vel = (handles.min_vel + handles.max_vel)/2;
+            c.LimitsMode = 'manual';
+            c.Limits = [handles.min_vel handles.max_vel];
+            c.Ticks = [handles.min_vel, (handles.min_vel + handles.mean_vel)/2, handles.mean_vel, (handles.max_vel + handles.mean_vel)/2, handles.max_vel];
+            c.TickLabels = {num2str(handles.min_vel,'%0.2f'), num2str((handles.min_vel + handles.mean_vel)/2,'%0.2f'), num2str(handles.mean_vel,'%0.2f'), num2str((handles.max_vel + handles.mean_vel)/2,'%0.2f'), num2str(handles.max_vel,'%0.2f')};
+            c.Color = [1 1 1];
+            c.Location = 'manual';
+            c.Position = [0.2 0.2 0.02 0.3];
+            c.FontWeight = 'bold';
+            c.Label.String = 'Velocity [m/s]';
+            c.FontSize = 12;
+            c.Label.FontSize = 14;
+            c.Label.FontWeight = 'bold';
+            c.Label.Color = [1 1 1];
+            caxis(handles.axes1, [handles.min_vel handles.max_vel]);
+            hold off
+            axis vis3d
+            daspect([1,1,1])
+            axis off
+            view([-34,-51])
+
+            close(f)
+    end
+
+
 handles.output = hObject;
 guidata(hObject, handles);
