@@ -1998,7 +1998,7 @@ function pushbutton12_Callback(hObject, eventdata, handles)
     % answer finite element mesh        
     prompt = sprintf('¿How many voxels (thickness) do you want to smooth at the wall?\n (This is only applied for vWERP):');
     dlgtitle = 'Voxels (thickness)';
-    definput = {'2'};
+    definput = {'1'};
     dims = [1 80];
     out_dialog = inputdlg(prompt,dlgtitle,dims,definput);
     kernel_radius = str2double(cell2mat(out_dialog));
