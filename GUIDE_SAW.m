@@ -916,8 +916,7 @@ switch get(handles.popupmenu1,'Value')
             hold off
             axtoolbar(handles.axes1,'Visible','off');
             
-            [~,EOAIdx] = max(D);   
-            handles.EOAdist = dist(EOAIdx);
+            handles.EOAdist = handles.PM.EOAdist;
             xline(handles.EOAdist, 'g-.','LineWidth', 2 );
             xline(handles.EOAdist + handles.PM.PrecDist, 'b-.','LineWidth', 2 );
             
