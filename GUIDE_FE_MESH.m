@@ -1996,32 +1996,33 @@ function pushbutton12_Callback(hObject, eventdata, handles)
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % answer finite element mesh        
-    prompt = sprintf('¿How many voxels (thickness) do you want to smooth at the wall?\n (This is only applied for vWERP):');
-    dlgtitle = 'Voxels (thickness)';
-    definput = {'1'};
+    prompt = {'¿How many voxels do you want to smooth at the wall thickness?','Kernel radius (radius of 1 mean that the kernel size is 3x3x3):'};
+    dlgtitle = 'Voxels thickness and kernel radius';
+    definput = {'1','1'};
     dims = [1 80];
     out_dialog = inputdlg(prompt,dlgtitle,dims,definput);
-    kernel_radius = str2double(cell2mat(out_dialog));
-    nhood = strel("sphere",kernel_radius);
+    kernel_thickness = str2double(out_dialog{1}); % kernel to generate the wall tickness
+    kernel_radius = (str2double(out_dialog{2})*2)+1; % kernel used to generate the smoothing kernel
+    nhood_thickness = strel("sphere",kernel_thickness);
+    
     handles.id_smooth_wall = 1;
     
-    J1 = imdilate(handles.SEG,nhood.Neighborhood);
-    J2 = imerode(handles.SEG,nhood.Neighborhood);
+    J1 = imdilate(handles.SEG,nhood_thickness.Neighborhood);
+    J2 = imerode(handles.SEG,nhood_thickness.Neighborhood);
     handles.SEG_WALL = double((J1-J2)>0);
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % smooth step decide how many 
-    kernel_size = handles.kernel_size;
-    
+   
     MR_PCA_FH_temp = handles.MR_PCA_FH;
     MR_PCA_AP_temp = handles.MR_PCA_AP;
     MR_PCA_RL_temp = handles.MR_PCA_RL;
     
     for n=1:size(handles.MR_PCA_FH,4)
-        MR_PCA_FH_temp(:,:,:,n) = smooth3(squeeze(handles.MR_PCA_FH(:,:,:,n)),'box',kernel_size);
-        MR_PCA_AP_temp(:,:,:,n) = smooth3(squeeze(handles.MR_PCA_AP(:,:,:,n)),'box',kernel_size);
-        MR_PCA_RL_temp(:,:,:,n) = smooth3(squeeze(handles.MR_PCA_RL(:,:,:,n)),'box',kernel_size);
+        MR_PCA_FH_temp(:,:,:,n) = smooth3(squeeze(handles.MR_PCA_FH(:,:,:,n)),'gaussian',kernel_radius); % we smooth gaussian
+        MR_PCA_AP_temp(:,:,:,n) = smooth3(squeeze(handles.MR_PCA_AP(:,:,:,n)),'gaussian',kernel_radius); % we smooth gaussian
+        MR_PCA_RL_temp(:,:,:,n) = smooth3(squeeze(handles.MR_PCA_RL(:,:,:,n)),'gaussian',kernel_radius); % we smooth gaussian
     end
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -2053,8 +2054,8 @@ function pushbutton12_Callback(hObject, eventdata, handles)
         
     for m=1:handles.d
         handles.veset_new(:,:,m)=[  interp3(X,Y,Z,squeeze(MR_PCA_AP_old(:,:,:,m)),nodes_n(:,1),nodes_n(:,2),nodes_n(:,3),handles.int_method),...
-                                interp3(X,Y,Z,squeeze(MR_PCA_FH_old(:,:,:,m)),nodes_n(:,1),nodes_n(:,2),nodes_n(:,3),handles.int_method)*-1,...
-                                interp3(X,Y,Z,squeeze(MR_PCA_RL_old(:,:,:,m)),nodes_n(:,1),nodes_n(:,2),nodes_n(:,3),handles.int_method)*-1];
+                                    interp3(X,Y,Z,squeeze(MR_PCA_FH_old(:,:,:,m)),nodes_n(:,1),nodes_n(:,2),nodes_n(:,3),handles.int_method)*-1,...
+                                    interp3(X,Y,Z,squeeze(MR_PCA_RL_old(:,:,:,m)),nodes_n(:,1),nodes_n(:,2),nodes_n(:,3),handles.int_method)*-1];
     end
     
     handles.veset_new = handles.veset_new/100;    

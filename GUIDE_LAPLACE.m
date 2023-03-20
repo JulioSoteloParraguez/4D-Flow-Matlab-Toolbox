@@ -66,6 +66,7 @@ handles.output = hObject;
 
         addpath(genpath('vWERP/'));
         handles.SEG             = varargin{1}.SEG;
+        handles.SEG_for_vwerp   = varargin{1}.SEG_for_vwerp;
         handles.IPCMRA          = varargin{1}.IPCMRA;
         handles.voxel_MR        = varargin{1}.voxel_MR;
         handles.L               = varargin{1}.L;
@@ -86,6 +87,9 @@ handles.output = hObject;
         handles.MR_PCA_AP       = varargin{1}.MR_PCA_AP;
         handles.MR_PCA_FH       = varargin{1}.MR_PCA_FH;
         handles.MR_PCA_RL       = varargin{1}.MR_PCA_RL;
+        
+        set(handles.pushbutton11,'Visible','on');
+        set(handles.pushbutton10,'Visible','on');
 
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         % debo corregir el valor de slider axes, para que abra siempre el mismo
@@ -176,18 +180,17 @@ handles.output = hObject;
             
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             if handles.outlet_exec == 1
-
-                handles.list_string = {'Select Results ...','Mesh','Mesh + Velocity','Mesh + Inlet','Mesh + Outlet'};
-                set(handles.popupmenu2,'String',handles.list_string,'Value',4);
+                handles.list_string = {'Select Results ...','Mesh','Mesh + Velocity','Segmentation + Velocity','Segmentation + Inlet & Outlet','Mesh + Inlet','Mesh + Outlet'};
+                set(handles.popupmenu2,'String',handles.list_string,'Value',6);
 
             else
 
-                handles.list_string = {'Select Results ...','Mesh','Mesh + Velocity','Mesh + Inlet'};
-                set(handles.popupmenu2,'String',handles.list_string,'Value',4);
+                handles.list_string = {'Select Results ...','Mesh','Mesh + Velocity','Segmentation + Velocity','Segmentation + Inlet & Outlet','Mesh + Inlet'};
+                set(handles.popupmenu2,'String',handles.list_string,'Value',6);
 
             end
             
-            if get(handles.popupmenu2,'Value')==4
+            if get(handles.popupmenu2,'Value')==6
                 set(handles.pushbutton5,'Visible','off');
                 set(handles.pushbutton6,'Visible','on');
             end
@@ -256,10 +259,10 @@ handles.output = hObject;
             set(handles.popupmenu1,'Value',1)
 
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-            handles.list_string = {'Select Results ...','Mesh','Mesh + Velocity Vectors','Mesh + Inlet','Mesh + Outlet'};
-            set(handles.popupmenu2,'String',handles.list_string,'Value',5);
+            handles.list_string = {'Select Results ...','Mesh','Mesh + Velocity','Segmentation + Velocity','Segmentation + Inlet & Outlet','Mesh + Inlet','Mesh + Outlet'};
+            set(handles.popupmenu2,'String',handles.list_string,'Value',7);
 
-            if get(handles.popupmenu2,'Value')==5
+            if get(handles.popupmenu2,'Value')==7
                 set(handles.pushbutton5,'Visible','on');
                 set(handles.pushbutton6,'Visible','off');
             end
@@ -529,7 +532,7 @@ handles.output = hObject;
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-            handles.list_string = {'Select Results ...','Mesh','Mesh + Velocity'};
+            handles.list_string = {'Select Results ...','Mesh','Mesh + Velocity','Segmentation + Velocity','Segmentation + Inlet & Outlet'};
             set(handles.popupmenu2,'String',handles.list_string);
 
             set(handles.pushbutton1,'Visible','on');
@@ -1286,6 +1289,8 @@ if handles.id_vwerp == 1
         setappdata(0,'id_mag',id_mag);
         slider_id_axes1 = handles.slider_axes1;
         setappdata(0,'slider_id_axes1',slider_id_axes1);
+        SEG_for_vwerp = handles.SEG_for_vwerp;
+        setappdata(0,'SEG_for_vwerp',SEG_for_vwerp);
 
     elseif handles.id_while == 1
 
@@ -1369,6 +1374,8 @@ if handles.id_vwerp == 1
         setappdata(0,'id_mag',id_mag);
         slider_id_axes1 = handles.slider_axes1;
         setappdata(0,'slider_id_axes1',slider_id_axes1);
+        SEG_for_vwerp = handles.SEG_for_vwerp;
+        setappdata(0,'SEG_for_vwerp',SEG_for_vwerp);
 
         delete(handles.GUIDE_LAPLACE);
     end
@@ -1551,6 +1558,7 @@ function popupmenu1_Callback(hObject, eventdata, handles)
 % hObject    handle to popupmenu1 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+set(handles.uipanel2,'BackgroundColor',[0,0,0])
 switch get(handles.popupmenu1,'Value')
     
     case 1
@@ -3434,7 +3442,7 @@ if handles.id_vwerp  == 1
 
             SE = strel('sphere', 1);
             BW2 = imdilate(double(OUT<=0),SE);
-            PLANE = handles.SEG.*(double(BW2) - double(OUT<=0));
+            PLANE = handles.SEG_for_vwerp.*(double(BW2) - double(OUT<=0));
 
             X_C = X.*PLANE;
             Y_C = Y.*PLANE;
@@ -3482,11 +3490,11 @@ if handles.id_vwerp  == 1
 
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         if handles.outlet_exec == 1
-            handles.list_string = {'Select Results ...','Mesh','Mesh + Velocity','Mesh + Inlet','Mesh + Outlet'};
-            set(handles.popupmenu2,'String',handles.list_string,'Value',4);
+            handles.list_string = {'Select Results ...','Mesh','Mesh + Velocity','Segmentation + Velocity','Segmentation + Inlet & Outlet','Mesh + Inlet','Mesh + Outlet'};
+            set(handles.popupmenu2,'String',handles.list_string,'Value',6);
         else
-            handles.list_string = {'Select Results ...','Mesh','Mesh + Velocity','Mesh + Inlet'};
-            set(handles.popupmenu2,'String',handles.list_string,'Value',4);
+            handles.list_string = {'Select Results ...','Mesh','Mesh + Velocity','Segmentation + Velocity','Segmentation + Inlet & Outlet','Mesh + Inlet'};
+            set(handles.popupmenu2,'String',handles.list_string,'Value',6);
         end
 
         handles.id_mesh = 0;
@@ -3512,6 +3520,12 @@ if handles.id_vwerp  == 1
 
         end  
 
+        % we generate the next variables for vwerp
+        inlet = handles.PLANE_INLET;
+        n_inlet = handles.normal_inlet/norm(handles.normal_inlet);
+        
+        handles.inlet_for_plot = inlet;
+        handles.n_inlet_for_plot = n_inlet;
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -4228,7 +4242,7 @@ if handles.id_vwerp  == 1
 
             SE = strel('sphere', 1);
             BW2 = imdilate(double(OUT<=0),SE);
-            PLANE = handles.SEG.*(double(BW2) - double(OUT<=0));
+            PLANE = handles.SEG_for_vwerp.*(double(BW2) - double(OUT<=0));
 
             X_C = X.*PLANE;
             Y_C = Y.*PLANE;
@@ -4275,12 +4289,13 @@ if handles.id_vwerp  == 1
 
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         if handles.outlet_exec == 1
-            handles.list_string = {'Select Results ...','Mesh','Mesh + Velocity','Mesh + Inlet','Mesh + Outlet'};
-            set(handles.popupmenu2,'String',handles.list_string,'Value',4);
+            handles.list_string = {'Select Results ...','Mesh','Mesh + Velocity','Segmentation + Velocity','Segmentation + Inlet & Outlet','Mesh + Inlet','Mesh + Outlet'};
+            set(handles.popupmenu2,'String',handles.list_string,'Value',6);
         else
-            handles.list_string = {'Select Results ...','Mesh','Mesh + Velocity','Mesh + Inlet'};
-            set(handles.popupmenu2,'String',handles.list_string,'Value',4);
+            handles.list_string = {'Select Results ...','Mesh','Mesh + Velocity','Segmentation + Velocity','Segmentation + Inlet & Outlet','Mesh + Inlet'};
+            set(handles.popupmenu2,'String',handles.list_string,'Value',6);
         end
+
 
         handles.id_mesh = 0;
         handles.id_mesh_vel = 0;
@@ -4305,6 +4320,13 @@ if handles.id_vwerp  == 1
 
         end  
 
+        % we generate the next variables for vwerp
+        inlet = handles.PLANE_INLET;
+        n_inlet = handles.normal_inlet/norm(handles.normal_inlet);
+        
+        handles.inlet_for_plot = inlet;
+        handles.n_inlet_for_plot = n_inlet;
+        
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -4926,7 +4948,7 @@ if handles.id_vwerp  == 1
     %         
     %         BW2  = permute(BW2,[2,1,3]);
     %         OUT  = permute(OUT,[2,1,3]);
-            PLANE = handles.SEG.*(double(BW2) - double(OUT<=0));
+            PLANE = handles.SEG_for_vwerp.*(double(BW2) - double(OUT<=0));
 
             X_C = X.*PLANE;
             Y_C = Y.*PLANE;
@@ -4973,12 +4995,13 @@ if handles.id_vwerp  == 1
 
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         if handles.outlet_exec == 1
-            handles.list_string = {'Select Results ...','Mesh','Mesh + Velocity','Mesh + Inlet','Mesh + Outlet'};
-            set(handles.popupmenu2,'String',handles.list_string,'Value',4);
+            handles.list_string = {'Select Results ...','Mesh','Mesh + Velocity','Segmentation + Velocity','Segmentation + Inlet & Outlet','Mesh + Inlet','Mesh + Outlet'};
+            set(handles.popupmenu2,'String',handles.list_string,'Value',6);
         else
-            handles.list_string = {'Select Results ...','Mesh','Mesh + Velocity','Mesh + Inlet'};
-            set(handles.popupmenu2,'String',handles.list_string,'Value',4);
+            handles.list_string = {'Select Results ...','Mesh','Mesh + Velocity','Segmentation + Velocity','Segmentation + Inlet & Outlet','Mesh + Inlet'};
+            set(handles.popupmenu2,'String',handles.list_string,'Value',6);
         end
+
 
         handles.id_mesh = 0;
         handles.id_mesh_vel = 0;
@@ -5002,6 +5025,13 @@ if handles.id_vwerp  == 1
             set(handles.pushbutton3,'Visible','off');
 
         end  
+        
+        % we generate the next variables for vwerp
+        inlet = handles.PLANE_INLET;
+        n_inlet = handles.normal_inlet/norm(handles.normal_inlet);
+        
+        handles.inlet_for_plot = inlet;
+        handles.n_inlet_for_plot = n_inlet;
 
     end
 
@@ -7714,7 +7744,7 @@ if handles.id_vwerp == 1
 
             SE = strel('sphere', 1);
             BW2 = imdilate(double(OUT<=0),SE);
-            PLANE = handles.SEG.*(double(BW2) - double(OUT<=0));
+            PLANE = handles.SEG_for_vwerp.*(double(BW2) - double(OUT<=0));
 
             X_C = X.*PLANE;
             Y_C = Y.*PLANE;
@@ -7760,8 +7790,8 @@ if handles.id_vwerp == 1
         set(handles.text1,'visible','off')
 
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        handles.list_string = {'Select Results ...','Mesh','Mesh + Velocity Vectors','Mesh + Inlet','Mesh + Outlet'};
-        set(handles.popupmenu2,'String',handles.list_string,'Value',5);
+        handles.list_string = {'Select Results ...','Mesh','Mesh + Velocity','Segmentation + Velocity','Segmentation + Inlet & Outlet','Mesh + Inlet','Mesh + Outlet'};
+        set(handles.popupmenu2,'String',handles.list_string,'Value',7);
 
         handles.id_mesh = 0;
         handles.id_mesh_vel = 0;
@@ -7786,6 +7816,12 @@ if handles.id_vwerp == 1
 
         end
 
+        % we generate the next variables for vwerp
+        outlet = handles.PLANE_OUTLET;
+        n_outlet = handles.normal_outlet/norm(handles.normal_outlet);
+        
+        handles.outlet_for_plot = outlet;
+        handles.n_outlet_for_plot = n_outlet;
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -8490,7 +8526,7 @@ if handles.id_vwerp == 1
 
             SE = strel('sphere', 1);
             BW2 = imdilate(double(OUT<=0),SE);
-            PLANE = handles.SEG.*(double(BW2) - double(OUT<=0));
+            PLANE = handles.SEG_for_vwerp.*(double(BW2) - double(OUT<=0));
 
             X_C = X.*PLANE;
             Y_C = Y.*PLANE;
@@ -8536,8 +8572,8 @@ if handles.id_vwerp == 1
         set(handles.text1,'visible','off')
 
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        handles.list_string = {'Select Results ...','Mesh','Mesh + Velocity Vectors','Mesh + Inlet','Mesh + Outlet'};
-        set(handles.popupmenu2,'String',handles.list_string,'Value',5);
+        handles.list_string = {'Select Results ...','Mesh','Mesh + Velocity','Segmentation + Velocity','Segmentation + Inlet & Outlet','Mesh + Inlet','Mesh + Outlet'};
+        set(handles.popupmenu2,'String',handles.list_string,'Value',7);
 
         handles.id_mesh = 0;
         handles.id_mesh_vel = 0;
@@ -8562,6 +8598,12 @@ if handles.id_vwerp == 1
 
         end
 
+        % we generate the next variables for vwerp
+        outlet = handles.PLANE_OUTLET;
+        n_outlet = handles.normal_outlet/norm(handles.normal_outlet);
+        
+        handles.outlet_for_plot = outlet;
+        handles.n_outlet_for_plot = n_outlet;
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -9158,7 +9200,7 @@ if handles.id_vwerp == 1
 
             SE = strel('sphere', 1);
             BW2 = imdilate(double(OUT<=0),SE);
-            PLANE = handles.SEG.*(double(BW2) - double(OUT<=0));
+            PLANE = handles.SEG_for_vwerp.*(double(BW2) - double(OUT<=0));
 
             X_C = X.*PLANE;
             Y_C = Y.*PLANE;
@@ -9205,8 +9247,8 @@ if handles.id_vwerp == 1
         set(handles.text1,'visible','off')
 
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        handles.list_string = {'Select Results ...','Mesh','Mesh + Velocity Vectors','Mesh + Inlet','Mesh + Outlet'};
-        set(handles.popupmenu2,'String',handles.list_string,'Value',5);
+        handles.list_string = {'Select Results ...','Mesh','Mesh + Velocity','Segmentation + Velocity','Segmentation + Inlet & Outlet','Mesh + Inlet','Mesh + Outlet'};
+        set(handles.popupmenu2,'String',handles.list_string,'Value',7);
 
         handles.id_mesh = 0;
         handles.id_mesh_vel = 0;
@@ -9230,7 +9272,13 @@ if handles.id_vwerp == 1
             set(handles.pushbutton3,'Visible','off');
 
         end
-
+        
+        % we generate the next variables for vwerp
+        outlet = handles.PLANE_OUTLET;
+        n_outlet = handles.normal_outlet/norm(handles.normal_outlet);
+        
+        handles.outlet_for_plot = outlet;
+        handles.n_outlet_for_plot = n_outlet;
 
     end
 
@@ -11404,143 +11452,82 @@ switch get(handles.popupmenu2,'Value')
 
      case 3
         
-        set(handles.uipanel2,'BackgroundColor',[0,0,0])
-        set(handles.popupmenu1,'Value',1)
-
-        set(handles.popupmenu1,'value',1)
-        set(handles.popupmenu3,'value',1)
-        set(handles.pushbutton1,'visible','off')
-        set(handles.pushbutton2,'visible','off')
-        set(handles.pushbutton5,'Visible','off')
-        set(handles.pushbutton6,'Visible','off')
-
-        axes(handles.axes1);
-        plot(0.0)
-        patch('faces',handles.faces,'vertices',handles.nodes,'edgecolor','k','facecolor',[0.5 0.5 0.5],'facealpha',0.1)
-        hold on
-        q = quiver3(handles.nodes(1:end,1),handles.nodes(1:end,2),handles.nodes(1:end,3),handles.veset(1:end,1,handles.peak_flow),handles.veset(1:end,2,handles.peak_flow),handles.veset(1:end,3,handles.peak_flow),5,'Linewidth',1);
-        currentColormap = colormap(handles.axes1,'jet');
-        [~, ~, ind] = histcounts(handles.mags_vel(:), size(currentColormap, 1));
-        ind = reshape(ind,[size(handles.veset,1) size(handles.veset,3)]);
-        handles.cmap = uint8(ind2rgb(ind(1:end,handles.peak_flow), currentColormap) * 255);
-        handles.cmap(:,:,4) = 255;
-        handles.cmap = permute(repmat(handles.cmap, [1 3 1]), [2 1 3]);
-        set(q.Head, 'ColorBinding', 'interpolated', 'ColorData', reshape(handles.cmap(1:3,:,:), [], 4).');
-        set(q.Tail, 'ColorBinding', 'interpolated', 'ColorData', reshape(handles.cmap(1:2,:,:), [], 4).');
-        c = colorbar(handles.axes1);
-        handles.min_vel = min(handles.mags_vel(:));
-        handles.max_vel = max(handles.mags_vel(:));
-        handles.mean_vel = (handles.min_vel + handles.max_vel)/2;
-        c.LimitsMode = 'manual';
-        c.Limits = [handles.min_vel handles.max_vel];
-        c.Ticks = [handles.min_vel, (handles.min_vel + handles.mean_vel)/2, handles.mean_vel, (handles.max_vel + handles.mean_vel)/2, handles.max_vel];
-        c.TickLabels = {num2str(handles.min_vel,'%0.2f'), num2str((handles.min_vel + handles.mean_vel)/2,'%0.2f'), num2str(handles.mean_vel,'%0.2f'), num2str((handles.max_vel + handles.mean_vel)/2,'%0.2f'), num2str(handles.max_vel,'%0.2f')};
-        c.Color = [1 1 1]; % color
-        c.Location = 'manual';
-        c.Position = [0.2 0.2 0.02 0.3];
-        c.FontWeight = 'bold';
-        c.Label.String = 'Velocity [m/s]';
-        windows_screen_size = get(0,'ScreenSize');
-        if windows_screen_size(4)<=900
-            c.FontSize = 9;
-        elseif windows_screen_size(4)>900 && windows_screen_size(4)<=1100
-            c.FontSize = 10;
-        else
-            c.FontSize = 11;
-        end
-        if windows_screen_size(4)<=900
-            c.Label.FontSize = 10;
-        elseif windows_screen_size(4)>900 && windows_screen_size(4)<=1100
-            c.Label.FontSize = 12;
-        else
-            c.Label.FontSize = 14;
-        end
-        c.Label.FontWeight = 'bold';
-        c.Label.Color = [1 1 1];% color
-        caxis(handles.axes1, [handles.min_vel handles.max_vel]);
-        hold off
-        axis vis3d
-        daspect([1,1,1])
-        axis off
-        view([-34,-51])
-
-
-        % id mesh
-        handles.id_mesh = 0;
-        handles.id_mesh_vel = 1;
-
-        % slider adjustment
-        slider_step(1) = 1/size(handles.veset,3);
-        slider_step(2) = 0.1;
-        set(handles.slider1,'Value', handles.peak_flow/size(handles.veset,3),'sliderstep',slider_step,'max',1,'min',0,'visible','on')
-        set(handles.text1,'String',['# CP: ',num2str(handles.peak_flow)],'visible','on')
-
-        % id mesh
-        handles.id_mesh = 0;
-        handles.id_mesh_vel = 1;
-        handles.id_mesh_inlet = 0;
-        handles.id_mesh_outlet = 0;
-        handles.id_mesh_laplace = 0;
-        handles.id_centerline = 0;
-        handles.id_diameter = 0;
-        handles.id_radius = 0;
-        handles.id_axial_unit_vectors = 0;
-        handles.id_circumferential_unit_vectors = 0;
-        handles.id_wss_a = 0;
-        handles.id_wss_c = 0;
-        handles.id_axial_angle = 0;
-        handles.id_forward_vel = 0;
-        handles.id_backward_vel = 0;
-        handles.id_regurgitant_flow = 0;
-        handles.id_centerline_flow = 0;
-        handles.id_eccentricity = 0;
-        handles.id_curvature = 0; % new data Julio Sotelo
-        handles.id_flattening = 0; % new data Julio Sotelo
-        handles.id_ellipticity = 0; % new data Julio Sotelo
-        handles.id_length_vessel = 0; % new data Julio Sotelo
-%         handles.id_circulation = 0; % new data Julio Sotelo
-        handles.id_forward_vortex = 0; % new data Julio Sotelo
-        handles.id_ipcmra = 0;
-        handles.id_mag = 0;
-
-
-    case 4
-        
-        if handles.id_vwerp ==1
-
+            
             set(handles.uipanel2,'BackgroundColor',[0,0,0])
             set(handles.popupmenu1,'Value',1)
+
+            set(handles.popupmenu1,'value',1)
+            set(handles.popupmenu3,'value',1)
+            set(handles.pushbutton1,'visible','off')
+            set(handles.pushbutton2,'visible','off')
             set(handles.pushbutton5,'Visible','off')
-            set(handles.pushbutton6,'Visible','on')
-            
+            set(handles.pushbutton6,'Visible','off')
+
             axes(handles.axes1);
             plot(0.0)
-            patch('faces',handles.faces,'vertices',handles.nodes,'facecolor','none','edgecolor',[0.5 0.5 0.5],'edgealpha',0.5)
+            patch('faces',handles.faces,'vertices',handles.nodes,'edgecolor','k','facecolor',[0.5 0.5 0.5],'facealpha',0.1)
             hold on
-            plot3(handles.nodes(handles.id_inlet,1),handles.nodes(handles.id_inlet,2),handles.nodes(handles.id_inlet,3),'*y')
-            center_in = mean(handles.nodes(handles.id_inlet,1:3));
-            quiver3(center_in(1),center_in(2),center_in(3),handles.normal_inlet(1),handles.normal_inlet(2),handles.normal_inlet(3),30,'r','Linewidth',3)
+            q = quiver3(handles.nodes(1:end,1),handles.nodes(1:end,2),handles.nodes(1:end,3),handles.veset(1:end,1,handles.peak_flow),handles.veset(1:end,2,handles.peak_flow),handles.veset(1:end,3,handles.peak_flow),5,'Linewidth',1);
+            currentColormap = colormap(handles.axes1,'jet');
+            [~, ~, ind] = histcounts(handles.mags_vel(:), size(currentColormap, 1));
+            ind = reshape(ind,[size(handles.veset,1) size(handles.veset,3)]);
+            handles.cmap = uint8(ind2rgb(ind(1:end,handles.peak_flow), currentColormap) * 255);
+            handles.cmap(:,:,4) = 255;
+            handles.cmap = permute(repmat(handles.cmap, [1 3 1]), [2 1 3]);
+            set(q.Head, 'ColorBinding', 'interpolated', 'ColorData', reshape(handles.cmap(1:3,:,:), [], 4).');
+            set(q.Tail, 'ColorBinding', 'interpolated', 'ColorData', reshape(handles.cmap(1:2,:,:), [], 4).');
+            c = colorbar(handles.axes1);
+            handles.min_vel = min(handles.mags_vel(:));
+            handles.max_vel = max(handles.mags_vel(:));
+            handles.mean_vel = (handles.min_vel + handles.max_vel)/2;
+            c.LimitsMode = 'manual';
+            c.Limits = [handles.min_vel handles.max_vel];
+            c.Ticks = [handles.min_vel, (handles.min_vel + handles.mean_vel)/2, handles.mean_vel, (handles.max_vel + handles.mean_vel)/2, handles.max_vel];
+            c.TickLabels = {num2str(handles.min_vel,'%0.2f'), num2str((handles.min_vel + handles.mean_vel)/2,'%0.2f'), num2str(handles.mean_vel,'%0.2f'), num2str((handles.max_vel + handles.mean_vel)/2,'%0.2f'), num2str(handles.max_vel,'%0.2f')};
+            c.Color = [1 1 1]; % color
+            c.Location = 'manual';
+            c.Position = [0.2 0.2 0.02 0.3];
+            c.FontWeight = 'bold';
+            c.Label.String = 'Velocity [m/s]';
+            windows_screen_size = get(0,'ScreenSize');
+            if windows_screen_size(4)<=900
+                c.FontSize = 9;
+            elseif windows_screen_size(4)>900 && windows_screen_size(4)<=1100
+                c.FontSize = 10;
+            else
+                c.FontSize = 11;
+            end
+            if windows_screen_size(4)<=900
+                c.Label.FontSize = 10;
+            elseif windows_screen_size(4)>900 && windows_screen_size(4)<=1100
+                c.Label.FontSize = 12;
+            else
+                c.Label.FontSize = 14;
+            end
+            c.Label.FontWeight = 'bold';
+            c.Label.Color = [1 1 1];% color
+            caxis(handles.axes1, [handles.min_vel handles.max_vel]);
             hold off
             axis vis3d
-            lighting gouraud
             daspect([1,1,1])
             axis off
             view([-34,-51])
 
 
-            set(handles.slider1,'visible','off')
-            set(handles.text1,'visible','off')
-            set(handles.popupmenu1,'value',1)
-            set(handles.popupmenu3,'value',1)
-            set(handles.pushbutton1,'visible','off')
-            set(handles.pushbutton2,'visible','off')
-
-
-            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+            % id mesh
             handles.id_mesh = 0;
-            handles.id_mesh_vel = 0;
-            handles.id_mesh_inlet = 1;
+            handles.id_mesh_vel = 1;
+
+            % slider adjustment
+            slider_step(1) = 1/size(handles.veset,3);
+            slider_step(2) = 0.1;
+            set(handles.slider1,'Value', handles.peak_flow/size(handles.veset,3),'sliderstep',slider_step,'max',1,'min',0,'visible','on')
+            set(handles.text1,'String',['# CP: ',num2str(handles.peak_flow)],'visible','on')
+
+            % id mesh
+            handles.id_mesh = 0;
+            handles.id_mesh_vel = 1;
+            handles.id_mesh_inlet = 0;
             handles.id_mesh_outlet = 0;
             handles.id_mesh_laplace = 0;
             handles.id_centerline = 0;
@@ -11564,7 +11551,154 @@ switch get(handles.popupmenu2,'Value')
             handles.id_forward_vortex = 0; % new data Julio Sotelo
             handles.id_ipcmra = 0;
             handles.id_mag = 0;
+
+        
+    case 4
+        
+        if handles.id_vwerp ==1
+
+            % adjusting values for plot
+            mask = handles.SEG_for_vwerp;
+
+            % adjusting the velocities
+                v = [];
+                if max(abs(handles.MR_PCA_FH(:)))>10
+                    v{3}.im = (handles.MR_PCA_RL.*repmat(handles.SEG,1,1,1,size(handles.MR_PCA_RL,4))/100)*-1;
+                    v{2}.im = (handles.MR_PCA_FH.*repmat(handles.SEG,1,1,1,size(handles.MR_PCA_FH,4))/100)*-1;
+                    v{1}.im = (handles.MR_PCA_AP.*repmat(handles.SEG,1,1,1,size(handles.MR_PCA_AP,4))/100);
+                else
+                    v{3}.im = (handles.MR_PCA_RL.*repmat(handles.SEG,1,1,1,size(handles.MR_PCA_RL,4)))*-1;
+                    v{2}.im = (handles.MR_PCA_FH.*repmat(handles.SEG,1,1,1,size(handles.MR_PCA_FH,4)))*-1;
+                    v{1}.im = (handles.MR_PCA_AP.*repmat(handles.SEG,1,1,1,size(handles.MR_PCA_AP,4)));
+                end
+
+            handles.v_for_plot = v;
+            handles.mask_for_plot = mask;
+
+            % we extract the voxelization using binsurface iso2mesh
+            [node_bin,elem_bin] = binsurface(handles.mask_for_plot);
+
             
+            axes(handles.axes1);
+            plot(0.0)
+            set(handles.uipanel2,'BackgroundColor',[1,1,1])
+            
+            
+            %visu_mask_inlet_outlet(handles.v_for_plot, handles.mask_for_plot, handles.inlet_for_plot, handles.outlet_for_plot, handles.n_inlet_for_plot, handles.n_outlet_for_plot)
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            % visualization of the velocities vector field %%%%%%%%%%%%%%%%
+            % David Marlevi code %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+           
+            % code
+            time = 5;
+            n = sum(sum(sum(handles.mask_for_plot)));
+            pt = zeros(n,3);
+            V = zeros(n,3);
+
+            n = 0;
+            for i = 1:size(handles.mask_for_plot,1)
+               for j = 1:size(handles.mask_for_plot,2)
+                   for k = 1:size(handles.mask_for_plot,3)
+                       if(handles.mask_for_plot(i,j,k) ~= 1)
+                           continue
+                       end
+
+                       n = n + 1;
+                       pt(n,:) = [i, j, k];
+                       V(n,:) = [handles.v_for_plot{1}.im(i,j,k,time), handles.v_for_plot{2}.im(i,j,k,time), handles.v_for_plot{3}.im(i,j,k,time)];
+                   end
+               end
+            end
+
+            vs = 10;
+            jump = 1;
+            q = quiver3(pt(1:jump:end,1),pt(1:jump:end,2),pt(1:jump:end,3),vs*V(1:jump:end,1),vs*V(1:jump:end,2),vs*V(1:jump:end,3), 'Linewidth',1);
+            mag_vel = sqrt(sum(V(1:jump:end,:).^2,2));
+            currentColormap = colormap(handles.axes1,'jet');
+            [~, ~, ind] = histcounts(mag_vel(:), size(currentColormap, 1));
+            handles.cmap = uint8(ind2rgb(ind, currentColormap) * 255);
+            handles.cmap(:,:,4) = 255;
+            handles.cmap = permute(repmat(handles.cmap, [1 3 1]), [2 1 3]);
+            set(q.Head, 'ColorBinding', 'interpolated', 'ColorData', reshape(handles.cmap(1:3,:,:), [], 4).');
+            set(q.Tail, 'ColorBinding', 'interpolated', 'ColorData', reshape(handles.cmap(1:2,:,:), [], 4).');
+            c = colorbar(handles.axes1);
+            handles.min_vel = min(mag_vel(:));
+            handles.max_vel = max(mag_vel(:));
+            handles.mean_vel = (handles.min_vel + handles.max_vel)/2;
+            c.LimitsMode = 'manual';
+            c.Limits = [handles.min_vel handles.max_vel];
+            c.Ticks = [handles.min_vel, (handles.min_vel + handles.mean_vel)/2, handles.mean_vel, (handles.max_vel + handles.mean_vel)/2, handles.max_vel];
+            c.TickLabels = {num2str(handles.min_vel,'%0.2f'), num2str((handles.min_vel + handles.mean_vel)/2,'%0.2f'), num2str(handles.mean_vel,'%0.2f'), num2str((handles.max_vel + handles.mean_vel)/2,'%0.2f'), num2str(handles.max_vel,'%0.2f')};
+            c.Color = [0 0 0]; % color
+            c.FontWeight = 'bold';
+            c.Label.String = 'Velocity [m/s]';
+            c.FontSize = 11;
+            c.Label.FontSize = 14;
+            c.Label.FontWeight = 'bold';
+            c.Label.Color = [0 0 0];% color
+            caxis(handles.axes1, [handles.min_vel handles.max_vel]);
+            axis equal
+            q.AutoScale='off';
+
+            hold on
+            
+%             if handles.inlet_exec == 1 
+%             
+%             handles.n_inlet_for_plot = handles.n_inlet_for_plot*-1;
+%             [r,c,v] = ind2sub(size((handles.inlet_for_plot)),find((handles.inlet_for_plot) == 1));
+%             Xo(1) = mean(r); Xo(2) = mean(c); Xo(3) = mean(v); 
+%             scatter3(Xo(1),Xo(2),Xo(3),'ro')
+%             quiver3(Xo(1),Xo(2),Xo(3),vs*handles.n_inlet_for_plot(1),vs*handles.n_inlet_for_plot(2),vs*handles.n_inlet_for_plot(3),2,'r', 'linewidth',6)
+% 
+%             end
+%             
+%             if handles.outlet_exec == 1
+%             [r,c,v] = ind2sub(size((handles.outlet_for_plot)),find((handles.outlet_for_plot) == 1));
+%             Xo(1) = mean(r); Xo(2) = mean(c); Xo(3) = mean(v); 
+%             scatter3(Xo(1),Xo(2),Xo(3),'go')
+%             quiver3(Xo(1),Xo(2),Xo(3),vs*handles.n_outlet_for_plot(1),vs*handles.n_outlet_for_plot(2),vs*handles.n_outlet_for_plot(3),2,'g', 'linewidth',6)
+%             
+%             end
+            
+            % binsurface plot
+            trisurf(elem_bin,node_bin(:,1)+0.5,node_bin(:,2)+0.5,node_bin(:,3)+0.5, 'facecolor','none');
+            
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            % visualization of the velocities vector field %%%%%%%%%%%%%%%%
+            % David Marlevi code %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            
+            xlabel('A-P', 'Fontsize', 14,'FontWeight','bold')
+            ylabel('F-H', 'Fontsize', 14,'FontWeight','bold')
+            zlabel('R-L', 'Fontsize', 14,'FontWeight','bold')
+            title('Vector Field','Fontsize', 16,'FontWeight','bold')
+            hold off
+            grid on
+            daspect([1,1,1])
+            view(3)
+
+            set(handles.slider1,'visible','off')
+            set(handles.text1,'visible','off')
+            set(handles.popupmenu1,'value',1)
+            set(handles.popupmenu3,'value',1)
+            set(handles.pushbutton1,'visible','off')
+            set(handles.pushbutton2,'visible','off')
+            
+            if (handles.inlet_exec == 1) && (handles.outlet_exec == 1)
+
+                set(handles.pushbutton3,'Visible','on');
+
+            else 
+
+                set(handles.pushbutton3,'Visible','off');
+
+            end  
+            
+%             set(handles.pushbutton3,'Visible','off')
+            set(handles.pushbutton5,'Visible','off')
+            set(handles.pushbutton6,'Visible','off')
+
         else
         
             set(handles.popupmenu1,'Value',1)
@@ -11623,24 +11757,66 @@ switch get(handles.popupmenu2,'Value')
     case 5
         
         if handles.id_vwerp ==1
-            set(handles.uipanel2,'BackgroundColor',[0,0,0])
-            set(handles.popupmenu1,'Value',1)
-            set(handles.pushbutton5,'Visible','on')
-            set(handles.pushbutton6,'Visible','off')
+            
+            % adjusting values for plot
+            mask = handles.SEG_for_vwerp;
+            handles.mask_for_plot = mask;
+            vs = 10;
+            % we extract the voxelization using binsurface iso2mesh
+            [node_bin,elem_bin] = binsurface(handles.mask_for_plot);
+
             
             axes(handles.axes1);
             plot(0.0)
-            patch('faces',handles.faces,'vertices',handles.nodes,'facecolor','none','edgecolor',[0.5 0.5 0.5],'edgealpha',0.5)
+            set(handles.uipanel2,'BackgroundColor',[1,1,1])
+           
+            % binsurface plot
+            trisurf(elem_bin,node_bin(:,1)+0.5,node_bin(:,2)+0.5,node_bin(:,3)+0.5, 'facecolor','none', 'edgealpha',0.5);
             hold on
-            plot3(handles.nodes(handles.id_outlet,1),handles.nodes(handles.id_outlet,2),handles.nodes(handles.id_outlet,3),'*y')
-            center_out = mean(handles.nodes(handles.id_outlet,1:3));
-            quiver3(center_out(1),center_out(2),center_out(3),handles.normal_outlet(1),handles.normal_outlet(2),handles.normal_outlet(3),30,'r','Linewidth',3)
+            
+            if handles.inlet_exec == 1 
+                
+                [node_inletp,elem_inletp] = binsurface(handles.PLANE_INLET);
+                trisurf(elem_inletp,node_inletp(:,1)+0.5,node_inletp(:,2)+0.5,node_inletp(:,3)+0.5, 'facecolor','r');
+            
+                handles.n_inlet_for_plot = handles.normal_inlet;
+                
+                [r,c,v] = ind2sub(size((handles.inlet_for_plot)),find((handles.inlet_for_plot) == 1));
+                Xo(1) = mean(r); Xo(2) = mean(c); Xo(3) = mean(v); 
+                scatter3(Xo(1),Xo(2),Xo(3),'ro')
+                quiver3(Xo(1),Xo(2),Xo(3),vs*handles.n_inlet_for_plot(1),vs*handles.n_inlet_for_plot(2),vs*handles.n_inlet_for_plot(3),2,'r', 'linewidth',6)
+
+            end
+            
+            if handles.outlet_exec == 1
+                
+                [node_outletp,elem_outletp] = binsurface(handles.PLANE_OUTLET);
+                trisurf(elem_outletp,node_outletp(:,1)+0.5,node_outletp(:,2)+0.5,node_outletp(:,3)+0.5, 'facecolor','g');
+
+                handles.n_outlet_for_plot = handles.normal_outlet;
+                
+                [r,c,v] = ind2sub(size((handles.outlet_for_plot)),find((handles.outlet_for_plot) == 1));
+                Xo(1) = mean(r); Xo(2) = mean(c); Xo(3) = mean(v); 
+                scatter3(Xo(1),Xo(2),Xo(3),'go')
+                quiver3(Xo(1),Xo(2),Xo(3),vs*handles.n_outlet_for_plot(1),vs*handles.n_outlet_for_plot(2),vs*handles.n_outlet_for_plot(3),2,'g', 'linewidth',6)
+
+            end
+            
+            
+            
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            % visualization of the velocities vector field %%%%%%%%%%%%%%%%
+            % David Marlevi code %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            
+            xlabel('A-P', 'Fontsize', 14,'FontWeight','bold')
+            ylabel('F-H', 'Fontsize', 14,'FontWeight','bold')
+            zlabel('R-L', 'Fontsize', 14,'FontWeight','bold')
+            title('Vector Field','Fontsize', 16,'FontWeight','bold')
             hold off
-            axis vis3d
-            lighting gouraud
+            grid on
             daspect([1,1,1])
-            axis off
-            view([-34,-51])
+            view(3)
 
             set(handles.slider1,'visible','off')
             set(handles.text1,'visible','off')
@@ -11648,35 +11824,19 @@ switch get(handles.popupmenu2,'Value')
             set(handles.popupmenu3,'value',1)
             set(handles.pushbutton1,'visible','off')
             set(handles.pushbutton2,'visible','off')
+            if (handles.inlet_exec == 1) && (handles.outlet_exec == 1)
 
-            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                set(handles.pushbutton3,'Visible','on');
 
-            handles.id_mesh = 0;
-            handles.id_mesh_vel = 0;
-            handles.id_mesh_inlet = 0;
-            handles.id_mesh_outlet = 1;
-            handles.id_mesh_laplace = 0;
-            handles.id_centerline = 0;
-            handles.id_diameter = 0;
-            handles.id_radius = 0;
-            handles.id_axial_unit_vectors = 0;
-            handles.id_circumferential_unit_vectors = 0;
-            handles.id_wss_a = 0;
-            handles.id_wss_c = 0;
-            handles.id_axial_angle = 0;
-            handles.id_forward_vel = 0;
-            handles.id_backward_vel = 0;
-            handles.id_regurgitant_flow = 0;
-            handles.id_centerline_flow = 0;
-            handles.id_eccentricity = 0;
-            handles.id_curvature = 0; % new data Julio Sotelo
-            handles.id_flattening = 0; % new data Julio Sotelo
-            handles.id_ellipticity = 0; % new data Julio Sotelo
-            handles.id_length_vessel = 0; % new data Julio Sotelo
-    %         handles.id_circulation = 0; % new data Julio Sotelo
-            handles.id_forward_vortex = 0; % new data Julio Sotelo
-            handles.id_ipcmra = 0;
-            handles.id_mag = 0;
+            else 
+
+                set(handles.pushbutton3,'Visible','off');
+
+            end  
+            
+%             set(handles.pushbutton3,'Visible','off')
+            set(handles.pushbutton5,'Visible','off')
+            set(handles.pushbutton6,'Visible','off')
             
         else
             set(handles.popupmenu1,'Value',1)
@@ -11733,19 +11893,25 @@ switch get(handles.popupmenu2,'Value')
 
         if handles.id_vwerp ==1
 
-
-            set(handles.uipanel2,'BackgroundColor',[1,1,1])
+            set(handles.uipanel2,'BackgroundColor',[0,0,0])
+            set(handles.popupmenu1,'Value',1)
+            set(handles.pushbutton5,'Visible','off')
+            set(handles.pushbutton6,'Visible','on')
+            
             axes(handles.axes1);
             plot(0.0)
-            visu_mask_inlet_outlet(handles.v_for_plot, handles.mask_for_plot, handles.inlet_for_plot, handles.outlet_for_plot, handles.n_inlet_for_plot, handles.n_outlet_for_plot)
-            xlabel('A-P', 'Fontsize', 14,'FontWeight','bold')
-            ylabel('F-H', 'Fontsize', 14,'FontWeight','bold')
-            zlabel('R-L', 'Fontsize', 14,'FontWeight','bold')
-            title('Vector Field','Fontsize', 16,'FontWeight','bold')
+            patch('faces',handles.faces,'vertices',handles.nodes,'facecolor','none','edgecolor',[0.5 0.5 0.5],'edgealpha',0.5)
+            hold on
+            plot3(handles.nodes(handles.id_inlet,1),handles.nodes(handles.id_inlet,2),handles.nodes(handles.id_inlet,3),'*y')
+            center_in = mean(handles.nodes(handles.id_inlet,1:3));
+            quiver3(center_in(1),center_in(2),center_in(3),handles.normal_inlet(1),handles.normal_inlet(2),handles.normal_inlet(3),30,'r','Linewidth',3)
             hold off
-            grid on
+            axis vis3d
+            lighting gouraud
             daspect([1,1,1])
-            view(3)
+            axis off
+            view([-34,-51])
+
 
             set(handles.slider1,'visible','off')
             set(handles.text1,'visible','off')
@@ -11753,19 +11919,48 @@ switch get(handles.popupmenu2,'Value')
             set(handles.popupmenu3,'value',1)
             set(handles.pushbutton1,'visible','off')
             set(handles.pushbutton2,'visible','off')
-            set(handles.pushbutton3,'Visible','off')
-            set(handles.pushbutton5,'Visible','off')
-            set(handles.pushbutton6,'Visible','off')
-            set(handles.text3,'Visible','off')
-            set(handles.text4,'Visible','off')
-            set(handles.text5,'Visible','off')
-            set(handles.text6,'Visible','off')
-            set(handles.radiobutton1,'Visible','off')
-            set(handles.radiobutton2,'Visible','off')
-            set(handles.radiobutton3,'Visible','off')
-            set(handles.radiobutton4,'Visible','off')
-            set(handles.edit2,'Visible','off')
-            set(handles.edit3,'Visible','off')
+            
+            if (handles.inlet_exec == 1) && (handles.outlet_exec == 1)
+
+                set(handles.pushbutton3,'Visible','on');
+
+            else 
+
+                set(handles.pushbutton3,'Visible','off');
+
+            end  
+            
+%             set(handles.pushbutton3,'Visible','off')
+
+
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+            handles.id_mesh = 0;
+            handles.id_mesh_vel = 0;
+            handles.id_mesh_inlet = 1;
+            handles.id_mesh_outlet = 0;
+            handles.id_mesh_laplace = 0;
+            handles.id_centerline = 0;
+            handles.id_diameter = 0;
+            handles.id_radius = 0;
+            handles.id_axial_unit_vectors = 0;
+            handles.id_circumferential_unit_vectors = 0;
+            handles.id_wss_a = 0;
+            handles.id_wss_c = 0;
+            handles.id_axial_angle = 0;
+            handles.id_forward_vel = 0;
+            handles.id_backward_vel = 0;
+            handles.id_regurgitant_flow = 0;
+            handles.id_centerline_flow = 0;
+            handles.id_eccentricity = 0;
+            handles.id_curvature = 0; % new data Julio Sotelo
+            handles.id_flattening = 0; % new data Julio Sotelo
+            handles.id_ellipticity = 0; % new data Julio Sotelo
+            handles.id_length_vessel = 0; % new data Julio Sotelo
+    %         handles.id_circulation = 0; % new data Julio Sotelo
+            handles.id_forward_vortex = 0; % new data Julio Sotelo
+            handles.id_ipcmra = 0;
+            handles.id_mag = 0;
 
 
         else
@@ -11854,37 +12049,72 @@ switch get(handles.popupmenu2,'Value')
 
         if handles.id_vwerp ==1
 
-            set(handles.uipanel2,'BackgroundColor',[1,1,1])
-        
+            set(handles.uipanel2,'BackgroundColor',[0,0,0])
+            set(handles.popupmenu1,'Value',1)
+            set(handles.pushbutton5,'Visible','on')
+            set(handles.pushbutton6,'Visible','off')
+            
             axes(handles.axes1);
-            plot(handles.time, [handles.DP_VWERP(end), handles.DP_VWERP(1:end-1)]*handles.pa2mmhg,'b--*','LineWidth',2, 'MarkerSize', 10)
+            plot(0.0)
+            patch('faces',handles.faces,'vertices',handles.nodes,'facecolor','none','edgecolor',[0.5 0.5 0.5],'edgealpha',0.5)
             hold on
-            plot(handles.time, zeros(size(handles.time)),'k-')
+            plot3(handles.nodes(handles.id_outlet,1),handles.nodes(handles.id_outlet,2),handles.nodes(handles.id_outlet,3),'*y')
+            center_out = mean(handles.nodes(handles.id_outlet,1:3));
+            quiver3(center_out(1),center_out(2),center_out(3),handles.normal_outlet(1),handles.normal_outlet(2),handles.normal_outlet(3),30,'r','Linewidth',3)
             hold off
-            xlabel('time [s]', 'Fontsize', 14,'FontWeight','bold')
-            ylabel('Relative pressure drop [mmHg]', 'Fontsize', 14,'FontWeight','bold')
-            grid on
-            title(['Estimated relative pressure drops, WERP'], 'Fontsize', 16,'FontWeight','bold');
-        
+            axis vis3d
+            lighting gouraud
+            daspect([1,1,1])
+            axis off
+            view([-34,-51])
+
             set(handles.slider1,'visible','off')
             set(handles.text1,'visible','off')
             set(handles.popupmenu1,'value',1)
             set(handles.popupmenu3,'value',1)
             set(handles.pushbutton1,'visible','off')
             set(handles.pushbutton2,'visible','off')
-            set(handles.pushbutton3,'Visible','off')
-            set(handles.pushbutton5,'Visible','off')
-            set(handles.pushbutton6,'Visible','off')
-            set(handles.text3,'Visible','off')
-            set(handles.text4,'Visible','off')
-            set(handles.text5,'Visible','off')
-            set(handles.text6,'Visible','off')
-            set(handles.radiobutton1,'Visible','off')
-            set(handles.radiobutton2,'Visible','off')
-            set(handles.radiobutton3,'Visible','off')
-            set(handles.radiobutton4,'Visible','off')
-            set(handles.edit2,'Visible','off')
-            set(handles.edit3,'Visible','off')
+            
+            if (handles.inlet_exec == 1) && (handles.outlet_exec == 1)
+
+                set(handles.pushbutton3,'Visible','on');
+
+            else 
+
+                set(handles.pushbutton3,'Visible','off');
+
+            end  
+            
+%             set(handles.pushbutton3,'Visible','off')
+
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+            handles.id_mesh = 0;
+            handles.id_mesh_vel = 0;
+            handles.id_mesh_inlet = 0;
+            handles.id_mesh_outlet = 1;
+            handles.id_mesh_laplace = 0;
+            handles.id_centerline = 0;
+            handles.id_diameter = 0;
+            handles.id_radius = 0;
+            handles.id_axial_unit_vectors = 0;
+            handles.id_circumferential_unit_vectors = 0;
+            handles.id_wss_a = 0;
+            handles.id_wss_c = 0;
+            handles.id_axial_angle = 0;
+            handles.id_forward_vel = 0;
+            handles.id_backward_vel = 0;
+            handles.id_regurgitant_flow = 0;
+            handles.id_centerline_flow = 0;
+            handles.id_eccentricity = 0;
+            handles.id_curvature = 0; % new data Julio Sotelo
+            handles.id_flattening = 0; % new data Julio Sotelo
+            handles.id_ellipticity = 0; % new data Julio Sotelo
+            handles.id_length_vessel = 0; % new data Julio Sotelo
+    %         handles.id_circulation = 0; % new data Julio Sotelo
+            handles.id_forward_vortex = 0; % new data Julio Sotelo
+            handles.id_ipcmra = 0;
+            handles.id_mag = 0;
 
         else
 
@@ -11942,85 +12172,122 @@ switch get(handles.popupmenu2,'Value')
         end
 
     case 8 % diameter
+        
+        if handles.id_vwerp ==1
+            
+            set(handles.uipanel2,'BackgroundColor',[1,1,1])
+        
+            axes(handles.axes1);
+            plot(handles.time, [handles.DP_VWERP(end), handles.DP_VWERP(1:end-1)]*handles.pa2mmhg,'b--*','LineWidth',2, 'MarkerSize', 10)
+            hold on
+            plot(handles.time, zeros(size(handles.time)),'k-')
+            hold off
+            xlabel('time [s]', 'Fontsize', 14,'FontWeight','bold')
+            ylabel('Relative pressure drop [mmHg]', 'Fontsize', 14,'FontWeight','bold')
+            grid on
+            title(['Estimated relative pressure drops, WERP'], 'Fontsize', 16,'FontWeight','bold');
+        
+            set(handles.slider1,'visible','off')
+            set(handles.text1,'visible','off')
+            set(handles.popupmenu1,'value',1)
+            set(handles.popupmenu3,'value',1)
+            set(handles.pushbutton1,'visible','off')
+            set(handles.pushbutton2,'visible','off')
+            if (handles.inlet_exec == 1) && (handles.outlet_exec == 1)
 
-        set(handles.popupmenu1,'Value',1)
+                set(handles.pushbutton3,'Visible','on');
 
-        axes(handles.axes1);
-        plot(0.0)
-        patch('faces',handles.faces,'vertices',handles.nodes,'EdgeColor','k','FaceColor','interp','FaceVertexCData',handles.diameter,'CDataMapping','Scaled')
-        colormap(handles.axes1,'parula');
-        c = colorbar(handles.axes1);
-        handles.min_dia = min(handles.diameter(:));
-        handles.max_dia = max(handles.diameter(:));
-        handles.mean_dia = (handles.min_dia + handles.max_dia)/2;
-        c.LimitsMode = 'manual';
-        c.Limits = [handles.min_dia handles.max_dia];
-        c.Ticks = [handles.min_dia, (handles.min_dia + handles.mean_dia)/2, handles.mean_dia, (handles.max_dia + handles.mean_dia)/2, handles.max_dia];
-        c.TickLabels = {num2str(handles.min_dia,'%0.2f'), num2str((handles.min_dia + handles.mean_dia)/2,'%0.2f'), num2str(handles.mean_dia,'%0.2f'), num2str((handles.max_dia + handles.mean_dia)/2,'%0.2f'), num2str(handles.max_dia,'%0.2f')};
-        c.Color = [1 1 1]; % color
-        c.Location = 'manual';
-        c.Position = [0.2 0.2 0.02 0.3];
-        c.FontWeight = 'bold';
-        c.Label.String = 'Diameter [cm]';
-        windows_screen_size = get(0,'ScreenSize');
-        if windows_screen_size(4)<=900
-            c.FontSize = 9;
-        elseif windows_screen_size(4)>900 && windows_screen_size(4)<=1100
-            c.FontSize = 10;
+            else 
+
+                set(handles.pushbutton3,'Visible','off');
+
+            end  
+%             set(handles.pushbutton3,'Visible','off')
+            set(handles.pushbutton5,'Visible','off')
+            set(handles.pushbutton6,'Visible','off')
+            
         else
-            c.FontSize = 11;
+
+            set(handles.popupmenu1,'Value',1)
+
+            axes(handles.axes1);
+            plot(0.0)
+            patch('faces',handles.faces,'vertices',handles.nodes,'EdgeColor','k','FaceColor','interp','FaceVertexCData',handles.diameter,'CDataMapping','Scaled')
+            colormap(handles.axes1,'parula');
+            c = colorbar(handles.axes1);
+            handles.min_dia = min(handles.diameter(:));
+            handles.max_dia = max(handles.diameter(:));
+            handles.mean_dia = (handles.min_dia + handles.max_dia)/2;
+            c.LimitsMode = 'manual';
+            c.Limits = [handles.min_dia handles.max_dia];
+            c.Ticks = [handles.min_dia, (handles.min_dia + handles.mean_dia)/2, handles.mean_dia, (handles.max_dia + handles.mean_dia)/2, handles.max_dia];
+            c.TickLabels = {num2str(handles.min_dia,'%0.2f'), num2str((handles.min_dia + handles.mean_dia)/2,'%0.2f'), num2str(handles.mean_dia,'%0.2f'), num2str((handles.max_dia + handles.mean_dia)/2,'%0.2f'), num2str(handles.max_dia,'%0.2f')};
+            c.Color = [1 1 1]; % color
+            c.Location = 'manual';
+            c.Position = [0.2 0.2 0.02 0.3];
+            c.FontWeight = 'bold';
+            c.Label.String = 'Diameter [cm]';
+            windows_screen_size = get(0,'ScreenSize');
+            if windows_screen_size(4)<=900
+                c.FontSize = 9;
+            elseif windows_screen_size(4)>900 && windows_screen_size(4)<=1100
+                c.FontSize = 10;
+            else
+                c.FontSize = 11;
+            end
+            if windows_screen_size(4)<=900
+                c.Label.FontSize = 10;
+            elseif windows_screen_size(4)>900 && windows_screen_size(4)<=1100
+                c.Label.FontSize = 12;
+            else
+                c.Label.FontSize = 14;
+            end
+            c.Label.FontWeight = 'bold';
+            c.Label.Color = [1 1 1];% color
+            caxis(handles.axes1, [handles.min_dia handles.max_dia]);
+            hold off
+            axis vis3d
+            daspect([1,1,1])
+            axis off
+            view([-34,-51])
+
+            set(handles.slider1,'visible','off')
+            set(handles.text1,'visible','off')
+            set(handles.popupmenu1,'value',1)
+            set(handles.popupmenu3,'value',1)
+            set(handles.pushbutton1,'visible','off')
+            set(handles.pushbutton2,'visible','off')
+
+
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            handles.id_mesh = 0;
+            handles.id_mesh_vel = 0;
+            handles.id_mesh_inlet = 0;
+            handles.id_mesh_outlet = 0;
+            handles.id_mesh_laplace = 0;
+            handles.id_centerline = 0;
+            handles.id_diameter = 1;
+            handles.id_radius = 0;
+            handles.id_axial_unit_vectors = 0;
+            handles.id_circumferential_unit_vectors = 0;
+            handles.id_wss_a = 0;
+            handles.id_wss_c = 0;
+            handles.id_axial_angle = 0;
+            handles.id_forward_vel = 0;
+            handles.id_backward_vel = 0;
+            handles.id_regurgitant_flow = 0;
+            handles.id_centerline_flow = 0;
+            handles.id_eccentricity = 0;
+            handles.id_curvature = 0; % new data Julio Sotelo
+            handles.id_flattening = 0; % new data Julio Sotelo
+            handles.id_ellipticity = 0; % new data Julio Sotelo
+            handles.id_length_vessel = 0; % new data Julio Sotelo
+    %         handles.id_circulation = 0; % new data Julio Sotelo
+            handles.id_forward_vortex = 0; % new data Julio Sotelo
+            handles.id_ipcmra = 0;
+            handles.id_mag = 0;
+        
         end
-        if windows_screen_size(4)<=900
-            c.Label.FontSize = 10;
-        elseif windows_screen_size(4)>900 && windows_screen_size(4)<=1100
-            c.Label.FontSize = 12;
-        else
-            c.Label.FontSize = 14;
-        end
-        c.Label.FontWeight = 'bold';
-        c.Label.Color = [1 1 1];% color
-        caxis(handles.axes1, [handles.min_dia handles.max_dia]);
-        hold off
-        axis vis3d
-        daspect([1,1,1])
-        axis off
-        view([-34,-51])
-
-        set(handles.slider1,'visible','off')
-        set(handles.text1,'visible','off')
-        set(handles.popupmenu1,'value',1)
-        set(handles.popupmenu3,'value',1)
-        set(handles.pushbutton1,'visible','off')
-        set(handles.pushbutton2,'visible','off')
-
-
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        handles.id_mesh = 0;
-        handles.id_mesh_vel = 0;
-        handles.id_mesh_inlet = 0;
-        handles.id_mesh_outlet = 0;
-        handles.id_mesh_laplace = 0;
-        handles.id_centerline = 0;
-        handles.id_diameter = 1;
-        handles.id_radius = 0;
-        handles.id_axial_unit_vectors = 0;
-        handles.id_circumferential_unit_vectors = 0;
-        handles.id_wss_a = 0;
-        handles.id_wss_c = 0;
-        handles.id_axial_angle = 0;
-        handles.id_forward_vel = 0;
-        handles.id_backward_vel = 0;
-        handles.id_regurgitant_flow = 0;
-        handles.id_centerline_flow = 0;
-        handles.id_eccentricity = 0;
-        handles.id_curvature = 0; % new data Julio Sotelo
-        handles.id_flattening = 0; % new data Julio Sotelo
-        handles.id_ellipticity = 0; % new data Julio Sotelo
-        handles.id_length_vessel = 0; % new data Julio Sotelo
-%         handles.id_circulation = 0; % new data Julio Sotelo
-        handles.id_forward_vortex = 0; % new data Julio Sotelo
-        handles.id_ipcmra = 0;
-        handles.id_mag = 0;
 
     case 9 % radius
 
@@ -13629,7 +13896,8 @@ if handles.id_vwerp  == 1
     outlet_seg = handles.PLANE_OUTLET;
     outlet = handles.PLANE_OUTLET;
     n_outlet = handles.normal_outlet/norm(handles.normal_outlet);
-    mask = handles.SEG;
+    
+    mask = handles.SEG_for_vwerp;
     
     % adjusting the velocities
 %     v = [];
@@ -13646,13 +13914,13 @@ if handles.id_vwerp  == 1
     % adjusting the velocities
     v = [];
     if max(abs(handles.MR_PCA_FH(:)))>10
-        v{3}.im = (handles.MR_PCA_RL.*repmat(handles.SEG,1,1,1,size(handles.MR_PCA_RL,4))/100)*-1;
-        v{2}.im = (handles.MR_PCA_FH.*repmat(handles.SEG,1,1,1,size(handles.MR_PCA_FH,4))/100)*-1;
-        v{1}.im = (handles.MR_PCA_AP.*repmat(handles.SEG,1,1,1,size(handles.MR_PCA_AP,4))/100);
+        v{3}.im = (handles.MR_PCA_RL.*repmat(mask,1,1,1,size(handles.MR_PCA_RL,4))/100)*-1;
+        v{2}.im = (handles.MR_PCA_FH.*repmat(mask,1,1,1,size(handles.MR_PCA_FH,4))/100)*-1;
+        v{1}.im = (handles.MR_PCA_AP.*repmat(mask,1,1,1,size(handles.MR_PCA_AP,4))/100);
     else
-        v{3}.im = (handles.MR_PCA_RL.*repmat(handles.SEG,1,1,1,size(handles.MR_PCA_RL,4)))*-1;
-        v{2}.im = (handles.MR_PCA_FH.*repmat(handles.SEG,1,1,1,size(handles.MR_PCA_FH,4)))*-1;
-        v{1}.im = (handles.MR_PCA_AP.*repmat(handles.SEG,1,1,1,size(handles.MR_PCA_AP,4)));
+        v{3}.im = (handles.MR_PCA_RL.*repmat(mask,1,1,1,size(handles.MR_PCA_RL,4)))*-1;
+        v{2}.im = (handles.MR_PCA_FH.*repmat(mask,1,1,1,size(handles.MR_PCA_FH,4)))*-1;
+        v{1}.im = (handles.MR_PCA_AP.*repmat(mask,1,1,1,size(handles.MR_PCA_AP,4)));
     end
     
     % Check visualization - hardcoded by David 
@@ -13663,7 +13931,9 @@ if handles.id_vwerp  == 1
     handles.outlet_for_plot = outlet;
     handles.n_inlet_for_plot = n_inlet;
     handles.n_outlet_for_plot = n_outlet;
-    % visu_mask_inlet_outlet(v, mask,inlet,outlet,n_inlet,n_outlet)
+    
+%     figure,
+%     visu_mask_inlet_outlet(v, mask,inlet,outlet,n_inlet,n_outlet)
 
     % adjusting the dt
     t = linspace(0,(60/handles.heart_rate),size(handles.MR_PCA_AP,4));
@@ -13894,7 +14164,7 @@ if handles.id_vwerp  == 1
             %%%%%%%%% incorporate labels to the visualization Julio Sotelo
             Labels = werp2_make_labels(mask, maskin, maskout);
         end
-
+        
         %% Solve w using Stoke's equation
         % Get the chosen velocity field w from solving Stokes equation (FD meth)...
         % This is probably the trickiest part!
@@ -14013,8 +14283,8 @@ if handles.id_vwerp  == 1
 
 
     % we add two more rows in the popupmenu
-    handles.list_string = {'Select Results ...','Mesh','Mesh + Velocity','Mesh + Inlet','Mesh + Outlet','Vector Field','Relative pressure drop [mmHg]'};
-    set(handles.popupmenu2,'String',handles.list_string,'Value',7);
+    handles.list_string = {'Select Results ...','Mesh','Mesh + Velocity','Segmentation + Velocity','Segmentation + Inlet & Outlet','Mesh + Inlet','Mesh + Outlet','Relative pressure drop [mmHg]'};
+    set(handles.popupmenu2,'String',handles.list_string,'Value',8);
 
 
     set(handles.uipanel2,'BackgroundColor',[1,1,1])
@@ -14385,6 +14655,8 @@ function popupmenu3_Callback(hObject, eventdata, handles)
 
 % Hints: contents = cellstr(get(hObject,'String')) returns popupmenu3 contents as cell array
 %        contents{get(hObject,'Value')} returns selected item from popupmenu3
+
+set(handles.uipanel2,'BackgroundColor',[0,0,0])
 switch get(handles.popupmenu3,'Value')
     
     case 1
@@ -14643,9 +14915,18 @@ function GUIDE_LAPLACE_SizeChangedFcn(hObject, eventdata, handles)
     set(handles.popupmenu2,'FontUnits','Normalized','FontSize',0.37)
     set(handles.popupmenu3,'FontUnits','Normalized','FontSize',0.37)
     set(handles.text1,'FontUnits','Normalized','FontSize',0.52)
+    set(handles.text3,'FontUnits','Normalized','FontSize',0.52)
+    set(handles.text4,'FontUnits','Normalized','FontSize',0.52)
+    set(handles.text5,'FontUnits','Normalized','FontSize',0.52)
+    set(handles.text6,'FontUnits','Normalized','FontSize',0.52)
     set(handles.pushbutton1,'FontUnits','Normalized','FontSize',0.24)
     set(handles.pushbutton2,'FontUnits','Normalized','FontSize',0.24)
     set(handles.pushbutton3,'FontUnits','Normalized','FontSize',0.24)
+    set(handles.pushbutton5,'FontUnits','Normalized','FontSize',0.24)
+    set(handles.pushbutton6,'FontUnits','Normalized','FontSize',0.24)
+    set(handles.pushbutton7,'FontUnits','Normalized','FontSize',0.24)
+    set(handles.pushbutton10,'FontUnits','Normalized','FontSize',0.24)
+    set(handles.pushbutton11,'FontUnits','Normalized','FontSize',0.24)
 
 handles.output = hObject;  
 guidata(hObject, handles);
@@ -14990,9 +15271,251 @@ function pushbutton10_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Dilate
+
+    % adjusting values for plot
+    mask = handles.SEG_for_vwerp;
+    
+    % we erode the mask in one voxel
+    se = strel('sphere',1);
+    mask = imdilate(mask, se);
+
+    % adjusting the velocities
+        v = [];
+        if max(abs(handles.MR_PCA_FH(:)))>10
+            v{3}.im = (handles.MR_PCA_RL.*repmat(mask,1,1,1,size(handles.MR_PCA_RL,4))/100)*-1;
+            v{2}.im = (handles.MR_PCA_FH.*repmat(mask,1,1,1,size(handles.MR_PCA_FH,4))/100)*-1;
+            v{1}.im = (handles.MR_PCA_AP.*repmat(mask,1,1,1,size(handles.MR_PCA_AP,4))/100);
+        else
+            v{3}.im = (handles.MR_PCA_RL.*repmat(mask,1,1,1,size(handles.MR_PCA_RL,4)))*-1;
+            v{2}.im = (handles.MR_PCA_FH.*repmat(mask,1,1,1,size(handles.MR_PCA_FH,4)))*-1;
+            v{1}.im = (handles.MR_PCA_AP.*repmat(mask,1,1,1,size(handles.MR_PCA_AP,4)));
+        end
+
+    handles.v_for_plot = v;
+    handles.mask_for_plot = mask;
+
+    % we extract the voxelization using binsurface iso2mesh
+    [node_bin,elem_bin] = binsurface(handles.mask_for_plot);
+
+
+    axes(handles.axes1);
+    plot(0.0)
+    set(handles.uipanel2,'BackgroundColor',[1,1,1])
+
+
+    %visu_mask_inlet_outlet(handles.v_for_plot, handles.mask_for_plot, handles.inlet_for_plot, handles.outlet_for_plot, handles.n_inlet_for_plot, handles.n_outlet_for_plot)
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % visualization of the velocities vector field %%%%%%%%%%%%%%%%
+    % David Marlevi code %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    % code
+    time = 5;
+    n = sum(sum(sum(handles.mask_for_plot)));
+    pt = zeros(n,3);
+    V = zeros(n,3);
+
+    n = 0;
+    for i = 1:size(handles.mask_for_plot,1)
+       for j = 1:size(handles.mask_for_plot,2)
+           for k = 1:size(handles.mask_for_plot,3)
+               if(handles.mask_for_plot(i,j,k) ~= 1)
+                   continue
+               end
+
+               n = n + 1;
+               pt(n,:) = [i, j, k];
+               V(n,:) = [handles.v_for_plot{1}.im(i,j,k,time), handles.v_for_plot{2}.im(i,j,k,time), handles.v_for_plot{3}.im(i,j,k,time)];
+           end
+       end
+    end
+
+    vs = 10;
+    jump = 1;
+    q = quiver3(pt(1:jump:end,1),pt(1:jump:end,2),pt(1:jump:end,3),vs*V(1:jump:end,1),vs*V(1:jump:end,2),vs*V(1:jump:end,3), 'Linewidth',1);
+    mag_vel = sqrt(sum(V(1:jump:end,:).^2,2));
+    currentColormap = colormap(handles.axes1,'jet');
+    [~, ~, ind] = histcounts(mag_vel(:), size(currentColormap, 1));
+    handles.cmap = uint8(ind2rgb(ind, currentColormap) * 255);
+    handles.cmap(:,:,4) = 255;
+    handles.cmap = permute(repmat(handles.cmap, [1 3 1]), [2 1 3]);
+    set(q.Head, 'ColorBinding', 'interpolated', 'ColorData', reshape(handles.cmap(1:3,:,:), [], 4).');
+    set(q.Tail, 'ColorBinding', 'interpolated', 'ColorData', reshape(handles.cmap(1:2,:,:), [], 4).');
+    c = colorbar(handles.axes1);
+    handles.min_vel = min(mag_vel(:));
+    handles.max_vel = max(mag_vel(:));
+    handles.mean_vel = (handles.min_vel + handles.max_vel)/2;
+    c.LimitsMode = 'manual';
+    c.Limits = [handles.min_vel handles.max_vel];
+    c.Ticks = [handles.min_vel, (handles.min_vel + handles.mean_vel)/2, handles.mean_vel, (handles.max_vel + handles.mean_vel)/2, handles.max_vel];
+    c.TickLabels = {num2str(handles.min_vel,'%0.2f'), num2str((handles.min_vel + handles.mean_vel)/2,'%0.2f'), num2str(handles.mean_vel,'%0.2f'), num2str((handles.max_vel + handles.mean_vel)/2,'%0.2f'), num2str(handles.max_vel,'%0.2f')};
+    c.Color = [0 0 0]; % color
+    c.FontWeight = 'bold';
+    c.Label.String = 'Velocity [m/s]';
+    c.FontSize = 11;
+    c.Label.FontSize = 14;
+    c.Label.FontWeight = 'bold';
+    c.Label.Color = [0 0 0];% color
+    caxis(handles.axes1, [handles.min_vel handles.max_vel]);
+    axis equal
+    q.AutoScale='off';
+
+    hold on
+
+    % binsurface plot
+    trisurf(elem_bin,node_bin(:,1)+0.5,node_bin(:,2)+0.5,node_bin(:,3)+0.5, 'facecolor','none');
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % visualization of the velocities vector field %%%%%%%%%%%%%%%%
+    % David Marlevi code %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    xlabel('A-P', 'Fontsize', 14,'FontWeight','bold')
+    ylabel('F-H', 'Fontsize', 14,'FontWeight','bold')
+    zlabel('R-L', 'Fontsize', 14,'FontWeight','bold')
+    title('Vector Field','Fontsize', 16,'FontWeight','bold')
+    hold off
+    grid on
+    daspect([1,1,1])
+    view(3)
+
+    set(handles.slider1,'visible','off')
+    set(handles.text1,'visible','off')
+    set(handles.popupmenu1,'value',1)
+    set(handles.popupmenu3,'value',1)
+    
+
+    handles.SEG_for_vwerp = mask;
+    
+handles.output = hObject;
+guidata(hObject, handles);
+
 
 % --- Executes on button press in pushbutton11.
 function pushbutton11_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton11 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Erode
+
+    % adjusting values for plot
+    mask = handles.SEG_for_vwerp;
+    
+    % we erode the mask in one voxel
+    se = strel('sphere',1);
+    mask = imerode(mask, se);
+
+    % adjusting the velocities
+        v = [];
+        if max(abs(handles.MR_PCA_FH(:)))>10
+            v{3}.im = (handles.MR_PCA_RL.*repmat(mask,1,1,1,size(handles.MR_PCA_RL,4))/100)*-1;
+            v{2}.im = (handles.MR_PCA_FH.*repmat(mask,1,1,1,size(handles.MR_PCA_FH,4))/100)*-1;
+            v{1}.im = (handles.MR_PCA_AP.*repmat(mask,1,1,1,size(handles.MR_PCA_AP,4))/100);
+        else
+            v{3}.im = (handles.MR_PCA_RL.*repmat(mask,1,1,1,size(handles.MR_PCA_RL,4)))*-1;
+            v{2}.im = (handles.MR_PCA_FH.*repmat(mask,1,1,1,size(handles.MR_PCA_FH,4)))*-1;
+            v{1}.im = (handles.MR_PCA_AP.*repmat(mask,1,1,1,size(handles.MR_PCA_AP,4)));
+        end
+
+    handles.v_for_plot = v;
+    handles.mask_for_plot = mask;
+
+    % we extract the voxelization using binsurface iso2mesh
+    [node_bin,elem_bin] = binsurface(handles.mask_for_plot);
+
+
+    axes(handles.axes1);
+    plot(0.0)
+    set(handles.uipanel2,'BackgroundColor',[1,1,1])
+
+
+    %visu_mask_inlet_outlet(handles.v_for_plot, handles.mask_for_plot, handles.inlet_for_plot, handles.outlet_for_plot, handles.n_inlet_for_plot, handles.n_outlet_for_plot)
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % visualization of the velocities vector field %%%%%%%%%%%%%%%%
+    % David Marlevi code %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    % code
+    time = 5;
+    n = sum(sum(sum(handles.mask_for_plot)));
+    pt = zeros(n,3);
+    V = zeros(n,3);
+
+    n = 0;
+    for i = 1:size(handles.mask_for_plot,1)
+       for j = 1:size(handles.mask_for_plot,2)
+           for k = 1:size(handles.mask_for_plot,3)
+               if(handles.mask_for_plot(i,j,k) ~= 1)
+                   continue
+               end
+
+               n = n + 1;
+               pt(n,:) = [i, j, k];
+               V(n,:) = [handles.v_for_plot{1}.im(i,j,k,time), handles.v_for_plot{2}.im(i,j,k,time), handles.v_for_plot{3}.im(i,j,k,time)];
+           end
+       end
+    end
+
+    vs = 10;
+    jump = 1;
+    q = quiver3(pt(1:jump:end,1),pt(1:jump:end,2),pt(1:jump:end,3),vs*V(1:jump:end,1),vs*V(1:jump:end,2),vs*V(1:jump:end,3), 'Linewidth',1);
+    mag_vel = sqrt(sum(V(1:jump:end,:).^2,2));
+    currentColormap = colormap(handles.axes1,'jet');
+    [~, ~, ind] = histcounts(mag_vel(:), size(currentColormap, 1));
+    handles.cmap = uint8(ind2rgb(ind, currentColormap) * 255);
+    handles.cmap(:,:,4) = 255;
+    handles.cmap = permute(repmat(handles.cmap, [1 3 1]), [2 1 3]);
+    set(q.Head, 'ColorBinding', 'interpolated', 'ColorData', reshape(handles.cmap(1:3,:,:), [], 4).');
+    set(q.Tail, 'ColorBinding', 'interpolated', 'ColorData', reshape(handles.cmap(1:2,:,:), [], 4).');
+    c = colorbar(handles.axes1);
+    handles.min_vel = min(mag_vel(:));
+    handles.max_vel = max(mag_vel(:));
+    handles.mean_vel = (handles.min_vel + handles.max_vel)/2;
+    c.LimitsMode = 'manual';
+    c.Limits = [handles.min_vel handles.max_vel];
+    c.Ticks = [handles.min_vel, (handles.min_vel + handles.mean_vel)/2, handles.mean_vel, (handles.max_vel + handles.mean_vel)/2, handles.max_vel];
+    c.TickLabels = {num2str(handles.min_vel,'%0.2f'), num2str((handles.min_vel + handles.mean_vel)/2,'%0.2f'), num2str(handles.mean_vel,'%0.2f'), num2str((handles.max_vel + handles.mean_vel)/2,'%0.2f'), num2str(handles.max_vel,'%0.2f')};
+    c.Color = [0 0 0]; % color
+    c.FontWeight = 'bold';
+    c.Label.String = 'Velocity [m/s]';
+    c.FontSize = 11;
+    c.Label.FontSize = 14;
+    c.Label.FontWeight = 'bold';
+    c.Label.Color = [0 0 0];% color
+    caxis(handles.axes1, [handles.min_vel handles.max_vel]);
+    axis equal
+    q.AutoScale='off';
+
+    hold on
+
+    % binsurface plot
+    trisurf(elem_bin,node_bin(:,1)+0.5,node_bin(:,2)+0.5,node_bin(:,3)+0.5, 'facecolor','none');
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % visualization of the velocities vector field %%%%%%%%%%%%%%%%
+    % David Marlevi code %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    xlabel('A-P', 'Fontsize', 14,'FontWeight','bold')
+    ylabel('F-H', 'Fontsize', 14,'FontWeight','bold')
+    zlabel('R-L', 'Fontsize', 14,'FontWeight','bold')
+    title('Vector Field','Fontsize', 16,'FontWeight','bold')
+    hold off
+    grid on
+    daspect([1,1,1])
+    view(3)
+
+    set(handles.slider1,'visible','off')
+    set(handles.text1,'visible','off')
+    set(handles.popupmenu1,'value',1)
+    set(handles.popupmenu3,'value',1)
+    
+
+    handles.SEG_for_vwerp = mask;
+    
+handles.output = hObject;
+guidata(hObject, handles);

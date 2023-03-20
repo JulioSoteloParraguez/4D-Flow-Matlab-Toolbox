@@ -13452,6 +13452,8 @@ function uipushtool1_ClickedCallback(hObject, eventdata, handles)
         end
         
     end
+    
+handles.ANG = handles.IPCMRA; % Julio Sotelo 20-03-2023
 handles.output = hObject;
 guidata(hObject, handles);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -13904,7 +13906,7 @@ function uipushtool4_ClickedCallback(hObject, eventdata, handles)
                 GUIDE_SEGMENTATION(input)
                 input.SEG = getappdata(0,'SEG');
                 input.idangmag = getappdata(0,'idangmag');
-                input.IPCMRA = getappdata(0,'IPCMRA');
+%                 input.IPCMRA = getappdata(0,'IPCMRA');
                 input.L = getappdata(0,'L');
                 input.NUM = getappdata(0,'NUM');
                 input.Lrgb = getappdata(0,'Lrgb');
@@ -18402,6 +18404,7 @@ function pushbutton83_Callback(hObject, eventdata, handles)
     %%% vWERP Quantification
     input                       = [];
     input.SEG                   = handles.SEG;
+    input.SEG_for_vwerp         = handles.SEG;
     input.IPCMRA                = handles.IPCMRA;
     input.voxel_MR              = handles.voxel_MR;
     input.L                     = handles.L;
@@ -18466,6 +18469,8 @@ function pushbutton83_Callback(hObject, eventdata, handles)
         input.id_view = getappdata(0,'id_view');
         input.id_ipcmra = getappdata(0,'id_ipcmra');
         input.id_mag = getappdata(0,'id_mag');
+        
+        input.SEG_for_vwerp = getappdata(0,'SEG_for_vwerp');
         
         input.slider_id_axes1 = getappdata(0,'slider_id_axes1');
         
