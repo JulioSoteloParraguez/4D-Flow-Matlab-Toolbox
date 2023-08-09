@@ -2880,6 +2880,7 @@ function pushbutton13_Callback(hObject, eventdata, handles)
     
     [out] = FAST_FEM(input); % Change
     
+    handles.GR = out.GR; % Derivative values of velocity
     handles.Ten = out.Ten;
     handles.normal = out.normal;
     handles.IWSS = out.IWSS;
@@ -12137,6 +12138,8 @@ function Save_Data_Callback(hObject, eventdata, handles)
                 if handles.save_selection(7,1)==1
                     mkdir([directory,'/MATLAB FILES/FE WSS/'])
                     WSS = handles.WSS;
+                    VEL_DERIV = handles.GR;
+                    save([directory,'/MATLAB FILES/FE Velocity/VEL_DERIV.mat'],'VEL_DERIV')
                     save([directory,'/MATLAB FILES/FE WSS/WSS.mat'],'WSS')
                     waitbar(st/ sum(handles.save_selection(:,1)),h,['Saving MAT Files ',num2str(st),' files of ',num2str(sum(handles.save_selection(:,1))),' ...']);
                     st = st+steps;
@@ -18783,13 +18786,56 @@ input.MR_PCA_FH = handles.MR_PCA_FH;
 input.MR_PCA_AP = handles.MR_PCA_AP;
 input.MR_PCA_RL = handles.MR_PCA_RL;
 input.SEG = handles.SEG;
-input.Centerline = handles.centerline; 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+input.Centerline = handles.centerline; % centerline
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % for points location %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 input.faces = handles.faces;
 input.nodes = handles.nodes;
 input.elem = handles.elem;
 input.Laplace = handles.Laplace;
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+input.area                  = handles.area;
+input.curvature             = handles.curvature;
+input.diameter              = handles.diameter;
+input.ellipticity           = handles.ellipticity;
+input.flattening            = handles.flattening;
+input.radius                = handles.radius;
+input.eccentricity          = handles.eccentricity;
+input.OSI                   = handles.OSI;
+input.regurgitant_flow      = handles.regurgitant_flow;
+input.axial_circulation     = handles.axial_circulation;
+input.WSS                   = handles.WSS;
+input.WSS_A                 = handles.WSS_A;
+input.WSS_C                 = handles.WSS_C;
+input.angle_axial_direction = handles.angle_axial_direction;
+input.HD                    = handles.HD;
+input.mags_ke               = handles.mags_ke;
+input.RHD                   = handles.RHD;
+input.mags_vd               = handles.mags_vd;
+input.mags_el               = handles.mags_el;
+input.forward_vortex        = handles.forward_vortex;
+input.backward_velocity     = handles.backward_velocity;
+input.forward_velocity      = handles.forward_velocity;
+        input.veset                 = handles.veset;
+        input.VOR                   = handles.VOR;
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% this parameter is to project the velocity to the axial direction
+input.axial_unit_vectors    = handles.axial_unit_vectors;
+input.time                  = handles.time;
+input.peak_flow             = handles.peak_flow;
 
 f = GUIDE_SAW(input);
 
