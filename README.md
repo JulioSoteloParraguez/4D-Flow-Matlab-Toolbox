@@ -87,3 +87,5 @@ Matlab-based toolkit to extract the spatio-temporal maps of pressure differences
 Google Scholar: https://scholar.google.com/citations?user=aqhjvOQAAAAJ&hl=es&authuser=3
 
 Researchgate: https://www.researchgate.net/profile/Julio_Sotelo3
+
+Linkedin: https://cl.linkedin.com/in/juliosoteloparraguez
