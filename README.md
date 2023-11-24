@@ -33,7 +33,7 @@ c) unzip the zip file (iso2mesh), for the system version that you are using, and
 
 d) To excecute the app go to the app folder and write "run GUIDE_4D_FLOW.m" in the MATLAB command windows.
 
-To include the vWERP module: You can contact to David Marlevi (david.marlevi@ki.se), the author of this method and request the "vWERP/" folder that has to go inside the 4D flow APP folder.
+To include the vWERP module: You can contact to David Marlevi (david.marlevi@ki.se), the author of this method and request the "vWERP/" folder that need to be included inside the 4D flow APP folder.
 
 To obtain more information about SAW method, please visit (http://cmib.website/resources/#PressMapTk).
 
