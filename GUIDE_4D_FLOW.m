@@ -2,17 +2,20 @@ function varargout = GUIDE_4D_FLOW(varargin)
 % GUIDE_4D_FLOW MATLAB code for GUIDE_4D_FLOW.fig
 % This code is develop by Dr. Julio Sotelo, that together with 
 % Dr. Sergio Uribe and Dr. Daniel Hurtado, have been working in Cardiac MR 
-% and particularly in the quantification of 4D flow data for about 7 years 
-% iaddpath(genpath('vWERP/'));n the Biomedical Imaging center at Universidad Catolica of Chile
+% and particularly in the quantification of 4D flow data for about 10 years 
+% at the Biomedical Imaging center at Universidad Catolica of Chile
 % (www.mri.cl).
 % We have developed a methodology for the non-invasive quantification of 
 % hemodynamics from 4D flow data sets based on Finite Elements methods. 
 % This technique is unique and is possible obtain several hemodynamic 
 % parameters in 3D as WSS, OSI, vorticity, helicity density, relative helicity
 % density, viscouss dissipation, energy loss and kinetic energy. 
+% Currently Dr. Julio Sotelo, is part of the Department of Computer
+% Engineering at Universidad Técnica Federico Santa María, one of the best 
+% Universities in Chile in Engineering.  
 %   Author:      Dr. Julio Sotelo
-%   Time-stamp:  2019-06-06
-%   E-mail:      jasotelo@uc.cl
+%   Time-stamp:  2023-11-24
+%   E-mail:      julio.sotelo@usm.cl
 gui_Singleton = 1; 
 gui_State = struct('gui_Name',       mfilename, ...
                    'gui_Singleton',  gui_Singleton, ...
@@ -40,7 +43,7 @@ function GUIDE_4D_FLOW_OpeningFcn(hObject, eventdata, handles, varargin)
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Showing the logo image %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    txt = 'Symbols/LOGO.tiff';
+    txt = 'Symbols/LOGO.png';
     imlogo = imread(txt);
     [av,bv,~] = size(imlogo);
     windows_screen_size = get(0,'ScreenSize');
@@ -18827,8 +18830,8 @@ input.mags_el               = handles.mags_el;
 input.forward_vortex        = handles.forward_vortex;
 input.backward_velocity     = handles.backward_velocity;
 input.forward_velocity      = handles.forward_velocity;
-        input.veset                 = handles.veset;
-        input.VOR                   = handles.VOR;
+input.veset                 = handles.veset;
+input.VOR                   = handles.VOR;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
