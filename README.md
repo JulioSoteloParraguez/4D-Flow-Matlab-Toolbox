@@ -3,7 +3,7 @@
 ![fcvm-09-885338-g001](https://user-images.githubusercontent.com/75703824/196751007-3f58efda-eefc-4b39-ac8a-b40c3217af2b.jpg)
 
 
-This code was developed by Dr. Julio Sotelo (Professor at the Departamento of Computer Engineering at Universidad Técnica Federico Santa María https://usm.cl/en/home/), as part of his PhD thesis and also his postdoctoral research, guided by the professors Dr. Sergio Uribe and Dr. Daniel Hurtado, at the Pontificia Universidad Católica de Chile (https://www.uc.cl/). It is also part of the contribution developed by the Center for Biomedical Imaging (www.mri.cl) and Nucleo Milenio CardioMR. We have developed a methodology for the non-invasive quantification of hemodynamics and geometrical parameters from 4D flow data sets based on Finite Elements methods. [Reference 1 to 6]
+This code was developed by Dr. Julio Sotelo (Professor at the Departament of Computer Engineering at Universidad Técnica Federico Santa María https://usm.cl/en/home/), as part of his PhD thesis and also his postdoctoral research, guided by the professors Dr. Sergio Uribe and Dr. Daniel Hurtado, at the Pontificia Universidad Católica de Chile (https://www.uc.cl/). It is also part of the contribution developed by the Center for Biomedical Imaging (www.mri.cl) and Nucleo Milenio CardioMR. We have developed a methodology for the non-invasive quantification of hemodynamics and geometrical parameters from 4D flow data sets based on Finite Elements methods. [Reference 1 to 6]
 
 Also we include aditional Matlab-based toolkits to extract the pressure differences from 4D flow MRI images, developed by colaborators at Karolinska Institutet's and King's College London (KCL).
 
