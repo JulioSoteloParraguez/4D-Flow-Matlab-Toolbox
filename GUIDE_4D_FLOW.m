@@ -10468,6 +10468,7 @@ function Load_Folder_Callback(hObject, eventdata, handles)
                 input.IPCMRA = getappdata(0,'IPCMRA');
                 input.id = getappdata(0,'id');
                 id_while = getappdata(0,'id_while');
+                pause(0.05)
             end
             handles.VENC = getappdata(0,'VENC');
             handles.voxel_MR = getappdata(0,'voxel_MR');
@@ -10480,6 +10481,7 @@ function Load_Folder_Callback(hObject, eventdata, handles)
             handles.MR_PCA_AP = getappdata(0,'MR_PCA_AP');
             handles.MR_PCA_RL = getappdata(0,'MR_PCA_RL');
             handles.IPCMRA = getappdata(0,'IPCMRA');
+            pause(0.05)
             break
         end
         % load data offset error JSOTELO
@@ -11991,6 +11993,7 @@ function Save_Data_Callback(hObject, eventdata, handles)
                     input.NODES_SECTION = getappdata(0,'NODES_SECTION');% incorporated 25012023
                     
                     handles.NODES_SECTION = input.NODES_SECTION;
+                    pause(0.05)
 
                 end
                 
@@ -13378,6 +13381,7 @@ function uipushtool1_ClickedCallback(hObject, eventdata, handles)
             colormap gray
             axis off
             daspect([1 1 1])
+            pause(0.05)
         end
         
     elseif (handles.id_ang == 0) && (handles.id_mag == 1)% Julio Sotelo 23-11-2018
@@ -13455,6 +13459,7 @@ function uipushtool1_ClickedCallback(hObject, eventdata, handles)
             colormap gray
             axis off
             daspect([1 1 1])
+            pause(0.05)
         end
         
     end
@@ -13921,6 +13926,7 @@ function uipushtool4_ClickedCallback(hObject, eventdata, handles)
                 input.slider_axes3  = getappdata(0,'slider_axes3');
                 input.view_sac  = getappdata(0,'view_sac');
                 id_while = getappdata(0,'id_while');
+                pause(0.05)
             end
             handles.SEG = input.SEG;
             handles.L = input.L;
@@ -13940,6 +13946,7 @@ function uipushtool4_ClickedCallback(hObject, eventdata, handles)
                 set(handles.pushbutton12,'visible','on');
                 break
             end
+            pause(0.05)
         end
         
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -16062,7 +16069,7 @@ function pushbutton62_Callback(hObject, eventdata, handles)
         handles.flattening                      = getappdata(0,'flattening'); % Julio Sotelo 28-05-2019
         handles.area                            = getappdata(0,'area'); % Julio Sotelo 28-05-2019
         handles.axial_circulation               = getappdata(0,'axial_circulation'); % Julio Sotelo 28-05-2019
-        
+       
         if id_while ==1
             
             if isempty(handles.Laplace)==0
@@ -16333,6 +16340,7 @@ function pushbutton62_Callback(hObject, eventdata, handles)
                 msgbox('The Laplace equation have not been calculated ...','Warning','warn')
             end
         end
+        pause(0.05)
     end
 
    
@@ -16434,36 +16442,70 @@ function pushbutton63_Callback(hObject, eventdata, handles)
     if handles.slider_axes1 ==1, handles.slider_axes1_voxel = handles.voxel_MR(3); else handles.slider_axes1_voxel = handles.slider_axes1*handles.voxel_MR(3); end
     if handles.slider_axes2 ==1, handles.slider_axes2_voxel = handles.voxel_MR(2); else handles.slider_axes2_voxel = handles.slider_axes2*handles.voxel_MR(2); end
     if handles.slider_axes3 ==1, handles.slider_axes3_voxel = handles.voxel_MR(1); else handles.slider_axes3_voxel = handles.slider_axes3*handles.voxel_MR(1); end
-    axes(handles.axes1);
-    imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.IPCMRA(:,:,handles.slider_axes1)))
-    hold on
-    plot([handles.yd(1,1),handles.yd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
-    plot([handles.slider_axes2_voxel,handles.slider_axes2_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--r','Linewidth',1)
-    hold off
-    axis image
-    colormap gray
-    axis off
-    daspect([1 1 1])
-    axes(handles.axes2);
-    imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.IPCMRA(:,handles.slider_axes2,:)))
-    hold on
-    plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
-    plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--g','Linewidth',1)
-    hold off
-    axis image
-    colormap gray
-    axis off
-    daspect([1 1 1])
-    axes(handles.axes3);
-    imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',squeeze(handles.IPCMRA(handles.slider_axes3,:,:)))
-    hold on
-    plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes2_voxel,handles.slider_axes2_voxel]','--r','Linewidth',1)
-    plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.yd(1,1),handles.yd(end,end)]','--g','Linewidth',1)
-    hold off
-    axis image
-    colormap gray
-    axis off
-    daspect([1 1 1])
+    
+    if handles.id_ang==1
+        axes(handles.axes1);
+        imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.IPCMRA(:,:,handles.slider_axes1)))
+        hold on
+        plot([handles.yd(1,1),handles.yd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
+        plot([handles.slider_axes2_voxel,handles.slider_axes2_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--r','Linewidth',1)
+        hold off
+        axis image
+        colormap gray
+        axis off
+        daspect([1 1 1])
+        axes(handles.axes2);
+        imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.IPCMRA(:,handles.slider_axes2,:)))
+        hold on
+        plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
+        plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--g','Linewidth',1)
+        hold off
+        axis image
+        colormap gray
+        axis off
+        daspect([1 1 1])
+        axes(handles.axes3);
+        imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',squeeze(handles.IPCMRA(handles.slider_axes3,:,:)))
+        hold on
+        plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes2_voxel,handles.slider_axes2_voxel]','--r','Linewidth',1)
+        plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.yd(1,1),handles.yd(end,end)]','--g','Linewidth',1)
+        hold off
+        axis image
+        colormap gray
+        axis off
+        daspect([1 1 1])
+    else
+        axes(handles.axes1);
+        imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.MAG(:,:,handles.slider_axes1)))
+        hold on
+        plot([handles.yd(1,1),handles.yd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
+        plot([handles.slider_axes2_voxel,handles.slider_axes2_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--r','Linewidth',1)
+        hold off
+        axis image
+        colormap gray
+        axis off
+        daspect([1 1 1])
+        axes(handles.axes2);
+        imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.MAG(:,handles.slider_axes2,:)))
+        hold on
+        plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
+        plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--g','Linewidth',1)
+        hold off
+        axis image
+        colormap gray
+        axis off
+        daspect([1 1 1])
+        axes(handles.axes3);
+        imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',squeeze(handles.MAG(handles.slider_axes3,:,:)))
+        hold on
+        plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes2_voxel,handles.slider_axes2_voxel]','--r','Linewidth',1)
+        plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.yd(1,1),handles.yd(end,end)]','--g','Linewidth',1)
+        hold off
+        axis image
+        colormap gray
+        axis off
+        daspect([1 1 1])
+    end
     slider_step(1) = 1/c;
     slider_step(2) = 0.1;
     set(handles.slider1,'Value', round(c/2)/c,'sliderstep',slider_step,'max',1,'min',0)
@@ -16578,36 +16620,70 @@ function pushbutton64_Callback(hObject, eventdata, handles)
     if handles.slider_axes1 ==1, handles.slider_axes1_voxel = handles.voxel_MR(3); else handles.slider_axes1_voxel = handles.slider_axes1*handles.voxel_MR(3); end
     if handles.slider_axes2 ==1, handles.slider_axes2_voxel = handles.voxel_MR(2); else handles.slider_axes2_voxel = handles.slider_axes2*handles.voxel_MR(2); end
     if handles.slider_axes3 ==1, handles.slider_axes3_voxel = handles.voxel_MR(1); else handles.slider_axes3_voxel = handles.slider_axes3*handles.voxel_MR(1); end
-    axes(handles.axes1);
-    imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.IPCMRA(:,:,handles.slider_axes1)))
-    hold on
-    plot([handles.yd(1,1),handles.yd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
-    plot([handles.slider_axes2_voxel,handles.slider_axes2_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--r','Linewidth',1)
-    hold off
-    axis image
-    colormap gray
-    axis off
-    daspect([1 1 1])
-    axes(handles.axes2);
-    imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.IPCMRA(:,handles.slider_axes2,:)))
-    hold on
-    plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
-    plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--g','Linewidth',1)
-    hold off
-    axis image
-    colormap gray
-    axis off
-    daspect([1 1 1])
-    axes(handles.axes3);
-    imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',squeeze(handles.IPCMRA(handles.slider_axes3,:,:)))
-    hold on
-    plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes2_voxel,handles.slider_axes2_voxel]','--r','Linewidth',1)
-    plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.yd(1,1),handles.yd(end,end)]','--g','Linewidth',1)
-    hold off
-    axis image
-    colormap gray
-    axis off
-    daspect([1 1 1])
+    
+    if handles.id_ang==1
+        axes(handles.axes1);
+        imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.IPCMRA(:,:,handles.slider_axes1)))
+        hold on
+        plot([handles.yd(1,1),handles.yd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
+        plot([handles.slider_axes2_voxel,handles.slider_axes2_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--r','Linewidth',1)
+        hold off
+        axis image
+        colormap gray
+        axis off
+        daspect([1 1 1])
+        axes(handles.axes2);
+        imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.IPCMRA(:,handles.slider_axes2,:)))
+        hold on
+        plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
+        plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--g','Linewidth',1)
+        hold off
+        axis image
+        colormap gray
+        axis off
+        daspect([1 1 1])
+        axes(handles.axes3);
+        imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',squeeze(handles.IPCMRA(handles.slider_axes3,:,:)))
+        hold on
+        plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes2_voxel,handles.slider_axes2_voxel]','--r','Linewidth',1)
+        plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.yd(1,1),handles.yd(end,end)]','--g','Linewidth',1)
+        hold off
+        axis image
+        colormap gray
+        axis off
+        daspect([1 1 1])
+    else
+        axes(handles.axes1);
+        imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.MAG(:,:,handles.slider_axes1)))
+        hold on
+        plot([handles.yd(1,1),handles.yd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
+        plot([handles.slider_axes2_voxel,handles.slider_axes2_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--r','Linewidth',1)
+        hold off
+        axis image
+        colormap gray
+        axis off
+        daspect([1 1 1])
+        axes(handles.axes2);
+        imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.MAG(:,handles.slider_axes2,:)))
+        hold on
+        plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
+        plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--g','Linewidth',1)
+        hold off
+        axis image
+        colormap gray
+        axis off
+        daspect([1 1 1])
+        axes(handles.axes3);
+        imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',squeeze(handles.MAG(handles.slider_axes3,:,:)))
+        hold on
+        plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes2_voxel,handles.slider_axes2_voxel]','--r','Linewidth',1)
+        plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.yd(1,1),handles.yd(end,end)]','--g','Linewidth',1)
+        hold off
+        axis image
+        colormap gray
+        axis off
+        daspect([1 1 1])
+    end
     slider_step(1) = 1/c;
     slider_step(2) = 0.1;
     set(handles.slider1,'Value', round(c/2)/c,'sliderstep',slider_step,'max',1,'min',0)
@@ -16722,36 +16798,72 @@ function pushbutton65_Callback(hObject, eventdata, handles)
     if handles.slider_axes1 ==1, handles.slider_axes1_voxel = handles.voxel_MR(3); else handles.slider_axes1_voxel = handles.slider_axes1*handles.voxel_MR(3); end
     if handles.slider_axes2 ==1, handles.slider_axes2_voxel = handles.voxel_MR(2); else handles.slider_axes2_voxel = handles.slider_axes2*handles.voxel_MR(2); end
     if handles.slider_axes3 ==1, handles.slider_axes3_voxel = handles.voxel_MR(1); else handles.slider_axes3_voxel = handles.slider_axes3*handles.voxel_MR(1); end
-    axes(handles.axes1);
-    imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.IPCMRA(:,:,handles.slider_axes1)))
-    hold on
-    plot([handles.yd(1,1),handles.yd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
-    plot([handles.slider_axes2_voxel,handles.slider_axes2_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--r','Linewidth',1)
-    hold off
-    axis image
-    colormap gray
-    axis off
-    daspect([1 1 1])
-    axes(handles.axes2);
-    imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.IPCMRA(:,handles.slider_axes2,:)))
-    hold on
-    plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
-    plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--g','Linewidth',1)
-    hold off
-    axis image
-    colormap gray
-    axis off
-    daspect([1 1 1])
-    axes(handles.axes3);
-    imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',squeeze(handles.IPCMRA(handles.slider_axes3,:,:)))
-    hold on
-    plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes2_voxel,handles.slider_axes2_voxel]','--r','Linewidth',1)
-    plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.yd(1,1),handles.yd(end,end)]','--g','Linewidth',1)
-    hold off
-    axis image
-    colormap gray
-    axis off
-    daspect([1 1 1])
+    
+    if handles.id_ang==1
+        axes(handles.axes1);
+        imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.IPCMRA(:,:,handles.slider_axes1)))
+        hold on
+        plot([handles.yd(1,1),handles.yd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
+        plot([handles.slider_axes2_voxel,handles.slider_axes2_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--r','Linewidth',1)
+        hold off
+        axis image
+        colormap gray
+        axis off
+        daspect([1 1 1])
+        axes(handles.axes2);
+        imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.IPCMRA(:,handles.slider_axes2,:)))
+        hold on
+        plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
+        plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--g','Linewidth',1)
+        hold off
+        axis image
+        colormap gray
+        axis off
+        daspect([1 1 1])
+        axes(handles.axes3);
+        imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',squeeze(handles.IPCMRA(handles.slider_axes3,:,:)))
+        hold on
+        plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes2_voxel,handles.slider_axes2_voxel]','--r','Linewidth',1)
+        plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.yd(1,1),handles.yd(end,end)]','--g','Linewidth',1)
+        hold off
+        axis image
+        colormap gray
+        axis off
+        daspect([1 1 1])
+    else
+
+        axes(handles.axes1);
+        imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.MAG(:,:,handles.slider_axes1)))
+        hold on
+        plot([handles.yd(1,1),handles.yd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
+        plot([handles.slider_axes2_voxel,handles.slider_axes2_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--r','Linewidth',1)
+        hold off
+        axis image
+        colormap gray
+        axis off
+        daspect([1 1 1])
+        axes(handles.axes2);
+        imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.MAG(:,handles.slider_axes2,:)))
+        hold on
+        plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
+        plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--g','Linewidth',1)
+        hold off
+        axis image
+        colormap gray
+        axis off
+        daspect([1 1 1])
+        axes(handles.axes3);
+        imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',squeeze(handles.MAG(handles.slider_axes3,:,:)))
+        hold on
+        plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes2_voxel,handles.slider_axes2_voxel]','--r','Linewidth',1)
+        plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.yd(1,1),handles.yd(end,end)]','--g','Linewidth',1)
+        hold off
+        axis image
+        colormap gray
+        axis off
+        daspect([1 1 1])
+
+    end
     slider_step(1) = 1/c;
     slider_step(2) = 0.1;
     set(handles.slider1,'Value', round(c/2)/c,'sliderstep',slider_step,'max',1,'min',0)
@@ -16866,28 +16978,52 @@ function pushbutton66_Callback(hObject, eventdata, handles)
     if handles.slider_axes1 ==1, handles.slider_axes1_voxel = handles.voxel_MR(3); else handles.slider_axes1_voxel = handles.slider_axes1*handles.voxel_MR(3); end
     if handles.slider_axes2 ==1, handles.slider_axes2_voxel = handles.voxel_MR(2); else handles.slider_axes2_voxel = handles.slider_axes2*handles.voxel_MR(2); end
     if handles.slider_axes3 ==1, handles.slider_axes3_voxel = handles.voxel_MR(1); else handles.slider_axes3_voxel = handles.slider_axes3*handles.voxel_MR(1); end
-    axes(handles.axes1);
-    imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.IPCMRA(:,:,handles.slider_axes1)))
-    hold on
-    plot([handles.yd(1,1),handles.yd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
-    plot([handles.slider_axes2_voxel,handles.slider_axes2_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--r','Linewidth',1)
-    hold off
-    axis image
-    colormap gray
-    axis off
-    daspect([1 1 1])
-    axes(handles.axes2);
-    imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.IPCMRA(:,handles.slider_axes2,:)))
-    hold on
-    plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
-    plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--g','Linewidth',1)
-    hold off
-    axis image
-    colormap gray
-    axis off
-    daspect([1 1 1])
+    
+    if handles.id_ang==1
+        axes(handles.axes1);
+        imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.IPCMRA(:,:,handles.slider_axes1)))
+        hold on
+        plot([handles.yd(1,1),handles.yd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
+        plot([handles.slider_axes2_voxel,handles.slider_axes2_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--r','Linewidth',1)
+        hold off
+        axis image
+        colormap gray
+        axis off
+        daspect([1 1 1])
+        axes(handles.axes2);
+        imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.IPCMRA(:,handles.slider_axes2,:)))
+        hold on
+        plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
+        plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--g','Linewidth',1)
+        hold off
+        axis image
+        colormap gray
+        axis off
+        daspect([1 1 1])
+    else
+        axes(handles.axes1);
+        imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.MAG(:,:,handles.slider_axes1)))
+        hold on
+        plot([handles.yd(1,1),handles.yd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
+        plot([handles.slider_axes2_voxel,handles.slider_axes2_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--r','Linewidth',1)
+        hold off
+        axis image
+        colormap gray
+        axis off
+        daspect([1 1 1])
+        axes(handles.axes2);
+        imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.MAG(:,handles.slider_axes2,:)))
+        hold on
+        plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
+        plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--g','Linewidth',1)
+        hold off
+        axis image
+        colormap gray
+        axis off
+        daspect([1 1 1])
+    end
     axes(handles.axes3);
-    imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',squeeze(handles.IPCMRA(handles.slider_axes3,:,:)))
+    imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',squeeze(handles.MAG(handles.slider_axes3,:,:)))
     hold on
     plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes2_voxel,handles.slider_axes2_voxel]','--r','Linewidth',1)
     plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.yd(1,1),handles.yd(end,end)]','--g','Linewidth',1)
@@ -17009,36 +17145,70 @@ function pushbutton67_Callback(hObject, eventdata, handles)
     if handles.slider_axes1 ==1, handles.slider_axes1_voxel = handles.voxel_MR(3); else handles.slider_axes1_voxel = handles.slider_axes1*handles.voxel_MR(3); end
     if handles.slider_axes2 ==1, handles.slider_axes2_voxel = handles.voxel_MR(2); else handles.slider_axes2_voxel = handles.slider_axes2*handles.voxel_MR(2); end
     if handles.slider_axes3 ==1, handles.slider_axes3_voxel = handles.voxel_MR(1); else handles.slider_axes3_voxel = handles.slider_axes3*handles.voxel_MR(1); end
-    axes(handles.axes1);
-    imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.IPCMRA(:,:,handles.slider_axes1)))
-    hold on
-    plot([handles.yd(1,1),handles.yd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
-    plot([handles.slider_axes2_voxel,handles.slider_axes2_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--r','Linewidth',1)
-    hold off
-    axis image
-    colormap gray
-    axis off
-    daspect([1 1 1])
-    axes(handles.axes2);
-    imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.IPCMRA(:,handles.slider_axes2,:)))
-    hold on
-    plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
-    plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--g','Linewidth',1)
-    hold off
-    axis image
-    colormap gray
-    axis off
-    daspect([1 1 1])
-    axes(handles.axes3);
-    imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',squeeze(handles.IPCMRA(handles.slider_axes3,:,:)))
-    hold on
-    plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes2_voxel,handles.slider_axes2_voxel]','--r','Linewidth',1)
-    plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.yd(1,1),handles.yd(end,end)]','--g','Linewidth',1)
-    hold off
-    axis image
-    colormap gray
-    axis off
-    daspect([1 1 1])
+    
+    if handles.id_ang==1
+        axes(handles.axes1);
+        imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.IPCMRA(:,:,handles.slider_axes1)))
+        hold on
+        plot([handles.yd(1,1),handles.yd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
+        plot([handles.slider_axes2_voxel,handles.slider_axes2_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--r','Linewidth',1)
+        hold off
+        axis image
+        colormap gray
+        axis off
+        daspect([1 1 1])
+        axes(handles.axes2);
+        imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.IPCMRA(:,handles.slider_axes2,:)))
+        hold on
+        plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
+        plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--g','Linewidth',1)
+        hold off
+        axis image
+        colormap gray
+        axis off
+        daspect([1 1 1])
+        axes(handles.axes3);
+        imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',squeeze(handles.IPCMRA(handles.slider_axes3,:,:)))
+        hold on
+        plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes2_voxel,handles.slider_axes2_voxel]','--r','Linewidth',1)
+        plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.yd(1,1),handles.yd(end,end)]','--g','Linewidth',1)
+        hold off
+        axis image
+        colormap gray
+        axis off
+        daspect([1 1 1])
+    else
+        axes(handles.axes1);
+        imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.MAG(:,:,handles.slider_axes1)))
+        hold on
+        plot([handles.yd(1,1),handles.yd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
+        plot([handles.slider_axes2_voxel,handles.slider_axes2_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--r','Linewidth',1)
+        hold off
+        axis image
+        colormap gray
+        axis off
+        daspect([1 1 1])
+        axes(handles.axes2);
+        imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.MAG(:,handles.slider_axes2,:)))
+        hold on
+        plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
+        plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--g','Linewidth',1)
+        hold off
+        axis image
+        colormap gray
+        axis off
+        daspect([1 1 1])
+        axes(handles.axes3);
+        imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',squeeze(handles.MAG(handles.slider_axes3,:,:)))
+        hold on
+        plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes2_voxel,handles.slider_axes2_voxel]','--r','Linewidth',1)
+        plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.yd(1,1),handles.yd(end,end)]','--g','Linewidth',1)
+        hold off
+        axis image
+        colormap gray
+        axis off
+        daspect([1 1 1])
+    end
     slider_step(1) = 1/c;
     slider_step(2) = 0.1;
     set(handles.slider1,'Value', round(c/2)/c,'sliderstep',slider_step,'max',1,'min',0)
@@ -17152,36 +17322,70 @@ function pushbutton68_Callback(hObject, eventdata, handles)
     if handles.slider_axes1 ==1, handles.slider_axes1_voxel = handles.voxel_MR(3); else handles.slider_axes1_voxel = handles.slider_axes1*handles.voxel_MR(3); end
     if handles.slider_axes2 ==1, handles.slider_axes2_voxel = handles.voxel_MR(2); else handles.slider_axes2_voxel = handles.slider_axes2*handles.voxel_MR(2); end
     if handles.slider_axes3 ==1, handles.slider_axes3_voxel = handles.voxel_MR(1); else handles.slider_axes3_voxel = handles.slider_axes3*handles.voxel_MR(1); end
-    axes(handles.axes1);
-    imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.IPCMRA(:,:,handles.slider_axes1)))
-    hold on
-    plot([handles.yd(1,1),handles.yd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
-    plot([handles.slider_axes2_voxel,handles.slider_axes2_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--r','Linewidth',1)
-    hold off
-    axis image
-    colormap gray
-    axis off
-    daspect([1 1 1])
-    axes(handles.axes2);
-    imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.IPCMRA(:,handles.slider_axes2,:)))
-    hold on
-    plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
-    plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--g','Linewidth',1)
-    hold off
-    axis image
-    colormap gray
-    axis off
-    daspect([1 1 1])
-    axes(handles.axes3);
-    imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',squeeze(handles.IPCMRA(handles.slider_axes3,:,:)))
-    hold on
-    plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes2_voxel,handles.slider_axes2_voxel]','--r','Linewidth',1)
-    plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.yd(1,1),handles.yd(end,end)]','--g','Linewidth',1)
-    hold off
-    axis image
-    colormap gray
-    axis off
-    daspect([1 1 1])
+    
+    if handles.id_ang == 1
+        axes(handles.axes1);
+        imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.IPCMRA(:,:,handles.slider_axes1)))
+        hold on
+        plot([handles.yd(1,1),handles.yd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
+        plot([handles.slider_axes2_voxel,handles.slider_axes2_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--r','Linewidth',1)
+        hold off
+        axis image
+        colormap gray
+        axis off
+        daspect([1 1 1])
+        axes(handles.axes2);
+        imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.IPCMRA(:,handles.slider_axes2,:)))
+        hold on
+        plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
+        plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--g','Linewidth',1)
+        hold off
+        axis image
+        colormap gray
+        axis off
+        daspect([1 1 1])
+        axes(handles.axes3);
+        imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',squeeze(handles.IPCMRA(handles.slider_axes3,:,:)))
+        hold on
+        plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes2_voxel,handles.slider_axes2_voxel]','--r','Linewidth',1)
+        plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.yd(1,1),handles.yd(end,end)]','--g','Linewidth',1)
+        hold off
+        axis image
+        colormap gray
+        axis off
+        daspect([1 1 1])
+    else
+        axes(handles.axes1);
+        imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.MAG(:,:,handles.slider_axes1)))
+        hold on
+        plot([handles.yd(1,1),handles.yd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
+        plot([handles.slider_axes2_voxel,handles.slider_axes2_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--r','Linewidth',1)
+        hold off
+        axis image
+        colormap gray
+        axis off
+        daspect([1 1 1])
+        axes(handles.axes2);
+        imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.MAG(:,handles.slider_axes2,:)))
+        hold on
+        plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
+        plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--g','Linewidth',1)
+        hold off
+        axis image
+        colormap gray
+        axis off
+        daspect([1 1 1])
+        axes(handles.axes3);
+        imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',squeeze(handles.MAG(handles.slider_axes3,:,:)))
+        hold on
+        plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes2_voxel,handles.slider_axes2_voxel]','--r','Linewidth',1)
+        plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.yd(1,1),handles.yd(end,end)]','--g','Linewidth',1)
+        hold off
+        axis image
+        colormap gray
+        axis off
+        daspect([1 1 1])
+    end
     slider_step(1) = 1/c;
     slider_step(2) = 0.1;
     set(handles.slider1,'Value', round(c/2)/c,'sliderstep',slider_step,'max',1,'min',0)
@@ -17413,36 +17617,70 @@ function pushbutton72_Callback(hObject, eventdata, handles)
     if handles.slider_axes1 ==1, handles.slider_axes1_voxel = handles.voxel_MR(3); else handles.slider_axes1_voxel = handles.slider_axes1*handles.voxel_MR(3); end
     if handles.slider_axes2 ==1, handles.slider_axes2_voxel = handles.voxel_MR(2); else handles.slider_axes2_voxel = handles.slider_axes2*handles.voxel_MR(2); end
     if handles.slider_axes3 ==1, handles.slider_axes3_voxel = handles.voxel_MR(1); else handles.slider_axes3_voxel = handles.slider_axes3*handles.voxel_MR(1); end
-    axes(handles.axes1);
-    imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.IPCMRA(:,:,handles.slider_axes1)))
-    hold on
-    plot([handles.yd(1,1),handles.yd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
-    plot([handles.slider_axes2_voxel,handles.slider_axes2_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--r','Linewidth',1)
-    hold off
-    axis image
-    colormap gray
-    axis off
-    daspect([1 1 1])
-    axes(handles.axes2);
-    imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.IPCMRA(:,handles.slider_axes2,:)))
-    hold on
-    plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
-    plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--g','Linewidth',1)
-    hold off
-    axis image
-    colormap gray
-    axis off
-    daspect([1 1 1])
-    axes(handles.axes3);
-    imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',squeeze(handles.IPCMRA(handles.slider_axes3,:,:)))
-    hold on
-    plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes2_voxel,handles.slider_axes2_voxel]','--r','Linewidth',1)
-    plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.yd(1,1),handles.yd(end,end)]','--g','Linewidth',1)
-    hold off
-    axis image
-    colormap gray
-    axis off
-    daspect([1 1 1])
+    
+    if handles.id_ang == 1
+        axes(handles.axes1);
+        imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.IPCMRA(:,:,handles.slider_axes1)))
+        hold on
+        plot([handles.yd(1,1),handles.yd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
+        plot([handles.slider_axes2_voxel,handles.slider_axes2_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--r','Linewidth',1)
+        hold off
+        axis image
+        colormap gray
+        axis off
+        daspect([1 1 1])
+        axes(handles.axes2);
+        imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.IPCMRA(:,handles.slider_axes2,:)))
+        hold on
+        plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
+        plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--g','Linewidth',1)
+        hold off
+        axis image
+        colormap gray
+        axis off
+        daspect([1 1 1])
+        axes(handles.axes3);
+        imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',squeeze(handles.IPCMRA(handles.slider_axes3,:,:)))
+        hold on
+        plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes2_voxel,handles.slider_axes2_voxel]','--r','Linewidth',1)
+        plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.yd(1,1),handles.yd(end,end)]','--g','Linewidth',1)
+        hold off
+        axis image
+        colormap gray
+        axis off
+        daspect([1 1 1])
+    else
+        axes(handles.axes1);
+        imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.MAG(:,:,handles.slider_axes1)))
+        hold on
+        plot([handles.yd(1,1),handles.yd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
+        plot([handles.slider_axes2_voxel,handles.slider_axes2_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--r','Linewidth',1)
+        hold off
+        axis image
+        colormap gray
+        axis off
+        daspect([1 1 1])
+        axes(handles.axes2);
+        imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.MAG(:,handles.slider_axes2,:)))
+        hold on
+        plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
+        plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--g','Linewidth',1)
+        hold off
+        axis image
+        colormap gray
+        axis off
+        daspect([1 1 1])
+        axes(handles.axes3);
+        imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',squeeze(handles.MAG(handles.slider_axes3,:,:)))
+        hold on
+        plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes2_voxel,handles.slider_axes2_voxel]','--r','Linewidth',1)
+        plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.yd(1,1),handles.yd(end,end)]','--g','Linewidth',1)
+        hold off
+        axis image
+        colormap gray
+        axis off
+        daspect([1 1 1])
+    end
     slider_step(1) = 1/c;
     slider_step(2) = 0.1;
     set(handles.slider1,'Value', round(c/2)/c,'sliderstep',slider_step,'max',1,'min',0)
@@ -17553,36 +17791,70 @@ function pushbutton73_Callback(hObject, eventdata, handles)
     if handles.slider_axes1 ==1, handles.slider_axes1_voxel = handles.voxel_MR(3); else handles.slider_axes1_voxel = handles.slider_axes1*handles.voxel_MR(3); end
     if handles.slider_axes2 ==1, handles.slider_axes2_voxel = handles.voxel_MR(2); else handles.slider_axes2_voxel = handles.slider_axes2*handles.voxel_MR(2); end
     if handles.slider_axes3 ==1, handles.slider_axes3_voxel = handles.voxel_MR(1); else handles.slider_axes3_voxel = handles.slider_axes3*handles.voxel_MR(1); end
-    axes(handles.axes1);
-    imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.IPCMRA(:,:,handles.slider_axes1)))
-    hold on
-    plot([handles.yd(1,1),handles.yd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
-    plot([handles.slider_axes2_voxel,handles.slider_axes2_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--r','Linewidth',1)
-    hold off
-    axis image
-    colormap gray
-    axis off
-    daspect([1 1 1])
-    axes(handles.axes2);
-    imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.IPCMRA(:,handles.slider_axes2,:)))
-    hold on
-    plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
-    plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--g','Linewidth',1)
-    hold off
-    axis image
-    colormap gray
-    axis off
-    daspect([1 1 1])
-    axes(handles.axes3);
-    imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',squeeze(handles.IPCMRA(handles.slider_axes3,:,:)))
-    hold on
-    plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes2_voxel,handles.slider_axes2_voxel]','--r','Linewidth',1)
-    plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.yd(1,1),handles.yd(end,end)]','--g','Linewidth',1)
-    hold off
-    axis image
-    colormap gray
-    axis off
-    daspect([1 1 1])
+    
+    if handles.id_ang==1
+        axes(handles.axes1);
+        imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.IPCMRA(:,:,handles.slider_axes1)))
+        hold on
+        plot([handles.yd(1,1),handles.yd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
+        plot([handles.slider_axes2_voxel,handles.slider_axes2_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--r','Linewidth',1)
+        hold off
+        axis image
+        colormap gray
+        axis off
+        daspect([1 1 1])
+        axes(handles.axes2);
+        imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.IPCMRA(:,handles.slider_axes2,:)))
+        hold on
+        plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
+        plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--g','Linewidth',1)
+        hold off
+        axis image
+        colormap gray
+        axis off
+        daspect([1 1 1])
+        axes(handles.axes3);
+        imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',squeeze(handles.IPCMRA(handles.slider_axes3,:,:)))
+        hold on
+        plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes2_voxel,handles.slider_axes2_voxel]','--r','Linewidth',1)
+        plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.yd(1,1),handles.yd(end,end)]','--g','Linewidth',1)
+        hold off
+        axis image
+        colormap gray
+        axis off
+        daspect([1 1 1])
+    else
+        axes(handles.axes1);
+        imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.MAG(:,:,handles.slider_axes1)))
+        hold on
+        plot([handles.yd(1,1),handles.yd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
+        plot([handles.slider_axes2_voxel,handles.slider_axes2_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--r','Linewidth',1)
+        hold off
+        axis image
+        colormap gray
+        axis off
+        daspect([1 1 1])
+        axes(handles.axes2);
+        imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.MAG(:,handles.slider_axes2,:)))
+        hold on
+        plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
+        plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--g','Linewidth',1)
+        hold off
+        axis image
+        colormap gray
+        axis off
+        daspect([1 1 1])
+        axes(handles.axes3);
+        imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',squeeze(handles.MAG(handles.slider_axes3,:,:)))
+        hold on
+        plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes2_voxel,handles.slider_axes2_voxel]','--r','Linewidth',1)
+        plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.yd(1,1),handles.yd(end,end)]','--g','Linewidth',1)
+        hold off
+        axis image
+        colormap gray
+        axis off
+        daspect([1 1 1])
+    end
     slider_step(1) = 1/c;
     slider_step(2) = 0.1;
     set(handles.slider1,'Value', round(c/2)/c,'sliderstep',slider_step,'max',1,'min',0)
@@ -17693,36 +17965,70 @@ function pushbutton74_Callback(hObject, eventdata, handles)
     if handles.slider_axes1 ==1, handles.slider_axes1_voxel = handles.voxel_MR(3); else handles.slider_axes1_voxel = handles.slider_axes1*handles.voxel_MR(3); end
     if handles.slider_axes2 ==1, handles.slider_axes2_voxel = handles.voxel_MR(2); else handles.slider_axes2_voxel = handles.slider_axes2*handles.voxel_MR(2); end
     if handles.slider_axes3 ==1, handles.slider_axes3_voxel = handles.voxel_MR(1); else handles.slider_axes3_voxel = handles.slider_axes3*handles.voxel_MR(1); end
-    axes(handles.axes1);
-    imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.IPCMRA(:,:,handles.slider_axes1)))
-    hold on
-    plot([handles.yd(1,1),handles.yd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
-    plot([handles.slider_axes2_voxel,handles.slider_axes2_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--r','Linewidth',1)
-    hold off
-    axis image
-    colormap gray
-    axis off
-    daspect([1 1 1])
-    axes(handles.axes2);
-    imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.IPCMRA(:,handles.slider_axes2,:)))
-    hold on
-    plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
-    plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--g','Linewidth',1)
-    hold off
-    axis image
-    colormap gray
-    axis off
-    daspect([1 1 1])
-    axes(handles.axes3);
-    imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',squeeze(handles.IPCMRA(handles.slider_axes3,:,:)))
-    hold on
-    plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes2_voxel,handles.slider_axes2_voxel]','--r','Linewidth',1)
-    plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.yd(1,1),handles.yd(end,end)]','--g','Linewidth',1)
-    hold off
-    axis image
-    colormap gray
-    axis off
-    daspect([1 1 1])
+    
+    if handles.id_ang==1
+        axes(handles.axes1);
+        imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.IPCMRA(:,:,handles.slider_axes1)))
+        hold on
+        plot([handles.yd(1,1),handles.yd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
+        plot([handles.slider_axes2_voxel,handles.slider_axes2_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--r','Linewidth',1)
+        hold off
+        axis image
+        colormap gray
+        axis off
+        daspect([1 1 1])
+        axes(handles.axes2);
+        imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.IPCMRA(:,handles.slider_axes2,:)))
+        hold on
+        plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
+        plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--g','Linewidth',1)
+        hold off
+        axis image
+        colormap gray
+        axis off
+        daspect([1 1 1])
+        axes(handles.axes3);
+        imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',squeeze(handles.IPCMRA(handles.slider_axes3,:,:)))
+        hold on
+        plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes2_voxel,handles.slider_axes2_voxel]','--r','Linewidth',1)
+        plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.yd(1,1),handles.yd(end,end)]','--g','Linewidth',1)
+        hold off
+        axis image
+        colormap gray
+        axis off
+        daspect([1 1 1])
+    else
+        axes(handles.axes1);
+        imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.MAG(:,:,handles.slider_axes1)))
+        hold on
+        plot([handles.yd(1,1),handles.yd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
+        plot([handles.slider_axes2_voxel,handles.slider_axes2_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--r','Linewidth',1)
+        hold off
+        axis image
+        colormap gray
+        axis off
+        daspect([1 1 1])
+        axes(handles.axes2);
+        imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.MAG(:,handles.slider_axes2,:)))
+        hold on
+        plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
+        plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--g','Linewidth',1)
+        hold off
+        axis image
+        colormap gray
+        axis off
+        daspect([1 1 1])
+        axes(handles.axes3);
+        imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',squeeze(handles.MAG(handles.slider_axes3,:,:)))
+        hold on
+        plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes2_voxel,handles.slider_axes2_voxel]','--r','Linewidth',1)
+        plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.yd(1,1),handles.yd(end,end)]','--g','Linewidth',1)
+        hold off
+        axis image
+        colormap gray
+        axis off
+        daspect([1 1 1])
+    end
     slider_step(1) = 1/c;
     slider_step(2) = 0.1;
     set(handles.slider1,'Value', round(c/2)/c,'sliderstep',slider_step,'max',1,'min',0)
@@ -17833,36 +18139,71 @@ function pushbutton75_Callback(hObject, eventdata, handles)
     if handles.slider_axes1 ==1, handles.slider_axes1_voxel = handles.voxel_MR(3); else handles.slider_axes1_voxel = handles.slider_axes1*handles.voxel_MR(3); end
     if handles.slider_axes2 ==1, handles.slider_axes2_voxel = handles.voxel_MR(2); else handles.slider_axes2_voxel = handles.slider_axes2*handles.voxel_MR(2); end
     if handles.slider_axes3 ==1, handles.slider_axes3_voxel = handles.voxel_MR(1); else handles.slider_axes3_voxel = handles.slider_axes3*handles.voxel_MR(1); end
-    axes(handles.axes1);
-    imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.IPCMRA(:,:,handles.slider_axes1)))
-    hold on
-    plot([handles.yd(1,1),handles.yd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
-    plot([handles.slider_axes2_voxel,handles.slider_axes2_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--r','Linewidth',1)
-    hold off
-    axis image
-    colormap gray
-    axis off
-    daspect([1 1 1])
-    axes(handles.axes2);
-    imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.IPCMRA(:,handles.slider_axes2,:)))
-    hold on
-    plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
-    plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--g','Linewidth',1)
-    hold off
-    axis image
-    colormap gray
-    axis off
-    daspect([1 1 1])
-    axes(handles.axes3);
-    imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',squeeze(handles.IPCMRA(handles.slider_axes3,:,:)))
-    hold on
-    plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes2_voxel,handles.slider_axes2_voxel]','--r','Linewidth',1)
-    plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.yd(1,1),handles.yd(end,end)]','--g','Linewidth',1)
-    hold off
-    axis image
-    colormap gray
-    axis off
-    daspect([1 1 1])
+    
+    if handles.id_ang ==1
+        axes(handles.axes1);
+        imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.IPCMRA(:,:,handles.slider_axes1)))
+        hold on
+        plot([handles.yd(1,1),handles.yd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
+        plot([handles.slider_axes2_voxel,handles.slider_axes2_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--r','Linewidth',1)
+        hold off
+        axis image
+        colormap gray
+        axis off
+        daspect([1 1 1])
+        axes(handles.axes2);
+        imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.IPCMRA(:,handles.slider_axes2,:)))
+        hold on
+        plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
+        plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--g','Linewidth',1)
+        hold off
+        axis image
+        colormap gray
+        axis off
+        daspect([1 1 1])
+        axes(handles.axes3);
+        imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',squeeze(handles.IPCMRA(handles.slider_axes3,:,:)))
+        hold on
+        plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes2_voxel,handles.slider_axes2_voxel]','--r','Linewidth',1)
+        plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.yd(1,1),handles.yd(end,end)]','--g','Linewidth',1)
+        hold off
+        axis image
+        colormap gray
+        axis off
+        daspect([1 1 1])
+    else
+        axes(handles.axes1);
+        imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.MAG(:,:,handles.slider_axes1)))
+        hold on
+        plot([handles.yd(1,1),handles.yd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
+        plot([handles.slider_axes2_voxel,handles.slider_axes2_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--r','Linewidth',1)
+        hold off
+        axis image
+        colormap gray
+        axis off
+        daspect([1 1 1])
+        axes(handles.axes2);
+        imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.MAG(:,handles.slider_axes2,:)))
+        hold on
+        plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
+        plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--g','Linewidth',1)
+        hold off
+        axis image
+        colormap gray
+        axis off
+        daspect([1 1 1])
+        axes(handles.axes3);
+        imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',squeeze(handles.MAG(handles.slider_axes3,:,:)))
+        hold on
+        plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes2_voxel,handles.slider_axes2_voxel]','--r','Linewidth',1)
+        plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.yd(1,1),handles.yd(end,end)]','--g','Linewidth',1)
+        hold off
+        axis image
+        colormap gray
+        axis off
+        daspect([1 1 1])
+    end
+
     slider_step(1) = 1/c;
     slider_step(2) = 0.1;
     set(handles.slider1,'Value', round(c/2)/c,'sliderstep',slider_step,'max',1,'min',0)
@@ -17973,36 +18314,71 @@ function pushbutton76_Callback(hObject, eventdata, handles)
     if handles.slider_axes1 ==1, handles.slider_axes1_voxel = handles.voxel_MR(3); else handles.slider_axes1_voxel = handles.slider_axes1*handles.voxel_MR(3); end
     if handles.slider_axes2 ==1, handles.slider_axes2_voxel = handles.voxel_MR(2); else handles.slider_axes2_voxel = handles.slider_axes2*handles.voxel_MR(2); end
     if handles.slider_axes3 ==1, handles.slider_axes3_voxel = handles.voxel_MR(1); else handles.slider_axes3_voxel = handles.slider_axes3*handles.voxel_MR(1); end
-    axes(handles.axes1);
-    imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.IPCMRA(:,:,handles.slider_axes1)))
-    hold on
-    plot([handles.yd(1,1),handles.yd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
-    plot([handles.slider_axes2_voxel,handles.slider_axes2_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--r','Linewidth',1)
-    hold off
-    axis image
-    colormap gray
-    axis off
-    daspect([1 1 1])
-    axes(handles.axes2);
-    imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.IPCMRA(:,handles.slider_axes2,:)))
-    hold on
-    plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
-    plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--g','Linewidth',1)
-    hold off
-    axis image
-    colormap gray
-    axis off
-    daspect([1 1 1])
-    axes(handles.axes3);
-    imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',squeeze(handles.IPCMRA(handles.slider_axes3,:,:)))
-    hold on
-    plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes2_voxel,handles.slider_axes2_voxel]','--r','Linewidth',1)
-    plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.yd(1,1),handles.yd(end,end)]','--g','Linewidth',1)
-    hold off
-    axis image
-    colormap gray
-    axis off
-    daspect([1 1 1])
+    
+    
+    if handles.id_ang==1
+        axes(handles.axes1);
+        imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.IPCMRA(:,:,handles.slider_axes1)))
+        hold on
+        plot([handles.yd(1,1),handles.yd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
+        plot([handles.slider_axes2_voxel,handles.slider_axes2_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--r','Linewidth',1)
+        hold off
+        axis image
+        colormap gray
+        axis off
+        daspect([1 1 1])
+        axes(handles.axes2);
+        imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.IPCMRA(:,handles.slider_axes2,:)))
+        hold on
+        plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
+        plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--g','Linewidth',1)
+        hold off
+        axis image
+        colormap gray
+        axis off
+        daspect([1 1 1])
+        axes(handles.axes3);
+        imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',squeeze(handles.IPCMRA(handles.slider_axes3,:,:)))
+        hold on
+        plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes2_voxel,handles.slider_axes2_voxel]','--r','Linewidth',1)
+        plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.yd(1,1),handles.yd(end,end)]','--g','Linewidth',1)
+        hold off
+        axis image
+        colormap gray
+        axis off
+        daspect([1 1 1])
+    else
+        axes(handles.axes1);
+        imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.MAG(:,:,handles.slider_axes1)))
+        hold on
+        plot([handles.yd(1,1),handles.yd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
+        plot([handles.slider_axes2_voxel,handles.slider_axes2_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--r','Linewidth',1)
+        hold off
+        axis image
+        colormap gray
+        axis off
+        daspect([1 1 1])
+        axes(handles.axes2);
+        imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.MAG(:,handles.slider_axes2,:)))
+        hold on
+        plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
+        plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--g','Linewidth',1)
+        hold off
+        axis image
+        colormap gray
+        axis off
+        daspect([1 1 1])
+        axes(handles.axes3);
+        imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',squeeze(handles.MAG(handles.slider_axes3,:,:)))
+        hold on
+        plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes2_voxel,handles.slider_axes2_voxel]','--r','Linewidth',1)
+        plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.yd(1,1),handles.yd(end,end)]','--g','Linewidth',1)
+        hold off
+        axis image
+        colormap gray
+        axis off
+        daspect([1 1 1])
+    end
     slider_step(1) = 1/c;
     slider_step(2) = 0.1;
     set(handles.slider1,'Value', round(c/2)/c,'sliderstep',slider_step,'max',1,'min',0)
@@ -18113,36 +18489,70 @@ function pushbutton77_Callback(hObject, eventdata, handles)
     if handles.slider_axes1 ==1, handles.slider_axes1_voxel = handles.voxel_MR(3); else handles.slider_axes1_voxel = handles.slider_axes1*handles.voxel_MR(3); end
     if handles.slider_axes2 ==1, handles.slider_axes2_voxel = handles.voxel_MR(2); else handles.slider_axes2_voxel = handles.slider_axes2*handles.voxel_MR(2); end
     if handles.slider_axes3 ==1, handles.slider_axes3_voxel = handles.voxel_MR(1); else handles.slider_axes3_voxel = handles.slider_axes3*handles.voxel_MR(1); end
-    axes(handles.axes1);
-    imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.IPCMRA(:,:,handles.slider_axes1)))
-    hold on
-    plot([handles.yd(1,1),handles.yd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
-    plot([handles.slider_axes2_voxel,handles.slider_axes2_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--r','Linewidth',1)
-    hold off
-    axis image
-    colormap gray
-    axis off
-    daspect([1 1 1])
-    axes(handles.axes2);
-    imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.IPCMRA(:,handles.slider_axes2,:)))
-    hold on
-    plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
-    plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--g','Linewidth',1)
-    hold off
-    axis image
-    colormap gray
-    axis off
-    daspect([1 1 1])
-    axes(handles.axes3);
-    imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',squeeze(handles.IPCMRA(handles.slider_axes3,:,:)))
-    hold on
-    plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes2_voxel,handles.slider_axes2_voxel]','--r','Linewidth',1)
-    plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.yd(1,1),handles.yd(end,end)]','--g','Linewidth',1)
-    hold off
-    axis image
-    colormap gray
-    axis off
-    daspect([1 1 1])
+    
+    if handles.id_ang==1
+        axes(handles.axes1);
+        imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.IPCMRA(:,:,handles.slider_axes1)))
+        hold on
+        plot([handles.yd(1,1),handles.yd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
+        plot([handles.slider_axes2_voxel,handles.slider_axes2_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--r','Linewidth',1)
+        hold off
+        axis image
+        colormap gray
+        axis off
+        daspect([1 1 1])
+        axes(handles.axes2);
+        imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.IPCMRA(:,handles.slider_axes2,:)))
+        hold on
+        plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
+        plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--g','Linewidth',1)
+        hold off
+        axis image
+        colormap gray
+        axis off
+        daspect([1 1 1])
+        axes(handles.axes3);
+        imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',squeeze(handles.IPCMRA(handles.slider_axes3,:,:)))
+        hold on
+        plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes2_voxel,handles.slider_axes2_voxel]','--r','Linewidth',1)
+        plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.yd(1,1),handles.yd(end,end)]','--g','Linewidth',1)
+        hold off
+        axis image
+        colormap gray
+        axis off
+        daspect([1 1 1])
+    else
+        axes(handles.axes1);
+        imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.MAG(:,:,handles.slider_axes1)))
+        hold on
+        plot([handles.yd(1,1),handles.yd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
+        plot([handles.slider_axes2_voxel,handles.slider_axes2_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--r','Linewidth',1)
+        hold off
+        axis image
+        colormap gray
+        axis off
+        daspect([1 1 1])
+        axes(handles.axes2);
+        imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.MAG(:,handles.slider_axes2,:)))
+        hold on
+        plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
+        plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--g','Linewidth',1)
+        hold off
+        axis image
+        colormap gray
+        axis off
+        daspect([1 1 1])
+        axes(handles.axes3);
+        imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',squeeze(handles.MAG(handles.slider_axes3,:,:)))
+        hold on
+        plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes2_voxel,handles.slider_axes2_voxel]','--r','Linewidth',1)
+        plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.yd(1,1),handles.yd(end,end)]','--g','Linewidth',1)
+        hold off
+        axis image
+        colormap gray
+        axis off
+        daspect([1 1 1])
+    end
     slider_step(1) = 1/c;
     slider_step(2) = 0.1;
     set(handles.slider1,'Value', round(c/2)/c,'sliderstep',slider_step,'max',1,'min',0)
@@ -18355,7 +18765,7 @@ function pushbutton81_Callback(hObject, eventdata, handles)
         input.MR_PCA_FH_smooth = getappdata(0,'MR_PCA_FH_smooth');
         input.MR_PCA_AP_smooth = getappdata(0,'MR_PCA_AP_smooth');
         input.MR_PCA_RL_smooth = getappdata(0,'MR_PCA_RL_smooth');
-
+        pause(0.05)
 
     end
     
@@ -18516,6 +18926,7 @@ function pushbutton83_Callback(hObject, eventdata, handles)
 %            close(g)
            
 %         end
+        pause(0.05)
     end
 
    
@@ -18753,9 +19164,11 @@ if handles.exec_fe_mesh == 1
             input.popup7_id         = getappdata(0,'popup7_id');
             input.popup8_id         = getappdata(0,'popup8_id');
 
+            pause(0.05)
         end
 
         break
+        pause(0.05)
     end
     
     h = msgbox('The reformatting toolbox was closed ...','none','none');
