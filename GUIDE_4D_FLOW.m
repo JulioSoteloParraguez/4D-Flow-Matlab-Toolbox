@@ -10458,7 +10458,7 @@ function Load_Folder_Callback(hObject, eventdata, handles)
                 input.VENC = getappdata(0,'VENC');
                 input.voxel_MR = getappdata(0,'voxel_MR');
                 input.heart_rate = getappdata(0,'heart_rate');
-                input.type = getappdata(0,'type');
+                %input.type = getappdata(0,'type');
                 input.MR_FFE_FH = getappdata(0,'MR_FFE_FH');
                 input.MR_FFE_AP = getappdata(0,'MR_FFE_AP');
                 input.MR_FFE_RL = getappdata(0,'MR_FFE_RL');
@@ -10473,7 +10473,7 @@ function Load_Folder_Callback(hObject, eventdata, handles)
             handles.VENC = getappdata(0,'VENC');
             handles.voxel_MR = getappdata(0,'voxel_MR');
             handles.heart_rate = getappdata(0,'heart_rate');
-            handles.type = getappdata(0,'type');
+            %handles.type = getappdata(0,'type');
             handles.MR_FFE_FH = getappdata(0,'MR_FFE_FH');
             handles.MR_FFE_AP = getappdata(0,'MR_FFE_AP');
             handles.MR_FFE_RL = getappdata(0,'MR_FFE_RL');
@@ -10719,7 +10719,7 @@ function Load_Folder_Callback(hObject, eventdata, handles)
                 input.VENC = getappdata(0,'VENC');
                 input.voxel_MR = getappdata(0,'voxel_MR');
                 input.heart_rate = getappdata(0,'heart_rate');
-                input.type = getappdata(0,'type');
+                %input.type = getappdata(0,'type');
                 input.MR_FFE_FH = getappdata(0,'MR_FFE_FH');
                 input.MR_FFE_AP = getappdata(0,'MR_FFE_AP');
                 input.MR_FFE_RL = getappdata(0,'MR_FFE_RL');
@@ -10733,7 +10733,7 @@ function Load_Folder_Callback(hObject, eventdata, handles)
             handles.VENC = getappdata(0,'VENC');
             handles.voxel_MR = getappdata(0,'voxel_MR');
             handles.heart_rate = getappdata(0,'heart_rate');
-            handles.type = getappdata(0,'type');
+            %handles.type = getappdata(0,'type');
             handles.MR_FFE_FH = getappdata(0,'MR_FFE_FH');
             handles.MR_FFE_AP = getappdata(0,'MR_FFE_AP');
             handles.MR_FFE_RL = getappdata(0,'MR_FFE_RL');
@@ -11218,7 +11218,7 @@ function Load_Folder_Callback(hObject, eventdata, handles)
                         input.VENC = getappdata(0,'VENC');
                         input.voxel_MR = getappdata(0,'voxel_MR');
                         input.heart_rate = getappdata(0,'heart_rate');
-                        input.type = getappdata(0,'type');
+                        %input.type = getappdata(0,'type');
                         input.MR_FFE_FH = getappdata(0,'MR_FFE_FH');
                         input.MR_FFE_AP = getappdata(0,'MR_FFE_AP');
                         input.MR_FFE_RL = getappdata(0,'MR_FFE_RL');
@@ -11232,7 +11232,7 @@ function Load_Folder_Callback(hObject, eventdata, handles)
                     handles.VENC = getappdata(0,'VENC');
                     handles.voxel_MR = getappdata(0,'voxel_MR');
                     handles.heart_rate = getappdata(0,'heart_rate');
-                    handles.type = getappdata(0,'type');
+                    %handles.type = getappdata(0,'type');
                     handles.MR_FFE_FH = getappdata(0,'MR_FFE_FH');
                     handles.MR_FFE_AP = getappdata(0,'MR_FFE_AP');
                     handles.MR_FFE_RL = getappdata(0,'MR_FFE_RL');
@@ -11372,7 +11372,7 @@ function Load_Folder_Callback(hObject, eventdata, handles)
                 input.VENC = getappdata(0,'VENC');
                 input.voxel_MR = getappdata(0,'voxel_MR');
                 input.heart_rate = getappdata(0,'heart_rate');
-                input.type = getappdata(0,'type');
+                %input.type = getappdata(0,'type');
                 input.MR_FFE_FH = getappdata(0,'MR_FFE_FH');
                 input.MR_FFE_AP = getappdata(0,'MR_FFE_AP');
                 input.MR_FFE_RL = getappdata(0,'MR_FFE_RL');
@@ -11386,7 +11386,7 @@ function Load_Folder_Callback(hObject, eventdata, handles)
             handles.VENC = getappdata(0,'VENC');
             handles.voxel_MR = getappdata(0,'voxel_MR');
             handles.heart_rate = getappdata(0,'heart_rate');
-            handles.type = getappdata(0,'type');
+            %handles.type = getappdata(0,'type');
             handles.MR_FFE_FH = getappdata(0,'MR_FFE_FH');
             handles.MR_FFE_AP = getappdata(0,'MR_FFE_AP');
             handles.MR_FFE_RL = getappdata(0,'MR_FFE_RL');
@@ -19259,6 +19259,36 @@ h = msgbox('The SAW toolbox was closed ...','none','none');
 pause(0.5)
 close(h)
 close(f)
+
+handles.output = hObject;
+guidata(hObject, handles);
+
+
+% --------------------------------------------------------------------
+function Save_data_mat_Callback(hObject, eventdata, handles)
+% hObject    handle to Save_data_mat (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+data = [];
+data.MR_FFE_FH = double(handles.MR_FFE_FH(2:end-1,2:end-1,2:end-1,:));
+data.MR_FFE_AP = double(handles.MR_FFE_AP(2:end-1,2:end-1,2:end-1,:));
+data.MR_FFE_RL = double(handles.MR_FFE_RL(2:end-1,2:end-1,2:end-1,:));
+data.MR_PCA_FH = double(handles.MR_PCA_FH(2:end-1,2:end-1,2:end-1,:));
+data.MR_PCA_AP = double(handles.MR_PCA_AP(2:end-1,2:end-1,2:end-1,:));
+data.MR_PCA_RL = double(handles.MR_PCA_RL(2:end-1,2:end-1,2:end-1,:));
+data.VENC = double(handles.VENC);
+data.voxel_MR = double(handles.voxel_MR);
+data.heart_rate = double(handles.heart_rate);
+data.type = handles.type;
+
+directory = uigetdir(pwd, 'Select Directory');
+
+h = msgbox("Please wait saving structure data ...","Saving","modal");
+save([directory,'\data.mat'],'data','-v7.3')
+
+close(h)
+disp('The data structure was successfully saved!')
 
 handles.output = hObject;
 guidata(hObject, handles);
