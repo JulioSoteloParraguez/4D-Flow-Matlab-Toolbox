@@ -15286,6 +15286,8 @@ function Load_SEG_Callback(hObject, eventdata, handles)
         name_file = file(1:end-4);        
         [as,bs,cs] = size(eval(name_file));
         
+        disp([as,bs,cs])
+        disp([handles.a, handles.b, handles.c])
         
         if handles.a == as && handles.b == bs && handles.c == cs
             
@@ -15372,6 +15374,89 @@ function Load_SEG_Callback(hObject, eventdata, handles)
         elseif handles.a-2 == as && handles.b-2 == bs && handles.c-2 == cs % load original without modification
             
             handles.SEG(2:end-1,2:end-1,2:end-1) = eval(name_file);
+            handles.Lrgb = ones(size(handles.SEG,1),size(handles.SEG,2),size(handles.SEG,3),3);
+            handles.Lrgb(:,:,:,1) =  handles.Lrgb(:,:,:,1)-handles.SEG + handles.SEG*0.1667;
+            handles.Lrgb(:,:,:,3) =  handles.Lrgb(:,:,:,3)-handles.SEG + handles.SEG*0.1667;
+            handles.NUM = 1;
+            handles.L = handles.SEG;
+            
+            handles.id_seg = 1;
+            handles.save_id_SEG_mat = 1;
+            handles.save_id_SEG_vti = 1;
+            
+            if handles.slider_axes1 ==1, handles.slider_axes1_voxel = 0; else, handles.slider_axes1_voxel = (handles.slider_axes1*handles.voxel_MR(3))-handles.voxel_MR(3); end
+            if handles.slider_axes2 ==1, handles.slider_axes2_voxel = 0; else, handles.slider_axes2_voxel = (handles.slider_axes2*handles.voxel_MR(2))-handles.voxel_MR(2); end
+            if handles.slider_axes3 ==1, handles.slider_axes3_voxel = 0; else, handles.slider_axes3_voxel = (handles.slider_axes3*handles.voxel_MR(1))-handles.voxel_MR(1); end
+            axes(handles.axes1);
+            imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.IPCMRA(:,:,handles.slider_axes1)))
+            hold on
+            plot([handles.yd(1,1),handles.yd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
+            plot([handles.slider_axes2_voxel,handles.slider_axes2_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--r','Linewidth',1)
+            if handles.id_seg == 1 && sum(handles.L(:))~=0
+                Lrgb2d = squeeze(handles.Lrgb(:,:,handles.slider_axes1,:));
+                himage = imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+                cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+                cdata = double(cdata)*0.5;
+                set(himage, 'AlphaData', cdata);
+            end
+            if handles.id_resizing == 1
+                rectangle('Position',handles.pos1,'LineWidth',1,'EdgeColor','y','LineStyle','-')
+            end
+            hold off
+            axis image
+            colormap(handles.axes1,'gray')
+            axis off
+            daspect([1 1 1])
+            axes(handles.axes2);
+            imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.IPCMRA(:,handles.slider_axes2,:)))
+            hold on
+            plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
+            plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--g','Linewidth',1)
+            if handles.id_seg == 1 && sum(handles.L(:))~=0
+                Lrgb2d = squeeze(handles.Lrgb(:,handles.slider_axes2,:,:));
+                himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',Lrgb2d);
+                cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+                cdata = double(cdata)*0.5;
+                set(himage, 'AlphaData', cdata);
+            end
+            if handles.id_resizing == 1
+                rectangle('Position',handles.pos2,'LineWidth',1,'EdgeColor','y','LineStyle','-')
+            end
+            hold off
+            axis image
+            colormap(handles.axes2,'gray')
+            axis off
+            daspect([1 1 1])
+            axes(handles.axes3);
+            imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',squeeze(handles.IPCMRA(handles.slider_axes3,:,:)))
+            hold on
+            plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes2_voxel,handles.slider_axes2_voxel]','--r','Linewidth',1)
+            plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.yd(1,1),handles.yd(end,end)]','--g','Linewidth',1)
+            if handles.id_seg == 1 && sum(handles.L(:))~=0
+                Lrgb2d = squeeze(handles.Lrgb(handles.slider_axes3,:,:,:));
+                himage = imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',Lrgb2d);
+                cdata = (double(rgb2gray(Lrgb2d))/double(max(max(rgb2gray(Lrgb2d)))))~=1;
+                cdata = double(cdata)*0.5;
+                set(himage, 'AlphaData', cdata);
+            end
+            if handles.id_resizing == 1
+                rectangle('Position',handles.pos3,'LineWidth',1,'EdgeColor','y','LineStyle','-')
+            end
+            hold off
+            axis image
+            colormap(handles.axes3,'gray')
+            axis off
+            daspect([1 1 1])
+            set(handles.text1,'visible','on','String',['Image size: ',num2str(size(handles.IPCMRA,1)),' x ',num2str(size(handles.IPCMRA,2)),' Im: ',num2str(round(handles.slider_axes1)),' / ',num2str(handles.c),' Type: ',handles.type])
+            set(handles.text2,'visible','on','String',['Image size: ',num2str(size(handles.IPCMRA,1)),' x ',num2str(size(handles.IPCMRA,3)),' Im: ',num2str(round(handles.slider_axes2)),' / ',num2str(handles.b),' Type: ',handles.type])
+            set(handles.text3,'visible','on','String',['Image size: ',num2str(size(handles.IPCMRA,2)),' x ',num2str(size(handles.IPCMRA,3)),' Im: ',num2str(round(handles.slider_axes3)),' / ',num2str(handles.a),' Type: ',handles.type])
+            list_string = {'...','Surface','Voxel'};
+            set(handles.popupmenu1,'visible','on','String',list_string);
+
+        elseif handles.a-2 == (as-2)*2 && handles.b-2 == (bs-2)*2 && handles.c-2 == (cs-2)*2 % load Segmentation for SuperRes
+            
+            IM = eval(name_file);
+            handles.SEG(2:end-1,2:end-1,2:end-1) = imresize3(IM(2:end-1,2:end-1,2:end-1),2,'nearest');
             handles.Lrgb = ones(size(handles.SEG,1),size(handles.SEG,2),size(handles.SEG,3),3);
             handles.Lrgb(:,:,:,1) =  handles.Lrgb(:,:,:,1)-handles.SEG + handles.SEG*0.1667;
             handles.Lrgb(:,:,:,3) =  handles.Lrgb(:,:,:,3)-handles.SEG + handles.SEG*0.1667;
