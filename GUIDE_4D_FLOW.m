@@ -10423,6 +10423,8 @@ function Load_Folder_Callback(hObject, eventdata, handles)
         fullFileName = files_names_mat{1};
         load(fullFileName);
         
+        handles.data = data; % load data file
+
         handles.VENC = data.VENC;
         handles.voxel_MR = data.voxel_MR;
         handles.heart_rate = data.heart_rate;
@@ -19355,17 +19357,19 @@ function Save_data_mat_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-data = [];
-data.MR_FFE_FH = double(handles.MR_FFE_FH(2:end-1,2:end-1,2:end-1,:));
-data.MR_FFE_AP = double(handles.MR_FFE_AP(2:end-1,2:end-1,2:end-1,:));
-data.MR_FFE_RL = double(handles.MR_FFE_RL(2:end-1,2:end-1,2:end-1,:));
-data.MR_PCA_FH = double(handles.MR_PCA_FH(2:end-1,2:end-1,2:end-1,:));
-data.MR_PCA_AP = double(handles.MR_PCA_AP(2:end-1,2:end-1,2:end-1,:));
-data.MR_PCA_RL = double(handles.MR_PCA_RL(2:end-1,2:end-1,2:end-1,:));
-data.VENC = double(handles.VENC);
-data.voxel_MR = double(handles.voxel_MR);
-data.heart_rate = double(handles.heart_rate);
-data.type = handles.type;
+
+handles.data.MR_FFE_FH = double(handles.MR_FFE_FH(2:end-1,2:end-1,2:end-1,:));
+handles.data.MR_FFE_AP = double(handles.MR_FFE_AP(2:end-1,2:end-1,2:end-1,:));
+handles.data.MR_FFE_RL = double(handles.MR_FFE_RL(2:end-1,2:end-1,2:end-1,:));
+handles.data.MR_PCA_FH = double(handles.MR_PCA_FH(2:end-1,2:end-1,2:end-1,:));
+handles.data.MR_PCA_AP = double(handles.MR_PCA_AP(2:end-1,2:end-1,2:end-1,:));
+handles.data.MR_PCA_RL = double(handles.MR_PCA_RL(2:end-1,2:end-1,2:end-1,:));
+handles.data.VENC = double(handles.VENC);
+handles.data.voxel_MR = double(handles.voxel_MR);
+handles.data.heart_rate = double(handles.heart_rate);
+handles.data.type = handles.type;
+
+data = handles.data;
 
 directory = uigetdir(pwd, 'Select Directory');
 
