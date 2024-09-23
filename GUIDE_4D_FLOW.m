@@ -11959,6 +11959,7 @@ function Save_Data_Callback(hObject, eventdata, handles)
                 input.nodes = handles.nodes;% incorporated 25012023
                 input.Laplace = handles.Laplace;% incorporated 25012023
                 input.length_vessel = handles.length_vessel;% incorporated 25012023
+                input.ID_selected = 0;% incorporated 25012023
                 
                 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
                 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -11993,14 +11994,17 @@ function Save_Data_Callback(hObject, eventdata, handles)
                     input.Laplace = getappdata(0,'Laplace');% incorporated 25012023
                     input.length_vessel = getappdata(0,'length_vessel');% incorporated 25012023
                     input.NODES_SECTION = getappdata(0,'NODES_SECTION');% incorporated 25012023
+                    input.ID_selected = getappdata(0,'ID_selected');% incorporated 25012023
                     
                     handles.NODES_SECTION = input.NODES_SECTION;
+                    handles.ID_selected = input.ID_selected;
                     pause(0.05)
 
                 end
                 
                 % SECTION OF VOLUME
                 handles.SECTIONS_V = handles.NODES_SECTION;
+                
 
                 % SECTIONS OF SURFACE
                 handles.SECTIONS_S = [];
@@ -12382,7 +12386,10 @@ function Save_Data_Callback(hObject, eventdata, handles)
                 if handles.save_selection(39,1)==1 % Julio Sotelo 04-07-2019
                     mkdir([directory,'/MATLAB FILES/2D Flow/'])
                     Maximum_Velocity = handles.max_velocity;
+                    
+                    Mean_Velocity_2D = handles.mean_velocity_2d;
                     save([directory,'/MATLAB FILES/2D Flow/Maximum_Velocity.mat'],'Maximum_Velocity')
+                    save([directory,'/MATLAB FILES/2D Flow/Mean_Velocity.mat'],'Mean_Velocity_2D')
                     waitbar(st/ sum(handles.save_selection(:,1)),h,['Saving MAT Files ',num2str(st),' files of ',num2str(sum(handles.save_selection(:,1))),' ...']);
                     st = st+steps;
                 end
@@ -12393,12 +12400,15 @@ function Save_Data_Callback(hObject, eventdata, handles)
                     waitbar(st/ sum(handles.save_selection(:,1)),h,['Saving MAT Files ',num2str(st),' files of ',num2str(sum(handles.save_selection(:,1))),' ...']);
                     st = st+steps;
                 end
+
                 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
                 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
                 if handles.id_csv_save == 1
                     mkdir([directory,'/MATLAB FILES/FE Segments/'])
                     Segments = handles.segments;
                     save([directory,'/MATLAB FILES/FE Segments/Segments.mat'],'Segments')
+                    ID_selected = handles.ID_selected;
+                    save([directory,'/MATLAB FILES/FE Segments/ID_selected.mat'],'ID_selected')
                     waitbar(st/ sum(handles.save_selection(:,1)),h,['Saving MAT Files ',num2str(st),' files of ',num2str(sum(handles.save_selection(:,1))),' ...']);
                     st = st+steps;
                 end 
@@ -12987,9 +12997,11 @@ function Save_Data_Callback(hObject, eventdata, handles)
                 VV = [{'Time [s]';...
                       'Flow [ml/s]';...
                       'Net Flow [ml]';...
+                      'Mean Velocity [cm/s]';...
                       'Maximum Velocity [cm/s]';...
                       'Minimum Velocity [cm/s]'}];
-                MM = [handles.time';handles.flow';handles.net_flow';handles.max_velocity';handles.min_velocity'];
+                handles.mean_velocity_2d = squeeze(handles.mean_velocity_2d);
+                MM = [handles.time';handles.flow';handles.net_flow';handles.mean_velocity_2d';handles.max_velocity';handles.min_velocity'];
                 TT = table(VV,MM);
                 TT.Properties.VariableNames = [{'Parameter','Cardiac_Phase'}];
 
@@ -13083,9 +13095,11 @@ function Save_Data_Callback(hObject, eventdata, handles)
                 VV = [{'Time [s]';...
                       'Flow [ml/s]';...
                       'Net Flow [ml]';...
+                      'Mean Velocity [cm/s]';...
                       'Maximum Velocity [cm/s]';...
                       'Minimum Velocity [cm/s]'}];
-                MM = [handles.time';handles.flow';handles.net_flow';handles.max_velocity';handles.min_velocity'];
+                handles.mean_velocity_2d = squeeze(handles.mean_velocity_2d);
+                MM = [handles.time';handles.flow';handles.net_flow';handles.mean_velocity_2d';handles.max_velocity';handles.min_velocity'];
                 TT = table(VV,MM);
                 TT.Properties.VariableNames = [{'Parameter','Cardiac_Phase'}];
 
@@ -13179,9 +13193,11 @@ function Save_Data_Callback(hObject, eventdata, handles)
                 VV = [{'Time [s]';...
                       'Flow [ml/s]';...
                       'Net Flow [ml]';...
+                      'Mean Velocity [cm/s]';...
                       'Maximum Velocity [cm/s]';...
                       'Minimum Velocity [cm/s]'}];
-                MM = [handles.time';handles.flow';handles.net_flow';handles.max_velocity';handles.min_velocity'];
+                handles.mean_velocity_2d = squeeze(handles.mean_velocity_2d);
+                MM = [handles.time';handles.flow';handles.net_flow';handles.mean_velocity_2d';handles.max_velocity';handles.min_velocity'];
                 TT = table(VV,MM);
                 TT.Properties.VariableNames = [{'Parameter','Cardiac_Phase'}];
 
@@ -13198,6 +13214,104 @@ function Save_Data_Callback(hObject, eventdata, handles)
 
                     if st==n
                         waitbar(st/ size(handles.veset,3),h,['Saving minimun values (XLS file) cardiac phase ',num2str(st),' of ',num2str(size(handles.veset,3)),' ...']);
+                        st = st+steps;
+                    end
+                end
+                close(h)
+
+
+                %%% Standar deviation Values
+                MAT = zeros(26,size(handles.SECTIONS_V,1),size(handles.veset,3));
+                for m=1:size(handles.veset,3)
+                    for n=1:size(handles.SECTIONS_V,1)
+
+                        MAT(1,n,m) = std(mag_velocity(handles.SECTIONS_V{n},m));
+                        MAT(2,n,m) = std(mag_wss(handles.SECTIONS_S{n},m));
+                        MAT(3,n,m) = std(mag_wssa(handles.SECTIONS_S{n},m));
+                        MAT(4,n,m) = std(mag_wssc(handles.SECTIONS_S{n},m));
+                        MAT(5,n,m) = std(mag_vor(id_vol_V_n{n},m));
+                        MAT(6,n,m) = std(mag_forward_vel(handles.SECTIONS_V{n},m));
+                        MAT(7,n,m) = std(mag_backward_vel(handles.SECTIONS_V{n},m));
+                        MAT(8,n,m) = std(osi_values(handles.SECTIONS_S{n},m));
+                        MAT(9,n,m) = std(hd_values(handles.SECTIONS_V{n},m));
+                        MAT(10,n,m) = std(rhd_values(handles.SECTIONS_V{n},m));
+                        MAT(11,n,m) = std(vd_values(id_vol_V_n{n},m));
+                        MAT(12,n,m) = std(el_values(id_vol_V_n{n},m));
+                        MAT(13,n,m) = std(ke_values(handles.SECTIONS_V{n},m));
+                        MAT(14,n,m) = std(aa_values(handles.SECTIONS_V{n},m));
+                        MAT(15,n,m) = std(rf_values(handles.SECTIONS_S{n},m));
+                        MAT(16,n,m) = std(ecc_values(handles.SECTIONS_S{n},m));
+                        MAT(17,n,m) = std(dia_values(handles.SECTIONS_S{n},m));
+                        MAT(18,n,m) = std(rad_values(handles.SECTIONS_S{n},m));
+                        MAT(19,n,m) = std(cur_values(handles.SECTIONS_S{n},m)); % Julio Sotelo 28-05-2019
+                        MAT(20,n,m) = std(ell_values(handles.SECTIONS_S{n},m)); % Julio Sotelo 28-05-2019
+                        MAT(21,n,m) = std(len_values(handles.SECTIONS_S{n},m)); % Julio Sotelo 28-05-2019
+    %                     MAT(22,n,m) = min(cir_values(handles.SECTIONS_S{n},m)); % Julio Sotelo 28-05-2019
+                        MAT(22,n,m) = std(fov_values(id_vol_V_n{n},m)); % Julio Sotelo 28-05-2019
+                        MAT(23,n,m) = std(fla_values(handles.SECTIONS_S{n},m)); % Julio Sotelo 28-05-2019
+                        MAT(24,n,m) = std(are_values(handles.SECTIONS_S{n},m)); % Julio Sotelo 28-05-2019
+                        MAT(25,n,m) = std(aci_values(handles.SECTIONS_S{n},m)); % Julio Sotelo 28-05-2019
+                        MAT(26,n,m) = peak_systole;
+
+                    end
+                end
+
+
+                if handles.save_selection(6,4)==0; MAT(1,:,:) = NaN; end
+                if handles.save_selection(7,4)==0; MAT(2,:,:) = NaN; end
+                if handles.save_selection(8,4)==0; MAT(8,:,:) = NaN; end
+                if handles.save_selection(9,4)==0; MAT(5,:,:) = NaN; end
+                if handles.save_selection(10,4)==0; MAT(9,:,:) = NaN; end
+                if handles.save_selection(11,4)==0; MAT(10,:,:) = NaN; end
+                if handles.save_selection(12,4)==0; MAT(11,:,:) = NaN; end
+                if handles.save_selection(13,4)==0; MAT(12,:,:) = NaN; end
+                if handles.save_selection(14,4)==0; MAT(13,:,:) = NaN; end
+                if handles.save_selection(17,4)==0; MAT(18,:,:) = NaN; end
+                if handles.save_selection(18,4)==0; MAT(17,:,:) = NaN; end
+                if handles.save_selection(21,4)==0; MAT(3,:,:) = NaN; end
+                if handles.save_selection(22,4)==0; MAT(4,:,:) = NaN; end
+                if handles.save_selection(23,4)==0; MAT(14,:,:) = NaN; end
+                if handles.save_selection(24,4)==0; MAT(6,:,:) = NaN; end
+                if handles.save_selection(25,4)==0; MAT(7,:,:) = NaN; end
+                if handles.save_selection(26,4)==0; MAT(15,:,:) = NaN; end
+                if handles.save_selection(28,4)==0; MAT(16,:,:) = NaN; end
+                if handles.save_selection(29,4)==0; MAT(19,:,:) = NaN; end
+                if handles.save_selection(30,4)==0; MAT(20,:,:) = NaN; end
+                if handles.save_selection(31,4)==0; MAT(21,:,:) = NaN; end
+                if handles.save_selection(32,4)==0; MAT(22,:,:) = NaN; end
+                if handles.save_selection(33,4)==0; MAT(23,:,:) = NaN; end
+                if handles.save_selection(34,4)==0; MAT(24,:,:) = NaN; end
+                if handles.save_selection(35,4)==0; MAT(25,:,:) = NaN; end
+    %             if handles.save_selection(36,4)==0; MAT(26,:,:) = NaN; end
+
+                h = waitbar(0,['Saving minimun values (XLS file) cardiac phase ',num2str(1),' of ',num2str(size(handles.veset,3)),' ...']);
+                steps = 1;
+                st = steps;
+                 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                VV = [{'Time [s]';...
+                      'Flow [ml/s]';...
+                      'Net Flow [ml]';...
+                      'Mean Velocity [cm/s]';...
+                      'Maximum Velocity [cm/s]';...
+                      'Minimum Velocity [cm/s]'}];
+                handles.mean_velocity_2d = squeeze(handles.mean_velocity_2d);
+                MM = [handles.time';handles.flow';handles.net_flow';handles.mean_velocity_2d';handles.max_velocity';handles.min_velocity'];
+                TT = table(VV,MM);
+                TT.Properties.VariableNames = [{'Parameter','Cardiac_Phase'}];
+
+                filename = [directory,'/XLS FILES/RESULTS_SECTIONS_STD_VALUES.xls'];
+                writetable(TT,fullfile(filename),'Sheet','2D Flow','Range','A1')
+                %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                for n=1:size(handles.veset,3)
+                    eval(['Sections_from_1_to_',num2str(size(handles.SECTIONS_V,1)),' = MAT(:,:,n);']);
+                    T = table(Parameter,eval(['Sections_from_1_to_',num2str(size(handles.SECTIONS_V,1))]));
+                    T.Properties.VariableNames = [{'Parameter','Section'}];
+
+                    filename = [directory,'/XLS FILES/RESULTS_SECTIONS_STD_VALUES.xls'];
+                    writetable(T,fullfile(filename),'Sheet',['Cardiac Phase #',num2str(n)],'Range','A1')
+
+                    if st==n
+                        waitbar(st/ size(handles.veset,3),h,['Saving std values (XLS file) cardiac phase ',num2str(st),' of ',num2str(size(handles.veset,3)),' ...']);
                         st = st+steps;
                     end
                 end
@@ -18810,6 +18924,7 @@ function pushbutton81_Callback(hObject, eventdata, handles)
     input.min_velocity        = [];
     input.velocity_proj       = [];
     input.id_section          = [];
+    input.mean_velocity_2d    = [];
     input.veset_out           = handles.veset;
     input.Lrgb                = handles.Lrgb;
     input.Lrgb_vel            = handles.Lrgb_vel;
@@ -18852,6 +18967,7 @@ function pushbutton81_Callback(hObject, eventdata, handles)
         input.MR_PCA_FH_smooth = getappdata(0,'MR_PCA_FH_smooth');
         input.MR_PCA_AP_smooth = getappdata(0,'MR_PCA_AP_smooth');
         input.MR_PCA_RL_smooth = getappdata(0,'MR_PCA_RL_smooth');
+        input.mean_velocity_2d = getappdata(0,'mean_velocity_2d');
         pause(0.05)
 
     end
@@ -18874,6 +18990,7 @@ function pushbutton81_Callback(hObject, eventdata, handles)
     handles.net_flow            = input.net_flow;
     handles.max_velocity        = input.max_velocity;
     handles.min_velocity        = input.min_velocity;
+    handles.mean_velocity_2d    = input.mean_velocity_2d;
     
     if isempty(handles.flow)==0
 
