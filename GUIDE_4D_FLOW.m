@@ -19515,138 +19515,274 @@ if exist('4DFlowNet-master', 'dir')==7
     answer = inputdlg(prompt,dlgtitle,fieldsize);
 
 
-    final_path = [answer{1},'envs\py38\python.exe'];
-    disp(final_path)
-    pyenv('Version',final_path);
-    pyenv(ExecutionMode="OutOfProcess")
-    py.list({"Monday","Tuesday","Wednesday","Thursday","Friday"});
+    if ispc==1
+        final_path = [answer{1},'envs\py38\python.exe'];
+        disp(final_path)
+        pyenv('Version',final_path);
+        pyenv(ExecutionMode="OutOfProcess")
+        py.list({"Monday","Tuesday","Wednesday","Thursday","Friday"});
 
-    % convert data to h5
-    data = [];
-    data.MR_FFE_FH = double(handles.MR_FFE_FH(2:end-1,2:end-1,2:end-1,:));
-    data.MR_FFE_AP = double(handles.MR_FFE_AP(2:end-1,2:end-1,2:end-1,:));
-    data.MR_FFE_RL = double(handles.MR_FFE_RL(2:end-1,2:end-1,2:end-1,:));
-    data.MR_PCA_FH = double(handles.MR_PCA_FH(2:end-1,2:end-1,2:end-1,:));
-    data.MR_PCA_AP = double(handles.MR_PCA_AP(2:end-1,2:end-1,2:end-1,:));
-    data.MR_PCA_RL = double(handles.MR_PCA_RL(2:end-1,2:end-1,2:end-1,:));
-    data.VENC = double(handles.VENC);
-    data.voxel_MR = double(handles.voxel_MR);
-    data.heart_rate = double(handles.heart_rate);
-    data.type = handles.type;
-
-
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    % we add the h5 file to the path of 4DFlowNet
-    if isfolder('4DFlowNet-master\data\')
-        if isfile('4DFlowNet-master\data\example_data.h5')
-            delete('4DFlowNet-master\data\example_data.h5')
+        % convert data to h5
+        data = [];
+        data.MR_FFE_FH = double(handles.MR_FFE_FH(2:end-1,2:end-1,2:end-1,:));
+        data.MR_FFE_AP = double(handles.MR_FFE_AP(2:end-1,2:end-1,2:end-1,:));
+        data.MR_FFE_RL = double(handles.MR_FFE_RL(2:end-1,2:end-1,2:end-1,:));
+        data.MR_PCA_FH = double(handles.MR_PCA_FH(2:end-1,2:end-1,2:end-1,:));
+        data.MR_PCA_AP = double(handles.MR_PCA_AP(2:end-1,2:end-1,2:end-1,:));
+        data.MR_PCA_RL = double(handles.MR_PCA_RL(2:end-1,2:end-1,2:end-1,:));
+        data.VENC = double(handles.VENC);
+        data.voxel_MR = double(handles.voxel_MR);
+        data.heart_rate = double(handles.heart_rate);
+        data.type = handles.type;
+    
+    
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        % we add the h5 file to the path of 4DFlowNet
+        if isfolder('4DFlowNet-master\data\')
+            if isfile('4DFlowNet-master\data\example_data.h5')
+                delete('4DFlowNet-master\data\example_data.h5')
+            end
+            output_filepath = '4DFlowNet-master\data\example_data.h5';
+        else
+            mkdir('4DFlowNet-master\data\')
+            output_filepath = '4DFlowNet-master\data\example_data.h5';
         end
-        output_filepath = '4DFlowNet-master\data\example_data.h5';
-    else
-        mkdir('4DFlowNet-master\data\')
-        output_filepath = '4DFlowNet-master\data\example_data.h5';
-    end
-
-
-    if isfolder('4DFlowNet-master\result\')
-        if isfile('4DFlowNet-master\result\example_result.h5')
-            delete('4DFlowNet-master\result\example_result.h5')
+    
+    
+        if isfolder('4DFlowNet-master\result\')
+            if isfile('4DFlowNet-master\result\example_result.h5')
+                delete('4DFlowNet-master\result\example_result.h5')
+            end
+        else
+            mkdir('4DFlowNet-master\result\')
         end
+    
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        % Read data files
+        dx = data.voxel_MR';
+    
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        dx = repmat(dx,1,size(data.MR_PCA_RL,4));
+    
+        vx = single(data.MR_PCA_RL./100);
+        vy = single(data.MR_PCA_AP./100);
+        vz = single(data.MR_PCA_FH./100);
+    
+        vmask = abs(repmat(abs(vz(:,:,:,1))==data.VENC/100,1,1,1,size(vz,4))-1);
+        vx = vx.*vmask;
+        vy = vy.*vmask;
+        vz = vz.*vmask;
+    
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        % we normlize the magnitude images between 0 to 4096
+        mag_u = single(round((data.MR_FFE_RL./max(data.MR_FFE_RL(:)))*600));
+        mag_v = single(round((data.MR_FFE_AP./max(data.MR_FFE_AP(:)))*600));
+        mag_w = single(round((data.MR_FFE_FH./max(data.MR_FFE_FH(:)))*600));
+    
+        venc = repmat(data.VENC/100,1,size(data.MR_PCA_RL,4));
+    
+        disp('Preparing HDF5')
+        colnames = {'/dx', '/u', '/v', '/w',  '/mag_u', '/mag_v', '/mag_w','/venc_u','/venc_v','/venc_w'};
+    
+        h5create(output_filepath,colnames{1},size(dx),'Datatype','single');
+        h5create(output_filepath,colnames{2},size(vx),'Datatype','single');
+        h5create(output_filepath,colnames{3},size(vy),'Datatype','single');
+        h5create(output_filepath,colnames{4},size(vz),'Datatype','single');
+    
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        h5create(output_filepath,colnames{5},size(mag_u),'Datatype','single');
+        h5create(output_filepath,colnames{6},size(mag_v),'Datatype','single');
+        h5create(output_filepath,colnames{7},size(mag_w),'Datatype','single');
+    
+        h5create(output_filepath,colnames{8},size(venc),'Datatype','single');
+        h5create(output_filepath,colnames{9},size(venc),'Datatype','single');
+        h5create(output_filepath,colnames{10},size(venc),'Datatype','single');
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        disp('Saving to HDF5')
+        h5write(output_filepath, colnames{1}, dx);
+        h5write(output_filepath, colnames{2}, vx);
+        h5write(output_filepath, colnames{3}, vy);
+        h5write(output_filepath, colnames{4}, vz);
+        h5write(output_filepath, colnames{5}, mag_v);
+        h5write(output_filepath, colnames{6}, mag_w);
+        h5write(output_filepath, colnames{7}, mag_w);
+        h5write(output_filepath, colnames{8}, venc);
+        h5write(output_filepath, colnames{9}, venc);
+        h5write(output_filepath, colnames{10}, venc);
+    
+        disp('Done!');
+    
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        % we run the python code.
+        cd '4DFlowNet-master/src/'
+        pyrunfile('predictor.py')
+        cd ../../
+    
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        % we create matlab file from h5 file super res
+        h5_result_HR_path = '4DFlowNet-master\result\example_result.h5';
+        
+        RL = double(h5read(h5_result_HR_path,'/u'))*100; % change to cm/s
+        AP = double(h5read(h5_result_HR_path,'/v'))*100; % change to cm/s
+        FH = double(h5read(h5_result_HR_path,'/w'))*100; % change to cm/s
+       
+        MAG = zeros(size(FH));
+        for n=1:size(FH,4)
+            MAG(:,:,:,n) = imresize3(data.MR_FFE_FH(:,:,:,n),[size(FH,1) size(FH,2) size(FH,3)], "cubic");
+        end
+        
+        data_new = data;
+        data_new.MR_FFE_AP = (MAG + abs(min(MAG(:))))*255;
+        data_new.MR_FFE_RL = (MAG + abs(min(MAG(:))))*255;
+        data_new.MR_FFE_FH = (MAG + abs(min(MAG(:))))*255;
+        data_new.MR_PCA_AP = AP;
+        data_new.MR_PCA_RL = RL;
+        data_new.MR_PCA_FH = FH;
+        data_new.voxel_MR = data.voxel_MR/2;
+        
+        data = data_new;
+
     else
-        mkdir('4DFlowNet-master\result\')
+        final_path = [answer{1},'envs/py38/bin/python3.8'];
+        disp(final_path)
+        pyenv('Version',final_path);
+        pyenv(ExecutionMode="OutOfProcess")
+        py.list({"Monday","Tuesday","Wednesday","Thursday","Friday"});
+
+        % convert data to h5
+        data = [];
+        data.MR_FFE_FH = double(handles.MR_FFE_FH(2:end-1,2:end-1,2:end-1,:));
+        data.MR_FFE_AP = double(handles.MR_FFE_AP(2:end-1,2:end-1,2:end-1,:));
+        data.MR_FFE_RL = double(handles.MR_FFE_RL(2:end-1,2:end-1,2:end-1,:));
+        data.MR_PCA_FH = double(handles.MR_PCA_FH(2:end-1,2:end-1,2:end-1,:));
+        data.MR_PCA_AP = double(handles.MR_PCA_AP(2:end-1,2:end-1,2:end-1,:));
+        data.MR_PCA_RL = double(handles.MR_PCA_RL(2:end-1,2:end-1,2:end-1,:));
+        data.VENC = double(handles.VENC);
+        data.voxel_MR = double(handles.voxel_MR);
+        data.heart_rate = double(handles.heart_rate);
+        data.type = handles.type;
+    
+    
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        % we add the h5 file to the path of 4DFlowNet
+        if isfolder('4DFlowNet-master/data/')
+            if isfile('4DFlowNet-master/data/example_data.h5')
+                delete('4DFlowNet-master/data/example_data.h5')
+            end
+            output_filepath = '4DFlowNet-master/data/example_data.h5';
+        else
+            mkdir('4DFlowNet-master/data/')
+            output_filepath = '4DFlowNet-master/data/example_data.h5';
+        end
+    
+    
+        if isfolder('4DFlowNet-master/result/')
+            if isfile('4DFlowNet-master/result/example_result.h5')
+                delete('4DFlowNet-master/result/example_result.h5')
+            end
+        else
+            mkdir('4DFlowNet-master/result/')
+        end
+    
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        % Read data files
+        dx = data.voxel_MR';
+    
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        dx = repmat(dx,1,size(data.MR_PCA_RL,4));
+    
+        vx = single(data.MR_PCA_RL./100);
+        vy = single(data.MR_PCA_AP./100);
+        vz = single(data.MR_PCA_FH./100);
+    
+        vmask = abs(repmat(abs(vz(:,:,:,1))==data.VENC/100,1,1,1,size(vz,4))-1);
+        vx = vx.*vmask;
+        vy = vy.*vmask;
+        vz = vz.*vmask;
+    
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        % we normlize the magnitude images between 0 to 4096
+        mag_u = single(round((data.MR_FFE_RL./max(data.MR_FFE_RL(:)))*600));
+        mag_v = single(round((data.MR_FFE_AP./max(data.MR_FFE_AP(:)))*600));
+        mag_w = single(round((data.MR_FFE_FH./max(data.MR_FFE_FH(:)))*600));
+    
+        venc = repmat(data.VENC/100,1,size(data.MR_PCA_RL,4));
+    
+        disp('Preparing HDF5')
+        colnames = {'/dx', '/u', '/v', '/w',  '/mag_u', '/mag_v', '/mag_w','/venc_u','/venc_v','/venc_w'};
+    
+        h5create(output_filepath,colnames{1},size(dx),'Datatype','single');
+        h5create(output_filepath,colnames{2},size(vx),'Datatype','single');
+        h5create(output_filepath,colnames{3},size(vy),'Datatype','single');
+        h5create(output_filepath,colnames{4},size(vz),'Datatype','single');
+    
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        h5create(output_filepath,colnames{5},size(mag_u),'Datatype','single');
+        h5create(output_filepath,colnames{6},size(mag_v),'Datatype','single');
+        h5create(output_filepath,colnames{7},size(mag_w),'Datatype','single');
+    
+        h5create(output_filepath,colnames{8},size(venc),'Datatype','single');
+        h5create(output_filepath,colnames{9},size(venc),'Datatype','single');
+        h5create(output_filepath,colnames{10},size(venc),'Datatype','single');
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        disp('Saving to HDF5')
+        h5write(output_filepath, colnames{1}, dx);
+        h5write(output_filepath, colnames{2}, vx);
+        h5write(output_filepath, colnames{3}, vy);
+        h5write(output_filepath, colnames{4}, vz);
+        h5write(output_filepath, colnames{5}, mag_v);
+        h5write(output_filepath, colnames{6}, mag_w);
+        h5write(output_filepath, colnames{7}, mag_w);
+        h5write(output_filepath, colnames{8}, venc);
+        h5write(output_filepath, colnames{9}, venc);
+        h5write(output_filepath, colnames{10}, venc);
+    
+        disp('Done!');
+    
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        % we run the python code.
+        cd '4DFlowNet-master/src/'
+        pyrunfile('predictor.py')
+        cd ../../
+    
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        % we create matlab file from h5 file super res
+        h5_result_HR_path = '4DFlowNet-master/result/example_result.h5';
+        
+        RL = double(h5read(h5_result_HR_path,'/u'))*100; % change to cm/s
+        AP = double(h5read(h5_result_HR_path,'/v'))*100; % change to cm/s
+        FH = double(h5read(h5_result_HR_path,'/w'))*100; % change to cm/s
+       
+        MAG = zeros(size(FH));
+        for n=1:size(FH,4)
+            MAG(:,:,:,n) = imresize3(data.MR_FFE_FH(:,:,:,n),[size(FH,1) size(FH,2) size(FH,3)], "cubic");
+        end
+        
+        data_new = data;
+        data_new.MR_FFE_AP = (MAG + abs(min(MAG(:))))*255;
+        data_new.MR_FFE_RL = (MAG + abs(min(MAG(:))))*255;
+        data_new.MR_FFE_FH = (MAG + abs(min(MAG(:))))*255;
+        data_new.MR_PCA_AP = AP;
+        data_new.MR_PCA_RL = RL;
+        data_new.MR_PCA_FH = FH;
+        data_new.voxel_MR = data.voxel_MR/2;
+        
+        data = data_new;
+
     end
-
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    % Read data files
-    dx = data.voxel_MR';
-
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    dx = repmat(dx,1,size(data.MR_PCA_RL,4));
-
-    vx = single(data.MR_PCA_RL./100);
-    vy = single(data.MR_PCA_AP./100);
-    vz = single(data.MR_PCA_FH./100);
-
-    vmask = abs(repmat(abs(vz(:,:,:,1))==data.VENC/100,1,1,1,size(vz,4))-1);
-    vx = vx.*vmask;
-    vy = vy.*vmask;
-    vz = vz.*vmask;
-
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    % we normlize the magnitude images between 0 to 4096
-    mag_u = single(round((data.MR_FFE_RL./max(data.MR_FFE_RL(:)))*600));
-    mag_v = single(round((data.MR_FFE_AP./max(data.MR_FFE_AP(:)))*600));
-    mag_w = single(round((data.MR_FFE_FH./max(data.MR_FFE_FH(:)))*600));
-
-    venc = repmat(data.VENC/100,1,size(data.MR_PCA_RL,4));
-
-    disp('Preparing HDF5')
-    colnames = {'/dx', '/u', '/v', '/w',  '/mag_u', '/mag_v', '/mag_w','/venc_u','/venc_v','/venc_w'};
-
-    h5create(output_filepath,colnames{1},size(dx),'Datatype','single');
-    h5create(output_filepath,colnames{2},size(vx),'Datatype','single');
-    h5create(output_filepath,colnames{3},size(vy),'Datatype','single');
-    h5create(output_filepath,colnames{4},size(vz),'Datatype','single');
-
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    h5create(output_filepath,colnames{5},size(mag_u),'Datatype','single');
-    h5create(output_filepath,colnames{6},size(mag_v),'Datatype','single');
-    h5create(output_filepath,colnames{7},size(mag_w),'Datatype','single');
-
-    h5create(output_filepath,colnames{8},size(venc),'Datatype','single');
-    h5create(output_filepath,colnames{9},size(venc),'Datatype','single');
-    h5create(output_filepath,colnames{10},size(venc),'Datatype','single');
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    disp('Saving to HDF5')
-    h5write(output_filepath, colnames{1}, dx);
-    h5write(output_filepath, colnames{2}, vx);
-    h5write(output_filepath, colnames{3}, vy);
-    h5write(output_filepath, colnames{4}, vz);
-    h5write(output_filepath, colnames{5}, mag_v);
-    h5write(output_filepath, colnames{6}, mag_w);
-    h5write(output_filepath, colnames{7}, mag_w);
-    h5write(output_filepath, colnames{8}, venc);
-    h5write(output_filepath, colnames{9}, venc);
-    h5write(output_filepath, colnames{10}, venc);
-
-    disp('Done!');
-
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    % we run the python code.
-    cd '4DFlowNet-master/src/'
-    pyrunfile('predictor.py')
-    cd ../../
-
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    % we create matlab file from h5 file super res
-    h5_result_HR_path = '4DFlowNet-master\result\example_result.h5';
     
-    RL = double(h5read(h5_result_HR_path,'/u'))*100; % change to cm/s
-    AP = double(h5read(h5_result_HR_path,'/v'))*100; % change to cm/s
-    FH = double(h5read(h5_result_HR_path,'/w'))*100; % change to cm/s
-   
-    MAG = zeros(size(FH));
-    for n=1:size(FH,4)
-        MAG(:,:,:,n) = imresize3(data.MR_FFE_FH(:,:,:,n),[size(FH,1) size(FH,2) size(FH,3)], "cubic");
-    end
-    
-    data_new = data;
-    data_new.MR_FFE_AP = (MAG + abs(min(MAG(:))))*255;;
-    data_new.MR_FFE_RL = (MAG + abs(min(MAG(:))))*255;;
-    data_new.MR_FFE_FH = (MAG + abs(min(MAG(:))))*255;;
-    data_new.MR_PCA_AP = AP;
-    data_new.MR_PCA_RL = RL;
-    data_new.MR_PCA_FH = FH;
-    data_new.voxel_MR = data.voxel_MR/2;
-    
-    data = data_new;
-
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
