@@ -48,7 +48,7 @@ function GUIDE_4D_FLOW_OpeningFcn(hObject, eventdata, handles, varargin)
     [av,bv,~] = size(imlogo);
     windows_screen_size = get(0,'ScreenSize');
     imlogo = imresize(imlogo,[round(windows_screen_size(4)*av/(av+bv)) round(windows_screen_size(4)*bv/(av+bv))]);
-    Sz= size(imlogo);
+    Sz = size(imlogo);
     flogo = figure('Position',[10000 10000 Sz(2) + 4 Sz(1) + 4],'name','4D FLOW APP','numbertitle','off','menubar','none');
     movegui(flogo,'center');
     set(flogo,'Units', 'pixels');
@@ -59,6 +59,7 @@ function GUIDE_4D_FLOW_OpeningFcn(hObject, eventdata, handles, varargin)
     clear imlogo
     warning off
     
+    
 guidata(hObject, handles);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -66,6 +67,7 @@ guidata(hObject, handles);
 function varargout = GUIDE_4D_FLOW_OutputFcn(hObject, eventdata, handles)
 
 varargout{1} = handles.output;
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -309,80 +311,163 @@ guidata(hObject, handles);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function pushbutton6_Callback(hObject, eventdata, handles)
-    axes(handles.axes1);
-    imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.IPCMRA(:,:,handles.slider_axes1)))
-    hold on
-    plot([handles.yd(1,1),handles.yd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
-    plot([handles.slider_axes2_voxel,handles.slider_axes2_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--r','Linewidth',1)
-    if handles.id_resizing == 1
-        rectangle('Position',handles.pos1,'LineWidth',1,'EdgeColor','y','LineStyle','-')
-    end
-    hold off
-    axis image
-    colormap gray
-    axis off
-    daspect([1 1 1])
-    h = imrect(gca,handles.pos1);
-    setColor(h,'c');
-    position = wait(h);
     
-    %%% Julio Sotelo 23-11-2018
-    handles.position_sag = position;
-    handles.position_axi = [handles.position_axi(1) position(2) handles.position_axi(3) position(4)];
-    handles.position_cor = [handles.position_cor(1) position(1) handles.position_cor(3) position(3)];
+    if handles.id_ang == 1
 
-    handles.c1 = position(2);
-    handles.c2 = position(1);
-    handles.c3 = handles.pos2(1);
-    handles.c4 = position(4);
-    handles.c5 = position(3);
-    handles.c6 = handles.pos2(3);
-    handles.pos1 = [handles.c2 handles.c1 handles.c5 handles.c4];
-    handles.pos2 = [handles.c3 handles.c1 handles.c6 handles.c4];
-    handles.pos3 = [handles.c3 handles.c2 handles.c6 handles.c5];
+        axes(handles.axes1);
+        imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.IPCMRA(:,:,handles.slider_axes1)))
+        hold on
+        plot([handles.yd(1,1),handles.yd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
+        plot([handles.slider_axes2_voxel,handles.slider_axes2_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--r','Linewidth',1)
+        if handles.id_resizing == 1
+            rectangle('Position',handles.pos1,'LineWidth',1,'EdgeColor','y','LineStyle','-')
+        end
+        hold off
+        axis image
+        colormap gray
+        axis off
+        daspect([1 1 1])
+        h = imrect(gca,handles.pos1);
+        setColor(h,'c');
+        position = wait(h);
+        
+        %%% Julio Sotelo 23-11-2018
+        handles.position_sag = position;
+        handles.position_axi = [handles.position_axi(1) position(2) handles.position_axi(3) position(4)];
+        handles.position_cor = [handles.position_cor(1) position(1) handles.position_cor(3) position(3)];
     
-    if handles.slider_axes1 ==1, handles.slider_axes1_voxel = 0; else, handles.slider_axes1_voxel = (handles.slider_axes1*handles.voxel_MR(3))-handles.voxel_MR(3); end
-    if handles.slider_axes2 ==1, handles.slider_axes2_voxel = 0; else, handles.slider_axes2_voxel = (handles.slider_axes2*handles.voxel_MR(2))-handles.voxel_MR(2); end
-    if handles.slider_axes3 ==1, handles.slider_axes3_voxel = 0; else, handles.slider_axes3_voxel = (handles.slider_axes3*handles.voxel_MR(1))-handles.voxel_MR(1); end
-    axes(handles.axes1);
-    imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.IPCMRA(:,:,handles.slider_axes1)))
-    hold on
-    plot([handles.yd(1,1),handles.yd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
-    plot([handles.slider_axes2_voxel,handles.slider_axes2_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--r','Linewidth',1)
-    if handles.id_resizing == 1
-        rectangle('Position',handles.pos1,'LineWidth',1,'EdgeColor','y','LineStyle','-')
+        handles.c1 = position(2);
+        handles.c2 = position(1);
+        handles.c3 = handles.pos2(1);
+        handles.c4 = position(4);
+        handles.c5 = position(3);
+        handles.c6 = handles.pos2(3);
+        handles.pos1 = [handles.c2 handles.c1 handles.c5 handles.c4];
+        handles.pos2 = [handles.c3 handles.c1 handles.c6 handles.c4];
+        handles.pos3 = [handles.c3 handles.c2 handles.c6 handles.c5];
+        
+        if handles.slider_axes1 ==1, handles.slider_axes1_voxel = 0; else, handles.slider_axes1_voxel = (handles.slider_axes1*handles.voxel_MR(3))-handles.voxel_MR(3); end
+        if handles.slider_axes2 ==1, handles.slider_axes2_voxel = 0; else, handles.slider_axes2_voxel = (handles.slider_axes2*handles.voxel_MR(2))-handles.voxel_MR(2); end
+        if handles.slider_axes3 ==1, handles.slider_axes3_voxel = 0; else, handles.slider_axes3_voxel = (handles.slider_axes3*handles.voxel_MR(1))-handles.voxel_MR(1); end
+        axes(handles.axes1);
+        imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.IPCMRA(:,:,handles.slider_axes1)))
+        hold on
+        plot([handles.yd(1,1),handles.yd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
+        plot([handles.slider_axes2_voxel,handles.slider_axes2_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--r','Linewidth',1)
+        if handles.id_resizing == 1
+            rectangle('Position',handles.pos1,'LineWidth',1,'EdgeColor','y','LineStyle','-')
+        end
+        hold off
+        axis image
+        colormap gray
+        axis off
+        daspect([1 1 1])
+        axes(handles.axes2);
+        imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.IPCMRA(:,handles.slider_axes2,:)))
+        hold on
+        plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
+        plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--g','Linewidth',1)
+        if handles.id_resizing == 1
+            rectangle('Position',handles.pos2,'LineWidth',1,'EdgeColor','y','LineStyle','-')
+        end
+        hold off
+        axis image
+        colormap gray
+        axis off
+        daspect([1 1 1])
+        axes(handles.axes3);
+        imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',squeeze(handles.IPCMRA(handles.slider_axes3,:,:)))
+        hold on
+        plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes2_voxel,handles.slider_axes2_voxel]','--r','Linewidth',1)
+        plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.yd(1,1),handles.yd(end,end)]','--g','Linewidth',1)
+        if handles.id_resizing == 1
+            rectangle('Position',handles.pos3,'LineWidth',1,'EdgeColor','y','LineStyle','-')
+        end
+        hold off
+        axis image
+        colormap gray
+        axis off
+        daspect([1 1 1])
+
+
+    else
+
+        axes(handles.axes1);
+        imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.MAG(:,:,handles.slider_axes1)))
+        hold on
+        plot([handles.yd(1,1),handles.yd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
+        plot([handles.slider_axes2_voxel,handles.slider_axes2_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--r','Linewidth',1)
+        if handles.id_resizing == 1
+            rectangle('Position',handles.pos1,'LineWidth',1,'EdgeColor','y','LineStyle','-')
+        end
+        hold off
+        axis image
+        colormap gray
+        axis off
+        daspect([1 1 1])
+        h = imrect(gca,handles.pos1);
+        setColor(h,'c');
+        position = wait(h);
+        
+        %%% Julio Sotelo 23-11-2018
+        handles.position_sag = position;
+        handles.position_axi = [handles.position_axi(1) position(2) handles.position_axi(3) position(4)];
+        handles.position_cor = [handles.position_cor(1) position(1) handles.position_cor(3) position(3)];
+    
+        handles.c1 = position(2);
+        handles.c2 = position(1);
+        handles.c3 = handles.pos2(1);
+        handles.c4 = position(4);
+        handles.c5 = position(3);
+        handles.c6 = handles.pos2(3);
+        handles.pos1 = [handles.c2 handles.c1 handles.c5 handles.c4];
+        handles.pos2 = [handles.c3 handles.c1 handles.c6 handles.c4];
+        handles.pos3 = [handles.c3 handles.c2 handles.c6 handles.c5];
+        
+        if handles.slider_axes1 ==1, handles.slider_axes1_voxel = 0; else, handles.slider_axes1_voxel = (handles.slider_axes1*handles.voxel_MR(3))-handles.voxel_MR(3); end
+        if handles.slider_axes2 ==1, handles.slider_axes2_voxel = 0; else, handles.slider_axes2_voxel = (handles.slider_axes2*handles.voxel_MR(2))-handles.voxel_MR(2); end
+        if handles.slider_axes3 ==1, handles.slider_axes3_voxel = 0; else, handles.slider_axes3_voxel = (handles.slider_axes3*handles.voxel_MR(1))-handles.voxel_MR(1); end
+        axes(handles.axes1);
+        imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.MAG(:,:,handles.slider_axes1)))
+        hold on
+        plot([handles.yd(1,1),handles.yd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
+        plot([handles.slider_axes2_voxel,handles.slider_axes2_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--r','Linewidth',1)
+        if handles.id_resizing == 1
+            rectangle('Position',handles.pos1,'LineWidth',1,'EdgeColor','y','LineStyle','-')
+        end
+        hold off
+        axis image
+        colormap gray
+        axis off
+        daspect([1 1 1])
+        axes(handles.axes2);
+        imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.MAG(:,handles.slider_axes2,:)))
+        hold on
+        plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
+        plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--g','Linewidth',1)
+        if handles.id_resizing == 1
+            rectangle('Position',handles.pos2,'LineWidth',1,'EdgeColor','y','LineStyle','-')
+        end
+        hold off
+        axis image
+        colormap gray
+        axis off
+        daspect([1 1 1])
+        axes(handles.axes3);
+        imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',squeeze(handles.MAG(handles.slider_axes3,:,:)))
+        hold on
+        plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes2_voxel,handles.slider_axes2_voxel]','--r','Linewidth',1)
+        plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.yd(1,1),handles.yd(end,end)]','--g','Linewidth',1)
+        if handles.id_resizing == 1
+            rectangle('Position',handles.pos3,'LineWidth',1,'EdgeColor','y','LineStyle','-')
+        end
+        hold off
+        axis image
+        colormap gray
+        axis off
+        daspect([1 1 1])
+
     end
-    hold off
-    axis image
-    colormap gray
-    axis off
-    daspect([1 1 1])
-    axes(handles.axes2);
-    imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.IPCMRA(:,handles.slider_axes2,:)))
-    hold on
-    plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
-    plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--g','Linewidth',1)
-    if handles.id_resizing == 1
-        rectangle('Position',handles.pos2,'LineWidth',1,'EdgeColor','y','LineStyle','-')
-    end
-    hold off
-    axis image
-    colormap gray
-    axis off
-    daspect([1 1 1])
-    axes(handles.axes3);
-    imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',squeeze(handles.IPCMRA(handles.slider_axes3,:,:)))
-    hold on
-    plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes2_voxel,handles.slider_axes2_voxel]','--r','Linewidth',1)
-    plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.yd(1,1),handles.yd(end,end)]','--g','Linewidth',1)
-    if handles.id_resizing == 1
-        rectangle('Position',handles.pos3,'LineWidth',1,'EdgeColor','y','LineStyle','-')
-    end
-    hold off
-    axis image
-    colormap gray
-    axis off
-    daspect([1 1 1])
 handles.output = hObject;
 guidata(hObject, handles);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -557,6 +642,9 @@ guidata(hObject, handles);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function pushbutton7_Callback(hObject, eventdata, handles)
+
+if handles.id_ang == 1
+
     axes(handles.axes2);
     imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.IPCMRA(:,handles.slider_axes2,:)))
     hold on
@@ -630,6 +718,84 @@ function pushbutton7_Callback(hObject, eventdata, handles)
     colormap gray
     axis off
     daspect([1 1 1])
+
+else
+
+    axes(handles.axes2);
+    imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.MAG(:,handles.slider_axes2,:)))
+    hold on
+    plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
+    plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--g','Linewidth',1)
+    if handles.id_resizing == 1
+        rectangle('Position',handles.pos2,'LineWidth',1,'EdgeColor','y','LineStyle','-')
+    end
+    hold off
+    axis image
+    colormap gray
+    axis off
+    daspect([1 1 1])
+    h = imrect(gca,handles.pos2);
+    setColor(h,'c');
+    position = wait(h);
+    
+    %%% Julio Sotelo 23-11-2018
+    handles.position_axi = position;
+    handles.position_sag = [handles.position_sag(1) position(2) handles.position_sag(3) position(4)];
+    handles.position_cor = [position(1) handles.position_cor(2) position(3) handles.position_cor(4)];
+
+    handles.c1 = position(2);
+    handles.c2 = handles.pos1(1);
+    handles.c3 = position(1);
+    handles.c4 = position(4);
+    handles.c5 = handles.pos1(3);
+    handles.c6 = position(3);
+    handles.pos1 = [handles.c2 handles.c1 handles.c5 handles.c4];
+    handles.pos2 = [handles.c3 handles.c1 handles.c6 handles.c4];
+    handles.pos3 = [handles.c3 handles.c2 handles.c6 handles.c5];
+    if handles.slider_axes1 ==1, handles.slider_axes1_voxel = 0; else handles.slider_axes1_voxel = (handles.slider_axes1*handles.voxel_MR(3))-handles.voxel_MR(3); end
+    if handles.slider_axes2 ==1, handles.slider_axes2_voxel = 0; else handles.slider_axes2_voxel = (handles.slider_axes2*handles.voxel_MR(1))-handles.voxel_MR(1); end
+    if handles.slider_axes3 ==1, handles.slider_axes3_voxel = 0; else handles.slider_axes3_voxel = (handles.slider_axes3*handles.voxel_MR(2))-handles.voxel_MR(2); end
+    axes(handles.axes1);
+    imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.MAG(:,:,handles.slider_axes1)))
+    hold on
+    plot([handles.yd(1,1),handles.yd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
+    plot([handles.slider_axes2_voxel,handles.slider_axes2_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--r','Linewidth',1)
+    if handles.id_resizing == 1
+        rectangle('Position',handles.pos1,'LineWidth',1,'EdgeColor','y','LineStyle','-')
+    end
+    hold off
+    axis image
+    colormap gray
+    axis off
+    daspect([1 1 1])
+    axes(handles.axes2);
+    imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.MAG(:,handles.slider_axes2,:)))
+    hold on
+    plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
+    plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--g','Linewidth',1)
+    if handles.id_resizing == 1
+        rectangle('Position',handles.pos2,'LineWidth',1,'EdgeColor','y','LineStyle','-')
+    end
+    hold off
+    axis image
+    colormap gray
+    axis off
+    daspect([1 1 1])
+    axes(handles.axes3);
+    imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',squeeze(handles.MAG(handles.slider_axes3,:,:)))
+    hold on
+    plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes2_voxel,handles.slider_axes2_voxel]','--r','Linewidth',1)
+    plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.yd(1,1),handles.yd(end,end)]','--g','Linewidth',1)
+    if handles.id_resizing == 1
+        rectangle('Position',handles.pos3,'LineWidth',1,'EdgeColor','y','LineStyle','-')
+    end
+    hold off
+    axis image
+    colormap gray
+    axis off
+    daspect([1 1 1])
+
+end
 handles.output = hObject;
 guidata(hObject, handles);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -802,6 +968,9 @@ guidata(hObject, handles);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function pushbutton8_Callback(hObject, eventdata, handles)
+    
+if handles.id_ang == 1
+
     axes(handles.axes3);
     imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',squeeze(handles.IPCMRA(handles.slider_axes3,:,:)))
     hold on
@@ -875,6 +1044,84 @@ function pushbutton8_Callback(hObject, eventdata, handles)
     colormap gray
     axis off
     daspect([1 1 1])
+
+else
+
+    axes(handles.axes3);
+    imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',squeeze(handles.MAG(handles.slider_axes3,:,:)))
+    hold on
+    plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes2_voxel,handles.slider_axes2_voxel]','--r','Linewidth',1)
+    plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.yd(1,1),handles.yd(end,end)]','--g','Linewidth',1)
+    if handles.id_resizing == 1
+        rectangle('Position',handles.pos3,'LineWidth',1,'EdgeColor','y','LineStyle','-')
+    end
+    hold off
+    axis image
+    colormap gray
+    axis off
+    daspect([1 1 1])
+    h = imrect(gca,handles.pos3);
+    setColor(h,'c');
+    position = wait(h);
+    
+    %%% Julio Sotelo 23-11-2018
+    handles.position_cor = position;
+    handles.position_axi = [position(1) handles.position_axi(2) position(3) handles.position_axi(4)];
+    handles.position_sag = [position(2) handles.position_sag(2) position(4) handles.position_sag(4)];
+
+    handles.c1 = handles.pos2(2);
+    handles.c2 = position(2);
+    handles.c3 = position(1);
+    handles.c4 = handles.pos2(4);
+    handles.c5 = position(4);
+    handles.c6 = position(3);
+    handles.pos1 = [handles.c2 handles.c1 handles.c5 handles.c4];
+    handles.pos2 = [handles.c3 handles.c1 handles.c6 handles.c4];
+    handles.pos3 = [handles.c3 handles.c2 handles.c6 handles.c5];
+    if handles.slider_axes1 ==1, handles.slider_axes1_voxel = 0; else handles.slider_axes1_voxel = (handles.slider_axes1*handles.voxel_MR(3))-handles.voxel_MR(3); end
+    if handles.slider_axes2 ==1, handles.slider_axes2_voxel = 0; else handles.slider_axes2_voxel = (handles.slider_axes2*handles.voxel_MR(1))-handles.voxel_MR(1); end
+    if handles.slider_axes3 ==1, handles.slider_axes3_voxel = 0; else handles.slider_axes3_voxel = (handles.slider_axes3*handles.voxel_MR(2))-handles.voxel_MR(2); end
+    axes(handles.axes1);
+    imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.MAG(:,:,handles.slider_axes1)))
+    hold on
+    plot([handles.yd(1,1),handles.yd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
+    plot([handles.slider_axes2_voxel,handles.slider_axes2_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--r','Linewidth',1)
+    if handles.id_resizing == 1
+        rectangle('Position',handles.pos1,'LineWidth',1,'EdgeColor','y','LineStyle','-')
+    end
+    hold off
+    axis image
+    colormap gray
+    axis off
+    daspect([1 1 1])
+    axes(handles.axes2);
+    imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.MAG(:,handles.slider_axes2,:)))
+    hold on
+    plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
+    plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--g','Linewidth',1)
+    if handles.id_resizing == 1
+        rectangle('Position',handles.pos2,'LineWidth',1,'EdgeColor','y','LineStyle','-')
+    end
+    hold off
+    axis image
+    colormap gray
+    axis off
+    daspect([1 1 1])
+    axes(handles.axes3);
+    imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',squeeze(handles.MAG(handles.slider_axes3,:,:)))
+    hold on
+    plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes2_voxel,handles.slider_axes2_voxel]','--r','Linewidth',1)
+    plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.yd(1,1),handles.yd(end,end)]','--g','Linewidth',1)
+    if handles.id_resizing == 1
+        rectangle('Position',handles.pos3,'LineWidth',1,'EdgeColor','y','LineStyle','-')
+    end
+    hold off
+    axis image
+    colormap gray
+    axis off
+    daspect([1 1 1])
+
+end
 handles.output = hObject;
 guidata(hObject, handles);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -10348,7 +10595,7 @@ function Load_Folder_Callback(hObject, eventdata, handles)
             baseFileNames_rec = dir(filePattern_rec);
             numberOfFiles_rec = length(baseFileNames_rec);
             
-            filePattern_dcm = sprintf('%s/*.dcm', thisFolder);
+            filePattern_dcm = sprintf('%s/*', thisFolder);
             baseFileNames_dcm = dir(filePattern_dcm);
             numberOfFiles_dcm = length(baseFileNames_dcm);
             
@@ -10372,8 +10619,10 @@ function Load_Folder_Callback(hObject, eventdata, handles)
 
             if numberOfFiles_dcm>=1 
                 for n = 1:numberOfFiles_dcm
-                    files_names_dcm{cont_dcm} = [thisFolder,filesep,baseFileNames_dcm(n).name];
-                    cont_dcm = cont_dcm + 1;
+                    if isfile([thisFolder,filesep,baseFileNames_dcm(n).name])==1
+                        files_names_dcm{cont_dcm} = [thisFolder,filesep,baseFileNames_dcm(n).name];
+                        cont_dcm = cont_dcm + 1;
+                    end
                 end
             end
 
@@ -10534,7 +10783,7 @@ function Load_Folder_Callback(hObject, eventdata, handles)
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     if isempty(files_names_par)==0
-        
+
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         % remove hidden files
         par_temp = [];
@@ -10553,11 +10802,11 @@ function Load_Folder_Callback(hObject, eventdata, handles)
                 cont = cont + 1;
             end
         end
-        
+
         files_names_par = par_temp;
         files_names_rec = rec_temp;
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        
+
         version = 0;
         h = waitbar(0,['Reading ',num2str(0),' files of ',num2str(length(files_names_rec)),' ...']);
         steps = round(length(files_names_rec)/3);
@@ -10749,7 +10998,7 @@ function Load_Folder_Callback(hObject, eventdata, handles)
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-                
+
         id_empty = double([isempty(handles.MR_FFE_FH),isempty(handles.MR_FFE_AP),isempty(handles.MR_FFE_RL)]);
         if sum(id_empty)>0
             [r,c,v] = find(id_empty==0);
@@ -10765,10 +11014,10 @@ function Load_Folder_Callback(hObject, eventdata, handles)
                 handles.MR_FFE_FH = handles.MR_FFE_RL;
                 handles.MR_FFE_AP = handles.MR_FFE_RL;
                 handles.MR_FFE_RL = handles.MR_FFE_RL;
-                    
+
             end
         end
-        
+
         MASK = double(handles.MR_PCA_FH~=max(phase_encoding)*-1);
         handles.MR_PCA_FH = handles.MR_PCA_FH.*MASK;
         handles.MR_PCA_AP = handles.MR_PCA_AP.*MASK;
@@ -10808,8 +11057,8 @@ function Load_Folder_Callback(hObject, eventdata, handles)
         handles.IPCMRA = (handles.IPCMRA/max(handles.IPCMRA(:)))*255;
 
     elseif isempty(files_names_dcm)==0
-        
-        
+
+
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             % remove hidden files
             dcm_temp = [];
@@ -10821,11 +11070,12 @@ function Load_Folder_Callback(hObject, eventdata, handles)
                 end
             end
             files_names_dcm = dcm_temp;
-%             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%         
-%             h = msgbox({'Please wait ...','Reading Manufacturer Information'});
-%             info_dicom = dicominfo(files_names_dcm{1});
-%             close(h)
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+            h = msgbox({'Please wait ...','Reading Manufacturer Information'});
+            info_dicom = dicominfo(files_names_dcm{1});
+            close(h)
+
 %             if strcmp(info_dicom.Manufacturer,'SIEMENS')==1
 %                 images = zeros(info_dicom.Rows,info_dicom.Columns,length(files_names_dcm));
 %                 infoStr = cell(length(files_names_dcm),1);
@@ -11092,8 +11342,8 @@ function Load_Folder_Callback(hObject, eventdata, handles)
 %                 handles.IPCMRA = (handles.IPCMRA/max(handles.IPCMRA(:)))*255;
 %                 
 % % %             elseif strcmp(info_dicom.Manufacturer,'Philips Medical Systems')==1
-
-            if strcmp(info_dicom.Manufacturer,'Philips')==1       
+            disp(info_dicom.Manufacturer)
+            if contains(info_dicom.Manufacturer,'Philips')==1       
                 h = waitbar(0,['Reading ',num2str(0),' files of ',num2str(length(files_names_dcm)),' ...']);
                 steps = round(length(files_names_dcm)/50);
                 st = steps;
@@ -11103,6 +11353,8 @@ function Load_Folder_Callback(hObject, eventdata, handles)
                 handles.MR_PCA_RL = [];
 
                 if length(files_names_dcm)>4
+
+
                     for k = 1:length(files_names_dcm)
                         info_temp = dicominfo(files_names_dcm{k});
                         RescaleSlope = info_temp.RescaleSlope;
@@ -11143,17 +11395,25 @@ function Load_Folder_Callback(hObject, eventdata, handles)
                             CPhase = eval(['info_temp.PerFrameFunctionalGroupsSequence.Item_',num2str(f),'.Private_2005_140f.Item_1.Private_2001_1008']);
                             Slice = eval(['info_temp.PerFrameFunctionalGroupsSequence.Item_',num2str(f),'.Private_2005_140f.Item_1.Private_2001_100a']);
                             [r,c,v] = find(info_temp.Private_2001_101a>0);
-                            if r == 1; id = 'RL'; end
-                            if r == 2; id = 'AP'; end
-                            if r == 3; id = 'FH'; end
+
+                            if r == 1
+                                id = 'RL'; 
+                            elseif r == 2
+                                id = 'AP'; 
+                            elseif r == 3
+                                id = 'FH'; 
+                            else
+                                id = 'NO'; 
+                            end
+
                             if strcmp(Image_Id,'FFE')==1
                                 name_file = 'handles.MR_FFE';
-                            else
+                            elseif (strcmp(id,'NO')==0) && (strcmp(Image_Id,'PCA')==1)
                                 name_file = ['handles.MR_',Image_Id,'_',id];
                             end
                             eval([name_file,'(:,:,Slice,CPhase)= squeeze(im_temp(:,:,f))*RescaleSlope + RescaleIntercept;'])
                         end
-                        if st==k;
+                        if st==k
                             waitbar(st/ length(files_names_dcm),h,['Reading ',num2str(st),' files of ',num2str(length(files_names_dcm)),' ...']);
                             st = st+steps;
                         end
@@ -11169,7 +11429,7 @@ function Load_Folder_Callback(hObject, eventdata, handles)
                 handles.MR_PCA_FH = permute(handles.MR_PCA_FH,[2,1,3,4]);
                 handles.MR_PCA_AP = permute(handles.MR_PCA_AP,[2,1,3,4]);
                 handles.MR_PCA_RL = permute(handles.MR_PCA_RL,[2,1,3,4]);
-                
+
                 id_empty = double([isempty(handles.MR_FFE_FH),isempty(handles.MR_FFE_AP),isempty(handles.MR_FFE_RL)]);
                 if sum(id_empty)>0
                     [r,c,v] = find(id_empty==0);
@@ -11187,15 +11447,14 @@ function Load_Folder_Callback(hObject, eventdata, handles)
                         handles.MR_FFE_RL = handles.MR_FFE_RL;
 
                     end
-                    
+
                 end
-                
-                
+
                 MASK = double(handles.MR_PCA_FH~=max(info_temp.Private_2001_101a)*-1);
                 handles.MR_PCA_FH = handles.MR_PCA_FH.*MASK;
                 handles.MR_PCA_AP = handles.MR_PCA_AP.*MASK;
                 handles.MR_PCA_RL = handles.MR_PCA_RL.*MASK;
-                
+
                 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
                 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
                 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -11248,7 +11507,7 @@ function Load_Folder_Callback(hObject, eventdata, handles)
                 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
                 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
                 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-                
+
                 [a,b,c,d] = size(handles.MR_FFE_FH);
                 handles.a = a;
                 handles.b = b;
@@ -11282,10 +11541,10 @@ function Load_Folder_Callback(hObject, eventdata, handles)
                 handles.d = d;
         %         handles.IPCMRA = (1/d)*sum( (handles.MR_FFE_FH.^2).*(handles.MR_PCA_FH.^2 + handles.MR_PCA_AP.^2 + handles.MR_PCA_RL.^2),4);
                 handles.IPCMRA = (handles.IPCMRA/max(handles.IPCMRA(:)))*255;
-                
+
             end
     elseif isempty(files_names_dat_vd_1)==0
-        
+
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         % remove hidden files
         dat_temp = [];
@@ -11298,7 +11557,7 @@ function Load_Folder_Callback(hObject, eventdata, handles)
         end
         files_names_dat_vd_1 = dat_temp;
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        
+
         handles.heart_rate = GUIDE_HEART_RATE;
         [names, number] = textread(files_names_txt_hd,'%s %s');
         val_header = str2double(number);
@@ -11349,7 +11608,7 @@ function Load_Folder_Callback(hObject, eventdata, handles)
         handles.MR_PCA_FH = (flip(permute(handles.MR_PCA_FH,[2,3,1,4]),3))/10;
         handles.MR_PCA_AP = (flip(permute(handles.MR_PCA_AP,[2,3,1,4]),3)*-1)/10;
         handles.MR_PCA_RL = (flip(permute(handles.MR_PCA_RL,[2,3,1,4]),3)*-1)/10;
-        
+
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -11402,7 +11661,7 @@ function Load_Folder_Callback(hObject, eventdata, handles)
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-                
+
         [a,b,c,d] = size(handles.MR_FFE_FH);
         handles.a = a;
         handles.b = b;
@@ -13588,190 +13847,382 @@ guidata(hObject, handles);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function uipushtool2_ClickedCallback(hObject, eventdata, handles)
 
-if handles.id_seg == 1 
-    
-    answer = questdlg({'If you change the size of the image the segmentation will be removed';' Do you want to continue? ...'},'Warning','Yes','No','No');
-    switch answer
-        case 'Yes'
-           set(handles.axes4,'Color',[0 0 0])
-            axes(handles.axes4);
-            colorbar('off')
-            plot(0.0)
-            axis off
-            set(handles.text4, 'visible', 'off');
-            list_string = {'...'};
-            set(handles.popupmenu1,'visible','off','String',list_string,'value',1);
-            set(handles.pushbutton5, 'visible', 'off');
-            set(handles.pushbutton12, 'visible', 'off');
-            set(handles.pushbutton13, 'visible', 'off');
-            set(handles.pushbutton14, 'visible', 'off');
-            set(handles.slider4, 'visible', 'off');
-            handles.SEG = zeros(size(handles.SEG));
-            handles.Lrgb = zeros(size(handles.Lrgb));
-            handles.L = zeros(size(handles.L));
-            handles.id_unwrappping = 0;
-            set(handles.pushbutton6, 'Units', 'pixels');
-            handles.pushbutton6_size = get(handles.pushbutton6, 'Position');
-            set(handles.pushbutton6, 'Units', 'normalized');
-            idx = mod(min(handles.pushbutton6_size(3:4)),2)>1;
-            w = floor(min(handles.pushbutton6_size(3:4)));
-            w(idx) = w(idx)+1;
-            im = imread('Symbols/P2.png');
-            g = double(imresize(im,[w-4 w-4],'method','nearest')>0);
-            set(handles.pushbutton6,'CData',g,'visible','on')
-            set(handles.pushbutton9,'visible','on')
-            set(handles.pushbutton7,'CData',g,'visible','on')
-            set(handles.pushbutton10,'visible','on')
-            set(handles.pushbutton8,'CData',g,'visible','on')
-            set(handles.pushbutton11,'visible','on')
-            handles.id_resizing = 1;
-            handles.c1 = handles.xd(1,1);
-            handles.c2 = handles.yd(1,1);
-            handles.c3 = handles.zd(1,1);
-            handles.c4 = handles.xd(end,end);
-            handles.c5 = handles.yd(end,end);
-            handles.c6 = handles.zd(end,end);
-            handles.pos1 = [handles.c2 handles.c1 handles.c5 handles.c4];
-            handles.pos2 = [handles.c3 handles.c1 handles.c6 handles.c4];
-            handles.pos3 = [handles.c3 handles.c2 handles.c6 handles.c5];
-            [a,b,c,d] = size(handles.IPCMRA);
-            set(handles.text1,'visible','on','String',['Image size: ',num2str(size(handles.IPCMRA,2)),' x ',num2str(size(handles.IPCMRA,1)),' Im: ',num2str(round(c/2)),' / ',num2str(c),' Type: ',handles.type])
-            set(handles.text2,'visible','on','String',['Image size: ',num2str(size(handles.IPCMRA,3)),' x ',num2str(size(handles.IPCMRA,1)),' Im: ',num2str(round(b/2)),' / ',num2str(b),' Type: ',handles.type])
-            set(handles.text3,'visible','on','String',['Image size: ',num2str(size(handles.IPCMRA,3)),' x ',num2str(size(handles.IPCMRA,2)),' Im: ',num2str(round(a/2)),' / ',num2str(a),' Type: ',handles.type])
-            if handles.slider_axes1 ==1, handles.slider_axes1_voxel = 0; else, handles.slider_axes1_voxel = (handles.slider_axes1*handles.voxel_MR(3))-handles.voxel_MR(3); end
-            if handles.slider_axes2 ==1, handles.slider_axes2_voxel = 0; else, handles.slider_axes2_voxel = (handles.slider_axes2*handles.voxel_MR(2))-handles.voxel_MR(2); end
-            if handles.slider_axes3 ==1, handles.slider_axes3_voxel = 0; else, handles.slider_axes3_voxel = (handles.slider_axes3*handles.voxel_MR(1))-handles.voxel_MR(1); end
-            axes(handles.axes1);
-            imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.IPCMRA(:,:,handles.slider_axes1)))
-            hold on
-            plot([handles.yd(1,1),handles.yd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
-            plot([handles.slider_axes2_voxel,handles.slider_axes2_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--r','Linewidth',1)
-            if handles.id_resizing == 1
-                rectangle('Position',handles.pos1,'LineWidth',1,'EdgeColor','y','LineStyle','-')
-            end
-            hold off
-            axis image
-            colormap gray
-            axis off
-            daspect([1 1 1])
-            axes(handles.axes2);
-            imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.IPCMRA(:,handles.slider_axes2,:)))
-            hold on
-            plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
-            plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--g','Linewidth',1)
-            if handles.id_resizing == 1
-                rectangle('Position',handles.pos2,'LineWidth',1,'EdgeColor','y','LineStyle','-')
-            end
-            hold off
-            axis image
-            colormap gray
-            axis off
-            daspect([1 1 1])
-            axes(handles.axes3);
-            imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',squeeze(handles.IPCMRA(handles.slider_axes3,:,:)))
-            hold on
-            plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes2_voxel,handles.slider_axes2_voxel]','--r','Linewidth',1)
-            plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.yd(1,1),handles.yd(end,end)]','--g','Linewidth',1)
-            if handles.id_resizing == 1
-                rectangle('Position',handles.pos3,'LineWidth',1,'EdgeColor','y','LineStyle','-')
-            end
-            hold off
-            axis image
-            colormap gray
-            axis off
-            daspect([1 1 1])
-        case 'No'
-            
+if handles.id_ang == 1
+
+    if handles.id_seg == 1 
+        
+        answer = questdlg({'If you change the size of the image the segmentation will be removed';' Do you want to continue? ...'},'Warning','Yes','No','No');
+        switch answer
+            case 'Yes'
+               set(handles.axes4,'Color',[0 0 0])
+                axes(handles.axes4);
+                colorbar('off')
+                plot(0.0)
+                axis off
+                set(handles.text4, 'visible', 'off');
+                list_string = {'...'};
+                set(handles.popupmenu1,'visible','off','String',list_string,'value',1);
+                set(handles.pushbutton5, 'visible', 'off');
+                set(handles.pushbutton12, 'visible', 'off');
+                set(handles.pushbutton13, 'visible', 'off');
+                set(handles.pushbutton14, 'visible', 'off');
+                set(handles.slider4, 'visible', 'off');
+                handles.SEG = zeros(size(handles.SEG));
+                handles.Lrgb = zeros(size(handles.Lrgb));
+                handles.L = zeros(size(handles.L));
+                handles.id_unwrappping = 0;
+                set(handles.pushbutton6, 'Units', 'pixels');
+                handles.pushbutton6_size = get(handles.pushbutton6, 'Position');
+                set(handles.pushbutton6, 'Units', 'normalized');
+                idx = mod(min(handles.pushbutton6_size(3:4)),2)>1;
+                w = floor(min(handles.pushbutton6_size(3:4)));
+                w(idx) = w(idx)+1;
+                im = imread('Symbols/P2.png');
+                g = double(imresize(im,[w-4 w-4],'method','nearest')>0);
+                set(handles.pushbutton6,'CData',g,'visible','on')
+                set(handles.pushbutton9,'visible','on')
+                set(handles.pushbutton7,'CData',g,'visible','on')
+                set(handles.pushbutton10,'visible','on')
+                set(handles.pushbutton8,'CData',g,'visible','on')
+                set(handles.pushbutton11,'visible','on')
+                handles.id_resizing = 1;
+                handles.c1 = handles.xd(1,1);
+                handles.c2 = handles.yd(1,1);
+                handles.c3 = handles.zd(1,1);
+                handles.c4 = handles.xd(end,end);
+                handles.c5 = handles.yd(end,end);
+                handles.c6 = handles.zd(end,end);
+                handles.pos1 = [handles.c2 handles.c1 handles.c5 handles.c4];
+                handles.pos2 = [handles.c3 handles.c1 handles.c6 handles.c4];
+                handles.pos3 = [handles.c3 handles.c2 handles.c6 handles.c5];
+                [a,b,c,d] = size(handles.IPCMRA);
+                set(handles.text1,'visible','on','String',['Image size: ',num2str(size(handles.IPCMRA,2)),' x ',num2str(size(handles.IPCMRA,1)),' Im: ',num2str(round(c/2)),' / ',num2str(c),' Type: ',handles.type])
+                set(handles.text2,'visible','on','String',['Image size: ',num2str(size(handles.IPCMRA,3)),' x ',num2str(size(handles.IPCMRA,1)),' Im: ',num2str(round(b/2)),' / ',num2str(b),' Type: ',handles.type])
+                set(handles.text3,'visible','on','String',['Image size: ',num2str(size(handles.IPCMRA,3)),' x ',num2str(size(handles.IPCMRA,2)),' Im: ',num2str(round(a/2)),' / ',num2str(a),' Type: ',handles.type])
+                if handles.slider_axes1 ==1, handles.slider_axes1_voxel = 0; else, handles.slider_axes1_voxel = (handles.slider_axes1*handles.voxel_MR(3))-handles.voxel_MR(3); end
+                if handles.slider_axes2 ==1, handles.slider_axes2_voxel = 0; else, handles.slider_axes2_voxel = (handles.slider_axes2*handles.voxel_MR(2))-handles.voxel_MR(2); end
+                if handles.slider_axes3 ==1, handles.slider_axes3_voxel = 0; else, handles.slider_axes3_voxel = (handles.slider_axes3*handles.voxel_MR(1))-handles.voxel_MR(1); end
+                axes(handles.axes1);
+                imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.IPCMRA(:,:,handles.slider_axes1)))
+                hold on
+                plot([handles.yd(1,1),handles.yd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
+                plot([handles.slider_axes2_voxel,handles.slider_axes2_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--r','Linewidth',1)
+                if handles.id_resizing == 1
+                    rectangle('Position',handles.pos1,'LineWidth',1,'EdgeColor','y','LineStyle','-')
+                end
+                hold off
+                axis image
+                colormap gray
+                axis off
+                daspect([1 1 1])
+                axes(handles.axes2);
+                imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.IPCMRA(:,handles.slider_axes2,:)))
+                hold on
+                plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
+                plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--g','Linewidth',1)
+                if handles.id_resizing == 1
+                    rectangle('Position',handles.pos2,'LineWidth',1,'EdgeColor','y','LineStyle','-')
+                end
+                hold off
+                axis image
+                colormap gray
+                axis off
+                daspect([1 1 1])
+                axes(handles.axes3);
+                imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',squeeze(handles.IPCMRA(handles.slider_axes3,:,:)))
+                hold on
+                plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes2_voxel,handles.slider_axes2_voxel]','--r','Linewidth',1)
+                plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.yd(1,1),handles.yd(end,end)]','--g','Linewidth',1)
+                if handles.id_resizing == 1
+                    rectangle('Position',handles.pos3,'LineWidth',1,'EdgeColor','y','LineStyle','-')
+                end
+                hold off
+                axis image
+                colormap gray
+                axis off
+                daspect([1 1 1])
+            case 'No'
+                
+        end
+    else 
+        set(handles.axes4,'Color',[0 0 0])
+        axes(handles.axes4);
+        colorbar('off')
+        plot(0.0)
+        axis off
+        set(handles.text4, 'visible', 'off');
+        list_string = {'...'};
+        set(handles.popupmenu1,'visible','off','String',list_string,'value',1);
+        set(handles.pushbutton5, 'visible', 'off');
+        set(handles.pushbutton12, 'visible', 'off');
+        set(handles.pushbutton13, 'visible', 'off');
+        set(handles.pushbutton14, 'visible', 'off');
+        set(handles.slider4, 'visible', 'off');
+        handles.SEG = zeros(size(handles.SEG));
+        handles.Lrgb = zeros(size(handles.Lrgb));
+        handles.L = zeros(size(handles.L));
+        handles.id_unwrappping = 0;
+        set(handles.pushbutton6, 'Units', 'pixels');
+        handles.pushbutton6_size = get(handles.pushbutton6, 'Position');
+        set(handles.pushbutton6, 'Units', 'normalized');
+        idx = mod(min(handles.pushbutton6_size(3:4)),2)>1;
+        w = floor(min(handles.pushbutton6_size(3:4)));
+        w(idx) = w(idx)+1;
+        im = imread('Symbols/P2.png');
+        g = double(imresize(im,[w-4 w-4],'method','nearest')>0);
+        set(handles.pushbutton6,'CData',g,'visible','on')
+        set(handles.pushbutton9,'visible','on')
+        set(handles.pushbutton7,'CData',g,'visible','on')
+        set(handles.pushbutton10,'visible','on')
+        set(handles.pushbutton8,'CData',g,'visible','on')
+        set(handles.pushbutton11,'visible','on')
+        handles.id_resizing = 1;
+        handles.c1 = handles.xd(1,1);
+        handles.c2 = handles.yd(1,1);
+        handles.c3 = handles.zd(1,1);
+        handles.c4 = handles.xd(end,end);
+        handles.c5 = handles.yd(end,end);
+        handles.c6 = handles.zd(end,end);
+        handles.pos1 = [handles.c2 handles.c1 handles.c5 handles.c4];
+        handles.pos2 = [handles.c3 handles.c1 handles.c6 handles.c4];
+        handles.pos3 = [handles.c3 handles.c2 handles.c6 handles.c5];
+        [a,b,c,d] = size(handles.IPCMRA);
+        set(handles.text1,'visible','on','String',['Image size: ',num2str(size(handles.IPCMRA,2)),' x ',num2str(size(handles.IPCMRA,1)),' Im: ',num2str(round(c/2)),' / ',num2str(c),' Type: ',handles.type])
+        set(handles.text2,'visible','on','String',['Image size: ',num2str(size(handles.IPCMRA,3)),' x ',num2str(size(handles.IPCMRA,1)),' Im: ',num2str(round(b/2)),' / ',num2str(b),' Type: ',handles.type])
+        set(handles.text3,'visible','on','String',['Image size: ',num2str(size(handles.IPCMRA,3)),' x ',num2str(size(handles.IPCMRA,2)),' Im: ',num2str(round(a/2)),' / ',num2str(a),' Type: ',handles.type])
+        if handles.slider_axes1 ==1, handles.slider_axes1_voxel = 0; else, handles.slider_axes1_voxel = (handles.slider_axes1*handles.voxel_MR(3))-handles.voxel_MR(3); end
+        if handles.slider_axes2 ==1, handles.slider_axes2_voxel = 0; else, handles.slider_axes2_voxel = (handles.slider_axes2*handles.voxel_MR(2))-handles.voxel_MR(2); end
+        if handles.slider_axes3 ==1, handles.slider_axes3_voxel = 0; else, handles.slider_axes3_voxel = (handles.slider_axes3*handles.voxel_MR(1))-handles.voxel_MR(1); end
+        axes(handles.axes1);
+        imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.IPCMRA(:,:,handles.slider_axes1)))
+        hold on
+        plot([handles.yd(1,1),handles.yd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
+        plot([handles.slider_axes2_voxel,handles.slider_axes2_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--r','Linewidth',1)
+        if handles.id_resizing == 1
+            rectangle('Position',handles.pos1,'LineWidth',1,'EdgeColor','y','LineStyle','-')
+        end
+        hold off
+        axis image
+        colormap gray
+        axis off
+        daspect([1 1 1])
+        axes(handles.axes2);
+        imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.IPCMRA(:,handles.slider_axes2,:)))
+        hold on
+        plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
+        plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--g','Linewidth',1)
+        if handles.id_resizing == 1
+            rectangle('Position',handles.pos2,'LineWidth',1,'EdgeColor','y','LineStyle','-')
+        end
+        hold off
+        axis image
+        colormap gray
+        axis off
+        daspect([1 1 1])
+        axes(handles.axes3);
+        imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',squeeze(handles.IPCMRA(handles.slider_axes3,:,:)))
+        hold on
+        plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes2_voxel,handles.slider_axes2_voxel]','--r','Linewidth',1)
+        plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.yd(1,1),handles.yd(end,end)]','--g','Linewidth',1)
+        if handles.id_resizing == 1
+            rectangle('Position',handles.pos3,'LineWidth',1,'EdgeColor','y','LineStyle','-')
+        end
+        hold off
+        axis image
+        colormap gray
+        axis off
+        daspect([1 1 1])
     end
-else 
-    set(handles.axes4,'Color',[0 0 0])
-    axes(handles.axes4);
-    colorbar('off')
-    plot(0.0)
-    axis off
-    set(handles.text4, 'visible', 'off');
-    list_string = {'...'};
-    set(handles.popupmenu1,'visible','off','String',list_string,'value',1);
-    set(handles.pushbutton5, 'visible', 'off');
-    set(handles.pushbutton12, 'visible', 'off');
-    set(handles.pushbutton13, 'visible', 'off');
-    set(handles.pushbutton14, 'visible', 'off');
-    set(handles.slider4, 'visible', 'off');
-    handles.SEG = zeros(size(handles.SEG));
-    handles.Lrgb = zeros(size(handles.Lrgb));
-    handles.L = zeros(size(handles.L));
-    handles.id_unwrappping = 0;
-    set(handles.pushbutton6, 'Units', 'pixels');
-    handles.pushbutton6_size = get(handles.pushbutton6, 'Position');
-    set(handles.pushbutton6, 'Units', 'normalized');
-    idx = mod(min(handles.pushbutton6_size(3:4)),2)>1;
-    w = floor(min(handles.pushbutton6_size(3:4)));
-    w(idx) = w(idx)+1;
-    im = imread('Symbols/P2.png');
-    g = double(imresize(im,[w-4 w-4],'method','nearest')>0);
-    set(handles.pushbutton6,'CData',g,'visible','on')
-    set(handles.pushbutton9,'visible','on')
-    set(handles.pushbutton7,'CData',g,'visible','on')
-    set(handles.pushbutton10,'visible','on')
-    set(handles.pushbutton8,'CData',g,'visible','on')
-    set(handles.pushbutton11,'visible','on')
-    handles.id_resizing = 1;
-    handles.c1 = handles.xd(1,1);
-    handles.c2 = handles.yd(1,1);
-    handles.c3 = handles.zd(1,1);
-    handles.c4 = handles.xd(end,end);
-    handles.c5 = handles.yd(end,end);
-    handles.c6 = handles.zd(end,end);
-    handles.pos1 = [handles.c2 handles.c1 handles.c5 handles.c4];
-    handles.pos2 = [handles.c3 handles.c1 handles.c6 handles.c4];
-    handles.pos3 = [handles.c3 handles.c2 handles.c6 handles.c5];
-    [a,b,c,d] = size(handles.IPCMRA);
-    set(handles.text1,'visible','on','String',['Image size: ',num2str(size(handles.IPCMRA,2)),' x ',num2str(size(handles.IPCMRA,1)),' Im: ',num2str(round(c/2)),' / ',num2str(c),' Type: ',handles.type])
-    set(handles.text2,'visible','on','String',['Image size: ',num2str(size(handles.IPCMRA,3)),' x ',num2str(size(handles.IPCMRA,1)),' Im: ',num2str(round(b/2)),' / ',num2str(b),' Type: ',handles.type])
-    set(handles.text3,'visible','on','String',['Image size: ',num2str(size(handles.IPCMRA,3)),' x ',num2str(size(handles.IPCMRA,2)),' Im: ',num2str(round(a/2)),' / ',num2str(a),' Type: ',handles.type])
-    if handles.slider_axes1 ==1, handles.slider_axes1_voxel = 0; else, handles.slider_axes1_voxel = (handles.slider_axes1*handles.voxel_MR(3))-handles.voxel_MR(3); end
-    if handles.slider_axes2 ==1, handles.slider_axes2_voxel = 0; else, handles.slider_axes2_voxel = (handles.slider_axes2*handles.voxel_MR(2))-handles.voxel_MR(2); end
-    if handles.slider_axes3 ==1, handles.slider_axes3_voxel = 0; else, handles.slider_axes3_voxel = (handles.slider_axes3*handles.voxel_MR(1))-handles.voxel_MR(1); end
-    axes(handles.axes1);
-    imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.IPCMRA(:,:,handles.slider_axes1)))
-    hold on
-    plot([handles.yd(1,1),handles.yd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
-    plot([handles.slider_axes2_voxel,handles.slider_axes2_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--r','Linewidth',1)
-    if handles.id_resizing == 1
-        rectangle('Position',handles.pos1,'LineWidth',1,'EdgeColor','y','LineStyle','-')
+
+else
+
+    if handles.id_seg == 1 
+        
+        answer = questdlg({'If you change the size of the image the segmentation will be removed';' Do you want to continue? ...'},'Warning','Yes','No','No');
+        switch answer
+            case 'Yes'
+               set(handles.axes4,'Color',[0 0 0])
+                axes(handles.axes4);
+                colorbar('off')
+                plot(0.0)
+                axis off
+                set(handles.text4, 'visible', 'off');
+                list_string = {'...'};
+                set(handles.popupmenu1,'visible','off','String',list_string,'value',1);
+                set(handles.pushbutton5, 'visible', 'off');
+                set(handles.pushbutton12, 'visible', 'off');
+                set(handles.pushbutton13, 'visible', 'off');
+                set(handles.pushbutton14, 'visible', 'off');
+                set(handles.slider4, 'visible', 'off');
+                handles.SEG = zeros(size(handles.SEG));
+                handles.Lrgb = zeros(size(handles.Lrgb));
+                handles.L = zeros(size(handles.L));
+                handles.id_unwrappping = 0;
+                set(handles.pushbutton6, 'Units', 'pixels');
+                handles.pushbutton6_size = get(handles.pushbutton6, 'Position');
+                set(handles.pushbutton6, 'Units', 'normalized');
+                idx = mod(min(handles.pushbutton6_size(3:4)),2)>1;
+                w = floor(min(handles.pushbutton6_size(3:4)));
+                w(idx) = w(idx)+1;
+                im = imread('Symbols/P2.png');
+                g = double(imresize(im,[w-4 w-4],'method','nearest')>0);
+                set(handles.pushbutton6,'CData',g,'visible','on')
+                set(handles.pushbutton9,'visible','on')
+                set(handles.pushbutton7,'CData',g,'visible','on')
+                set(handles.pushbutton10,'visible','on')
+                set(handles.pushbutton8,'CData',g,'visible','on')
+                set(handles.pushbutton11,'visible','on')
+                handles.id_resizing = 1;
+                handles.c1 = handles.xd(1,1);
+                handles.c2 = handles.yd(1,1);
+                handles.c3 = handles.zd(1,1);
+                handles.c4 = handles.xd(end,end);
+                handles.c5 = handles.yd(end,end);
+                handles.c6 = handles.zd(end,end);
+                handles.pos1 = [handles.c2 handles.c1 handles.c5 handles.c4];
+                handles.pos2 = [handles.c3 handles.c1 handles.c6 handles.c4];
+                handles.pos3 = [handles.c3 handles.c2 handles.c6 handles.c5];
+                [a,b,c,d] = size(handles.IPCMRA);
+                set(handles.text1,'visible','on','String',['Image size: ',num2str(size(handles.IPCMRA,2)),' x ',num2str(size(handles.IPCMRA,1)),' Im: ',num2str(round(c/2)),' / ',num2str(c),' Type: ',handles.type])
+                set(handles.text2,'visible','on','String',['Image size: ',num2str(size(handles.IPCMRA,3)),' x ',num2str(size(handles.IPCMRA,1)),' Im: ',num2str(round(b/2)),' / ',num2str(b),' Type: ',handles.type])
+                set(handles.text3,'visible','on','String',['Image size: ',num2str(size(handles.IPCMRA,3)),' x ',num2str(size(handles.IPCMRA,2)),' Im: ',num2str(round(a/2)),' / ',num2str(a),' Type: ',handles.type])
+                if handles.slider_axes1 ==1, handles.slider_axes1_voxel = 0; else, handles.slider_axes1_voxel = (handles.slider_axes1*handles.voxel_MR(3))-handles.voxel_MR(3); end
+                if handles.slider_axes2 ==1, handles.slider_axes2_voxel = 0; else, handles.slider_axes2_voxel = (handles.slider_axes2*handles.voxel_MR(2))-handles.voxel_MR(2); end
+                if handles.slider_axes3 ==1, handles.slider_axes3_voxel = 0; else, handles.slider_axes3_voxel = (handles.slider_axes3*handles.voxel_MR(1))-handles.voxel_MR(1); end
+                axes(handles.axes1);
+                imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.MAG(:,:,handles.slider_axes1)))
+                hold on
+                plot([handles.yd(1,1),handles.yd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
+                plot([handles.slider_axes2_voxel,handles.slider_axes2_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--r','Linewidth',1)
+                if handles.id_resizing == 1
+                    rectangle('Position',handles.pos1,'LineWidth',1,'EdgeColor','y','LineStyle','-')
+                end
+                hold off
+                axis image
+                colormap gray
+                axis off
+                daspect([1 1 1])
+                axes(handles.axes2);
+                imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.MAG(:,handles.slider_axes2,:)))
+                hold on
+                plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
+                plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--g','Linewidth',1)
+                if handles.id_resizing == 1
+                    rectangle('Position',handles.pos2,'LineWidth',1,'EdgeColor','y','LineStyle','-')
+                end
+                hold off
+                axis image
+                colormap gray
+                axis off
+                daspect([1 1 1])
+                axes(handles.axes3);
+                imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',squeeze(handles.MAG(handles.slider_axes3,:,:)))
+                hold on
+                plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes2_voxel,handles.slider_axes2_voxel]','--r','Linewidth',1)
+                plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.yd(1,1),handles.yd(end,end)]','--g','Linewidth',1)
+                if handles.id_resizing == 1
+                    rectangle('Position',handles.pos3,'LineWidth',1,'EdgeColor','y','LineStyle','-')
+                end
+                hold off
+                axis image
+                colormap gray
+                axis off
+                daspect([1 1 1])
+            case 'No'
+                
+        end
+    else 
+        set(handles.axes4,'Color',[0 0 0])
+        axes(handles.axes4);
+        colorbar('off')
+        plot(0.0)
+        axis off
+        set(handles.text4, 'visible', 'off');
+        list_string = {'...'};
+        set(handles.popupmenu1,'visible','off','String',list_string,'value',1);
+        set(handles.pushbutton5, 'visible', 'off');
+        set(handles.pushbutton12, 'visible', 'off');
+        set(handles.pushbutton13, 'visible', 'off');
+        set(handles.pushbutton14, 'visible', 'off');
+        set(handles.slider4, 'visible', 'off');
+        handles.SEG = zeros(size(handles.SEG));
+        handles.Lrgb = zeros(size(handles.Lrgb));
+        handles.L = zeros(size(handles.L));
+        handles.id_unwrappping = 0;
+        set(handles.pushbutton6, 'Units', 'pixels');
+        handles.pushbutton6_size = get(handles.pushbutton6, 'Position');
+        set(handles.pushbutton6, 'Units', 'normalized');
+        idx = mod(min(handles.pushbutton6_size(3:4)),2)>1;
+        w = floor(min(handles.pushbutton6_size(3:4)));
+        w(idx) = w(idx)+1;
+        im = imread('Symbols/P2.png');
+        g = double(imresize(im,[w-4 w-4],'method','nearest')>0);
+        set(handles.pushbutton6,'CData',g,'visible','on')
+        set(handles.pushbutton9,'visible','on')
+        set(handles.pushbutton7,'CData',g,'visible','on')
+        set(handles.pushbutton10,'visible','on')
+        set(handles.pushbutton8,'CData',g,'visible','on')
+        set(handles.pushbutton11,'visible','on')
+        handles.id_resizing = 1;
+        handles.c1 = handles.xd(1,1);
+        handles.c2 = handles.yd(1,1);
+        handles.c3 = handles.zd(1,1);
+        handles.c4 = handles.xd(end,end);
+        handles.c5 = handles.yd(end,end);
+        handles.c6 = handles.zd(end,end);
+        handles.pos1 = [handles.c2 handles.c1 handles.c5 handles.c4];
+        handles.pos2 = [handles.c3 handles.c1 handles.c6 handles.c4];
+        handles.pos3 = [handles.c3 handles.c2 handles.c6 handles.c5];
+        [a,b,c,d] = size(handles.IPCMRA);
+        set(handles.text1,'visible','on','String',['Image size: ',num2str(size(handles.IPCMRA,2)),' x ',num2str(size(handles.IPCMRA,1)),' Im: ',num2str(round(c/2)),' / ',num2str(c),' Type: ',handles.type])
+        set(handles.text2,'visible','on','String',['Image size: ',num2str(size(handles.IPCMRA,3)),' x ',num2str(size(handles.IPCMRA,1)),' Im: ',num2str(round(b/2)),' / ',num2str(b),' Type: ',handles.type])
+        set(handles.text3,'visible','on','String',['Image size: ',num2str(size(handles.IPCMRA,3)),' x ',num2str(size(handles.IPCMRA,2)),' Im: ',num2str(round(a/2)),' / ',num2str(a),' Type: ',handles.type])
+        if handles.slider_axes1 ==1, handles.slider_axes1_voxel = 0; else, handles.slider_axes1_voxel = (handles.slider_axes1*handles.voxel_MR(3))-handles.voxel_MR(3); end
+        if handles.slider_axes2 ==1, handles.slider_axes2_voxel = 0; else, handles.slider_axes2_voxel = (handles.slider_axes2*handles.voxel_MR(2))-handles.voxel_MR(2); end
+        if handles.slider_axes3 ==1, handles.slider_axes3_voxel = 0; else, handles.slider_axes3_voxel = (handles.slider_axes3*handles.voxel_MR(1))-handles.voxel_MR(1); end
+        axes(handles.axes1);
+        imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.MAG(:,:,handles.slider_axes1)))
+        hold on
+        plot([handles.yd(1,1),handles.yd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
+        plot([handles.slider_axes2_voxel,handles.slider_axes2_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--r','Linewidth',1)
+        if handles.id_resizing == 1
+            rectangle('Position',handles.pos1,'LineWidth',1,'EdgeColor','y','LineStyle','-')
+        end
+        hold off
+        axis image
+        colormap gray
+        axis off
+        daspect([1 1 1])
+        axes(handles.axes2);
+        imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.MAG(:,handles.slider_axes2,:)))
+        hold on
+        plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
+        plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--g','Linewidth',1)
+        if handles.id_resizing == 1
+            rectangle('Position',handles.pos2,'LineWidth',1,'EdgeColor','y','LineStyle','-')
+        end
+        hold off
+        axis image
+        colormap gray
+        axis off
+        daspect([1 1 1])
+        axes(handles.axes3);
+        imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',squeeze(handles.MAG(handles.slider_axes3,:,:)))
+        hold on
+        plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes2_voxel,handles.slider_axes2_voxel]','--r','Linewidth',1)
+        plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.yd(1,1),handles.yd(end,end)]','--g','Linewidth',1)
+        if handles.id_resizing == 1
+            rectangle('Position',handles.pos3,'LineWidth',1,'EdgeColor','y','LineStyle','-')
+        end
+        hold off
+        axis image
+        colormap gray
+        axis off
+        daspect([1 1 1])
     end
-    hold off
-    axis image
-    colormap gray
-    axis off
-    daspect([1 1 1])
-    axes(handles.axes2);
-    imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.IPCMRA(:,handles.slider_axes2,:)))
-    hold on
-    plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
-    plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--g','Linewidth',1)
-    if handles.id_resizing == 1
-        rectangle('Position',handles.pos2,'LineWidth',1,'EdgeColor','y','LineStyle','-')
-    end
-    hold off
-    axis image
-    colormap gray
-    axis off
-    daspect([1 1 1])
-    axes(handles.axes3);
-    imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',squeeze(handles.IPCMRA(handles.slider_axes3,:,:)))
-    hold on
-    plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes2_voxel,handles.slider_axes2_voxel]','--r','Linewidth',1)
-    plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.yd(1,1),handles.yd(end,end)]','--g','Linewidth',1)
-    if handles.id_resizing == 1
-        rectangle('Position',handles.pos3,'LineWidth',1,'EdgeColor','y','LineStyle','-')
-    end
-    hold off
-    axis image
-    colormap gray
-    axis off
-    daspect([1 1 1])
+
 end
+
 handles.output = hObject;
 guidata(hObject, handles);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -13793,7 +14244,12 @@ function uipushtool3_ClickedCallback(hObject, eventdata, handles)
     set(handles.slider4, 'visible', 'off');
     handles.id_unwrappping = 0;
     input.id            = 1;
-    input.IPCMRA        = (handles.IPCMRA./max(handles.IPCMRA(:)))*255;
+
+    if handles.id_ang == 1
+        input.IPCMRA        = (handles.IPCMRA./max(handles.IPCMRA(:)))*255;
+    else
+        input.IPCMRA        = (handles.MAG./max(handles.MAG(:)))*255;
+    end
     input.SEG           = handles.SEG;
     input.L             = handles.L;
     input.NUM           = handles.NUM;
@@ -13824,7 +14280,7 @@ function uipushtool3_ClickedCallback(hObject, eventdata, handles)
         if handles.slider_axes2 ==1, handles.slider_axes2_voxel = 0; else, handles.slider_axes2_voxel = (handles.slider_axes2*handles.voxel_MR(2))-handles.voxel_MR(2); end
         if handles.slider_axes3 ==1, handles.slider_axes3_voxel = 0; else, handles.slider_axes3_voxel = (handles.slider_axes3*handles.voxel_MR(1))-handles.voxel_MR(1); end
         axes(handles.axes1);
-        imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.IPCMRA(:,:,handles.slider_axes1)))
+        imagesc([handles.yd(1,1),handles.yd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(input.IPCMRA(:,:,handles.slider_axes1)))
         hold on
         plot([handles.yd(1,1),handles.yd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
         plot([handles.slider_axes2_voxel,handles.slider_axes2_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--r','Linewidth',1)
@@ -13844,7 +14300,7 @@ function uipushtool3_ClickedCallback(hObject, eventdata, handles)
         axis off
         daspect([1 1 1])
         axes(handles.axes2);
-        imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(handles.IPCMRA(:,handles.slider_axes2,:)))
+        imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.xd(1,1),handles.xd(end,end)]',squeeze(input.IPCMRA(:,handles.slider_axes2,:)))
         hold on
         plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes3_voxel,handles.slider_axes3_voxel]','--b','Linewidth',1)
         plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.xd(1,1),handles.xd(end,end)]','--g','Linewidth',1)
@@ -13864,7 +14320,7 @@ function uipushtool3_ClickedCallback(hObject, eventdata, handles)
         axis off
         daspect([1 1 1])
         axes(handles.axes3);
-        imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',squeeze(handles.IPCMRA(handles.slider_axes3,:,:)))
+        imagesc([handles.zd(1,1),handles.zd(end,end)]',[handles.yd(1,1),handles.yd(end,end)]',squeeze(input.IPCMRA(handles.slider_axes3,:,:)))
         hold on
         plot([handles.zd(1,1),handles.zd(end,end)]',[handles.slider_axes2_voxel,handles.slider_axes2_voxel]','--r','Linewidth',1)
         plot([handles.slider_axes1_voxel,handles.slider_axes1_voxel]',[handles.yd(1,1),handles.yd(end,end)]','--g','Linewidth',1)
@@ -13883,14 +14339,14 @@ function uipushtool3_ClickedCallback(hObject, eventdata, handles)
         colormap(handles.axes3,'gray')
         axis off
         daspect([1 1 1])
-        set(handles.text1,'visible','on','String',['Image size: ',num2str(size(handles.IPCMRA,1)),' x ',num2str(size(handles.IPCMRA,2)),' Im: ',num2str(round(handles.slider_axes1)),' / ',num2str(handles.c),' Type: ',handles.type])
-        set(handles.text2,'visible','on','String',['Image size: ',num2str(size(handles.IPCMRA,1)),' x ',num2str(size(handles.IPCMRA,3)),' Im: ',num2str(round(handles.slider_axes2)),' / ',num2str(handles.b),' Type: ',handles.type])
-        set(handles.text3,'visible','on','String',['Image size: ',num2str(size(handles.IPCMRA,2)),' x ',num2str(size(handles.IPCMRA,3)),' Im: ',num2str(round(handles.slider_axes3)),' / ',num2str(handles.a),' Type: ',handles.type])
+        set(handles.text1,'visible','on','String',['Image size: ',num2str(size(input.IPCMRA,1)),' x ',num2str(size(input.IPCMRA,2)),' Im: ',num2str(round(handles.slider_axes1)),' / ',num2str(handles.c),' Type: ',handles.type])
+        set(handles.text2,'visible','on','String',['Image size: ',num2str(size(input.IPCMRA,1)),' x ',num2str(size(input.IPCMRA,3)),' Im: ',num2str(round(handles.slider_axes2)),' / ',num2str(handles.b),' Type: ',handles.type])
+        set(handles.text3,'visible','on','String',['Image size: ',num2str(size(input.IPCMRA,2)),' x ',num2str(size(input.IPCMRA,3)),' Im: ',num2str(round(handles.slider_axes3)),' / ',num2str(handles.a),' Type: ',handles.type])
         list_string = {'...','Surface','Voxel'};
         set(handles.popupmenu1,'visible','on','String',list_string);
         popupmnenu1_pos = get(handles.popupmenu1,'Value');
         if popupmnenu1_pos == 2
-            [X,Y,Z] = meshgrid(0:size(handles.IPCMRA,1)-1,0:size(handles.IPCMRA,2)-1,0:size(handles.IPCMRA,3)-1);
+            [X,Y,Z] = meshgrid(0:size(input.IPCMRA,1)-1,0:size(input.IPCMRA,2)-1,0:size(input.IPCMRA,3)-1);
             xd = X*handles.voxel_MR(1);
             yd = Y*handles.voxel_MR(2);
             zd = Z*handles.voxel_MR(3);
@@ -13924,7 +14380,7 @@ function uipushtool3_ClickedCallback(hObject, eventdata, handles)
             end
             hold off
         elseif popupmnenu1_pos == 3
-            [X,Y,Z] = meshgrid(0:size(handles.IPCMRA,1)-1,0:size(handles.IPCMRA,2)-1,0:size(handles.IPCMRA,3)-1);
+            [X,Y,Z] = meshgrid(0:size(input.IPCMRA,1)-1,0:size(input.IPCMRA,2)-1,0:size(input.IPCMRA,3)-1);
             xd = X*handles.voxel_MR(1);
             yd = Y*handles.voxel_MR(2);
             zd = Z*handles.voxel_MR(3);
@@ -14071,11 +14527,9 @@ function uipushtool4_ClickedCallback(hObject, eventdata, handles)
         if input.idangmag == 1
             handles.id_ang      = 1;
             handles.id_mag      = 0;
-            handles.IPCMRA      = handles.ANG;
         else 
             handles.id_ang      = 0;
             handles.id_mag      = 1;
-            handles.IPCMRA      = handles.MAG;
         end
         
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -19144,7 +19598,7 @@ function uipushtool10_ClickedCallback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-if handles.exec_fe_mesh == 1
+% if handles.exec_fe_mesh == 1
     
     VENC_l      = handles.VENC;
     voxel_MR_l    = handles.voxel_MR;
@@ -19185,7 +19639,8 @@ if handles.exec_fe_mesh == 1
 %     [a,b,c,d] = size(MR_FFE_FH_l);
 
     % IPCMRA en coordenadas originales
-    IPCMRA_ORI_COOR = (1/d)*sum( (MR_FFE_FH_l.^2).*(MR_PCA_FH_l.^2 + MR_PCA_AP_l.^2 + MR_PCA_RL_l.^2),4);
+    IPCMRA_ORI_COOR = zeros(size(handles.IPCMRA,1)+2,size(handles.IPCMRA,2)+2,size(handles.IPCMRA,3)+2);
+    IPCMRA_ORI_COOR(2:end-1,2:end-1,2:end-1) = handles.IPCMRA; %(1/d)*sum( (MR_FFE_FH_l.^2).*(MR_PCA_FH_l.^2 + MR_PCA_AP_l.^2 + MR_PCA_RL_l.^2),4);
     IPCMRA_ORI_COOR = (IPCMRA_ORI_COOR/max(IPCMRA_ORI_COOR(:)))*255;
     
     [C,I] = max(squeeze(mean(mean(mean(abs(MR_PCA_FH_l),3),2),1)));
@@ -19236,7 +19691,7 @@ if handles.exec_fe_mesh == 1
         PCA_RL(:,:,:,n) = interp3(X, Y, Z,MR_PCA_RL_l(:,:,:,n),Xq,Yq,Zq,'linear');
         PCA_AP(:,:,:,n) = interp3(X, Y, Z,MR_PCA_AP_l(:,:,:,n),Xq,Yq,Zq,'linear');
     end
-
+    
 
     MR_FFE_FH_resize   = FFE;
     MR_FFE_AP_resize   = FFE;
@@ -19245,7 +19700,9 @@ if handles.exec_fe_mesh == 1
     MR_PCA_AP_resize   = PCA_AP;
     MR_PCA_RL_resize   = PCA_RL;
     [a_resize,b_resize,c_resize,d_resize] = size(MR_FFE_FH_resize);
-    IPCMRA_resize = (1/d)*sum( (MR_FFE_FH_resize.^2).*(MR_PCA_FH_resize.^2 + MR_PCA_AP_resize.^2 + MR_PCA_RL_resize.^2),4);
+    % IPCMRA_resize = (1/d)*sum( (MR_FFE_FH_resize.^2).*(MR_PCA_FH_resize.^2 + MR_PCA_AP_resize.^2 + MR_PCA_RL_resize.^2),4);
+    
+    IPCMRA_resize = interp3(X, Y, Z,IPCMRA_ORI_COOR,Xq,Yq,Zq,'linear');
     IPCMRA_resize = (IPCMRA_resize/max(IPCMRA_resize(:)))*255;
 
     [C,I] = max(squeeze(mean(mean(mean(abs(MR_PCA_FH_resize),3),2),1)));
@@ -19263,8 +19720,8 @@ if handles.exec_fe_mesh == 1
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % mostramos los cortes a la salida
-    [coordx, coordy, coordz] = meshgrid(0:size(IPCMRA_ORI_COOR,1)-1,...
-                                        0:size(IPCMRA_ORI_COOR,2)-1,...
+    [coordx, coordy, coordz] = meshgrid(0:size(IPCMRA_ORI_COOR,2)-1,...
+                                        0:size(IPCMRA_ORI_COOR,1)-1,...
                                         0:size(IPCMRA_ORI_COOR,3)-1);
 
                                                                                  
@@ -19288,10 +19745,13 @@ if handles.exec_fe_mesh == 1
     FFE_2 = squeeze(FFE_ORI_COOR(:,round(size(FFE_ORI_COOR,2)/2),:));
     FFE_3 = squeeze(FFE_ORI_COOR(round(size(FFE_ORI_COOR,1)/2),:,:));
 
-    [coordx, coordy, coordz] = meshgrid(0:size(IPCMRA_resize,1)-1,...
-                                        0:size(IPCMRA_resize,2)-1,...
+    [coordx, coordy, coordz] = meshgrid(0:size(IPCMRA_resize,2)-1,...
+                                        0:size(IPCMRA_resize,1)-1,...
                                         0:size(IPCMRA_resize,3)-1);
 
+    % [coordx, coordy, coordz] = meshgrid(0:size(IPCMRA_ORI_COOR,2)-1,...
+    %                                     0:size(IPCMRA_ORI_COOR,1)-1,...
+    %                                     0:size(IPCMRA_ORI_COOR,3)-1);
 
     % input values to function
     input = [];
@@ -19313,9 +19773,14 @@ if handles.exec_fe_mesh == 1
     input.MR_PCA_RL_resize = MR_PCA_RL_resize;
     input.IPCMRA_resize = IPCMRA_resize;
     input.FFE = FFE;
+    
     input.pos_a = pos_a;
     input.pos_b = pos_b;
     input.pos_c = pos_c;
+    % input.pos_a = round(size(IPCMRA_ORI_COOR,1)/2);
+    % input.pos_b = round(size(IPCMRA_ORI_COOR,2)/2);
+    % input.pos_c = round(size(IPCMRA_ORI_COOR,3)/2);
+
     input.corte_sagital_x = corte_sagital_x;
     input.corte_sagital_y = corte_sagital_y;
     input.corte_sagital_z = corte_sagital_z;
@@ -19325,6 +19790,8 @@ if handles.exec_fe_mesh == 1
     input.corte_axial_x = corte_axial_x;
     input.corte_axial_y = corte_axial_y;
     input.corte_axial_z = corte_axial_z;
+
+
     input.IPCMRA_1 = IPCMRA_1;
     input.IPCMRA_2 = IPCMRA_2;
     input.IPCMRA_3 = IPCMRA_3;
@@ -19379,9 +19846,9 @@ if handles.exec_fe_mesh == 1
     pause(2)
     close(h)
 
-else
-    msgbox('The tetrahedral mesh need to be generated ...','Warning','warn')
-end
+% else
+%     msgbox('The tetrahedral mesh need to be generated ...','Warning','warn')
+% end
 
 
 handles.output = hObject;
@@ -19515,274 +19982,138 @@ if exist('4DFlowNet-master', 'dir')==7
     answer = inputdlg(prompt,dlgtitle,fieldsize);
 
 
-    if ispc==1
-        final_path = [answer{1},'envs\py38\python.exe'];
-        disp(final_path)
-        pyenv('Version',final_path);
-        pyenv(ExecutionMode="OutOfProcess")
-        py.list({"Monday","Tuesday","Wednesday","Thursday","Friday"});
+    final_path = [answer{1},'envs\py38\python.exe'];
+    disp(final_path)
+    pyenv('Version',final_path);
+    pyenv(ExecutionMode="OutOfProcess")
+    py.list({"Monday","Tuesday","Wednesday","Thursday","Friday"});
 
-        % convert data to h5
-        data = [];
-        data.MR_FFE_FH = double(handles.MR_FFE_FH(2:end-1,2:end-1,2:end-1,:));
-        data.MR_FFE_AP = double(handles.MR_FFE_AP(2:end-1,2:end-1,2:end-1,:));
-        data.MR_FFE_RL = double(handles.MR_FFE_RL(2:end-1,2:end-1,2:end-1,:));
-        data.MR_PCA_FH = double(handles.MR_PCA_FH(2:end-1,2:end-1,2:end-1,:));
-        data.MR_PCA_AP = double(handles.MR_PCA_AP(2:end-1,2:end-1,2:end-1,:));
-        data.MR_PCA_RL = double(handles.MR_PCA_RL(2:end-1,2:end-1,2:end-1,:));
-        data.VENC = double(handles.VENC);
-        data.voxel_MR = double(handles.voxel_MR);
-        data.heart_rate = double(handles.heart_rate);
-        data.type = handles.type;
-    
-    
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        % we add the h5 file to the path of 4DFlowNet
-        if isfolder('4DFlowNet-master\data\')
-            if isfile('4DFlowNet-master\data\example_data.h5')
-                delete('4DFlowNet-master\data\example_data.h5')
-            end
-            output_filepath = '4DFlowNet-master\data\example_data.h5';
-        else
-            mkdir('4DFlowNet-master\data\')
-            output_filepath = '4DFlowNet-master\data\example_data.h5';
-        end
-    
-    
-        if isfolder('4DFlowNet-master\result\')
-            if isfile('4DFlowNet-master\result\example_result.h5')
-                delete('4DFlowNet-master\result\example_result.h5')
-            end
-        else
-            mkdir('4DFlowNet-master\result\')
-        end
-    
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        % Read data files
-        dx = data.voxel_MR';
-    
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        dx = repmat(dx,1,size(data.MR_PCA_RL,4));
-    
-        vx = single(data.MR_PCA_RL./100);
-        vy = single(data.MR_PCA_AP./100);
-        vz = single(data.MR_PCA_FH./100);
-    
-        vmask = abs(repmat(abs(vz(:,:,:,1))==data.VENC/100,1,1,1,size(vz,4))-1);
-        vx = vx.*vmask;
-        vy = vy.*vmask;
-        vz = vz.*vmask;
-    
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        % we normlize the magnitude images between 0 to 4096
-        mag_u = single(round((data.MR_FFE_RL./max(data.MR_FFE_RL(:)))*600));
-        mag_v = single(round((data.MR_FFE_AP./max(data.MR_FFE_AP(:)))*600));
-        mag_w = single(round((data.MR_FFE_FH./max(data.MR_FFE_FH(:)))*600));
-    
-        venc = repmat(data.VENC/100,1,size(data.MR_PCA_RL,4));
-    
-        disp('Preparing HDF5')
-        colnames = {'/dx', '/u', '/v', '/w',  '/mag_u', '/mag_v', '/mag_w','/venc_u','/venc_v','/venc_w'};
-    
-        h5create(output_filepath,colnames{1},size(dx),'Datatype','single');
-        h5create(output_filepath,colnames{2},size(vx),'Datatype','single');
-        h5create(output_filepath,colnames{3},size(vy),'Datatype','single');
-        h5create(output_filepath,colnames{4},size(vz),'Datatype','single');
-    
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        h5create(output_filepath,colnames{5},size(mag_u),'Datatype','single');
-        h5create(output_filepath,colnames{6},size(mag_v),'Datatype','single');
-        h5create(output_filepath,colnames{7},size(mag_w),'Datatype','single');
-    
-        h5create(output_filepath,colnames{8},size(venc),'Datatype','single');
-        h5create(output_filepath,colnames{9},size(venc),'Datatype','single');
-        h5create(output_filepath,colnames{10},size(venc),'Datatype','single');
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        disp('Saving to HDF5')
-        h5write(output_filepath, colnames{1}, dx);
-        h5write(output_filepath, colnames{2}, vx);
-        h5write(output_filepath, colnames{3}, vy);
-        h5write(output_filepath, colnames{4}, vz);
-        h5write(output_filepath, colnames{5}, mag_v);
-        h5write(output_filepath, colnames{6}, mag_w);
-        h5write(output_filepath, colnames{7}, mag_w);
-        h5write(output_filepath, colnames{8}, venc);
-        h5write(output_filepath, colnames{9}, venc);
-        h5write(output_filepath, colnames{10}, venc);
-    
-        disp('Done!');
-    
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        % we run the python code.
-        cd '4DFlowNet-master/src/'
-        pyrunfile('predictor.py')
-        cd ../../
-    
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        % we create matlab file from h5 file super res
-        h5_result_HR_path = '4DFlowNet-master\result\example_result.h5';
-        
-        RL = double(h5read(h5_result_HR_path,'/u'))*100; % change to cm/s
-        AP = double(h5read(h5_result_HR_path,'/v'))*100; % change to cm/s
-        FH = double(h5read(h5_result_HR_path,'/w'))*100; % change to cm/s
-       
-        MAG = zeros(size(FH));
-        for n=1:size(FH,4)
-            MAG(:,:,:,n) = imresize3(data.MR_FFE_FH(:,:,:,n),[size(FH,1) size(FH,2) size(FH,3)], "cubic");
-        end
-        
-        data_new = data;
-        data_new.MR_FFE_AP = (MAG + abs(min(MAG(:))))*255;
-        data_new.MR_FFE_RL = (MAG + abs(min(MAG(:))))*255;
-        data_new.MR_FFE_FH = (MAG + abs(min(MAG(:))))*255;
-        data_new.MR_PCA_AP = AP;
-        data_new.MR_PCA_RL = RL;
-        data_new.MR_PCA_FH = FH;
-        data_new.voxel_MR = data.voxel_MR/2;
-        
-        data = data_new;
+    % convert data to h5
+    data = [];
+    data.MR_FFE_FH = double(handles.MR_FFE_FH(2:end-1,2:end-1,2:end-1,:));
+    data.MR_FFE_AP = double(handles.MR_FFE_AP(2:end-1,2:end-1,2:end-1,:));
+    data.MR_FFE_RL = double(handles.MR_FFE_RL(2:end-1,2:end-1,2:end-1,:));
+    data.MR_PCA_FH = double(handles.MR_PCA_FH(2:end-1,2:end-1,2:end-1,:));
+    data.MR_PCA_AP = double(handles.MR_PCA_AP(2:end-1,2:end-1,2:end-1,:));
+    data.MR_PCA_RL = double(handles.MR_PCA_RL(2:end-1,2:end-1,2:end-1,:));
+    data.VENC = double(handles.VENC);
+    data.voxel_MR = double(handles.voxel_MR);
+    data.heart_rate = double(handles.heart_rate);
+    data.type = handles.type;
 
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % we add the h5 file to the path of 4DFlowNet
+    if isfolder('4DFlowNet-master\data\')
+        if isfile('4DFlowNet-master\data\example_data.h5')
+            delete('4DFlowNet-master\data\example_data.h5')
+        end
+        output_filepath = '4DFlowNet-master\data\example_data.h5';
     else
-        final_path = [answer{1},'envs/py38/bin/python3.8'];
-        disp(final_path)
-        pyenv('Version',final_path);
-        pyenv(ExecutionMode="OutOfProcess")
-        py.list({"Monday","Tuesday","Wednesday","Thursday","Friday"});
+        mkdir('4DFlowNet-master\data\')
+        output_filepath = '4DFlowNet-master\data\example_data.h5';
+    end
 
-        % convert data to h5
-        data = [];
-        data.MR_FFE_FH = double(handles.MR_FFE_FH(2:end-1,2:end-1,2:end-1,:));
-        data.MR_FFE_AP = double(handles.MR_FFE_AP(2:end-1,2:end-1,2:end-1,:));
-        data.MR_FFE_RL = double(handles.MR_FFE_RL(2:end-1,2:end-1,2:end-1,:));
-        data.MR_PCA_FH = double(handles.MR_PCA_FH(2:end-1,2:end-1,2:end-1,:));
-        data.MR_PCA_AP = double(handles.MR_PCA_AP(2:end-1,2:end-1,2:end-1,:));
-        data.MR_PCA_RL = double(handles.MR_PCA_RL(2:end-1,2:end-1,2:end-1,:));
-        data.VENC = double(handles.VENC);
-        data.voxel_MR = double(handles.voxel_MR);
-        data.heart_rate = double(handles.heart_rate);
-        data.type = handles.type;
-    
-    
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        % we add the h5 file to the path of 4DFlowNet
-        if isfolder('4DFlowNet-master/data/')
-            if isfile('4DFlowNet-master/data/example_data.h5')
-                delete('4DFlowNet-master/data/example_data.h5')
-            end
-            output_filepath = '4DFlowNet-master/data/example_data.h5';
-        else
-            mkdir('4DFlowNet-master/data/')
-            output_filepath = '4DFlowNet-master/data/example_data.h5';
-        end
-    
-    
-        if isfolder('4DFlowNet-master/result/')
-            if isfile('4DFlowNet-master/result/example_result.h5')
-                delete('4DFlowNet-master/result/example_result.h5')
-            end
-        else
-            mkdir('4DFlowNet-master/result/')
-        end
-    
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        % Read data files
-        dx = data.voxel_MR';
-    
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        dx = repmat(dx,1,size(data.MR_PCA_RL,4));
-    
-        vx = single(data.MR_PCA_RL./100);
-        vy = single(data.MR_PCA_AP./100);
-        vz = single(data.MR_PCA_FH./100);
-    
-        vmask = abs(repmat(abs(vz(:,:,:,1))==data.VENC/100,1,1,1,size(vz,4))-1);
-        vx = vx.*vmask;
-        vy = vy.*vmask;
-        vz = vz.*vmask;
-    
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        % we normlize the magnitude images between 0 to 4096
-        mag_u = single(round((data.MR_FFE_RL./max(data.MR_FFE_RL(:)))*600));
-        mag_v = single(round((data.MR_FFE_AP./max(data.MR_FFE_AP(:)))*600));
-        mag_w = single(round((data.MR_FFE_FH./max(data.MR_FFE_FH(:)))*600));
-    
-        venc = repmat(data.VENC/100,1,size(data.MR_PCA_RL,4));
-    
-        disp('Preparing HDF5')
-        colnames = {'/dx', '/u', '/v', '/w',  '/mag_u', '/mag_v', '/mag_w','/venc_u','/venc_v','/venc_w'};
-    
-        h5create(output_filepath,colnames{1},size(dx),'Datatype','single');
-        h5create(output_filepath,colnames{2},size(vx),'Datatype','single');
-        h5create(output_filepath,colnames{3},size(vy),'Datatype','single');
-        h5create(output_filepath,colnames{4},size(vz),'Datatype','single');
-    
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        h5create(output_filepath,colnames{5},size(mag_u),'Datatype','single');
-        h5create(output_filepath,colnames{6},size(mag_v),'Datatype','single');
-        h5create(output_filepath,colnames{7},size(mag_w),'Datatype','single');
-    
-        h5create(output_filepath,colnames{8},size(venc),'Datatype','single');
-        h5create(output_filepath,colnames{9},size(venc),'Datatype','single');
-        h5create(output_filepath,colnames{10},size(venc),'Datatype','single');
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        disp('Saving to HDF5')
-        h5write(output_filepath, colnames{1}, dx);
-        h5write(output_filepath, colnames{2}, vx);
-        h5write(output_filepath, colnames{3}, vy);
-        h5write(output_filepath, colnames{4}, vz);
-        h5write(output_filepath, colnames{5}, mag_v);
-        h5write(output_filepath, colnames{6}, mag_w);
-        h5write(output_filepath, colnames{7}, mag_w);
-        h5write(output_filepath, colnames{8}, venc);
-        h5write(output_filepath, colnames{9}, venc);
-        h5write(output_filepath, colnames{10}, venc);
-    
-        disp('Done!');
-    
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        % we run the python code.
-        cd '4DFlowNet-master/src/'
-        pyrunfile('predictor.py')
-        cd ../../
-    
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        % we create matlab file from h5 file super res
-        h5_result_HR_path = '4DFlowNet-master/result/example_result.h5';
-        
-        RL = double(h5read(h5_result_HR_path,'/u'))*100; % change to cm/s
-        AP = double(h5read(h5_result_HR_path,'/v'))*100; % change to cm/s
-        FH = double(h5read(h5_result_HR_path,'/w'))*100; % change to cm/s
-       
-        MAG = zeros(size(FH));
-        for n=1:size(FH,4)
-            MAG(:,:,:,n) = imresize3(data.MR_FFE_FH(:,:,:,n),[size(FH,1) size(FH,2) size(FH,3)], "cubic");
-        end
-        
-        data_new = data;
-        data_new.MR_FFE_AP = (MAG + abs(min(MAG(:))))*255;
-        data_new.MR_FFE_RL = (MAG + abs(min(MAG(:))))*255;
-        data_new.MR_FFE_FH = (MAG + abs(min(MAG(:))))*255;
-        data_new.MR_PCA_AP = AP;
-        data_new.MR_PCA_RL = RL;
-        data_new.MR_PCA_FH = FH;
-        data_new.voxel_MR = data.voxel_MR/2;
-        
-        data = data_new;
 
+    if isfolder('4DFlowNet-master\result\')
+        if isfile('4DFlowNet-master\result\example_result.h5')
+            delete('4DFlowNet-master\result\example_result.h5')
+        end
+    else
+        mkdir('4DFlowNet-master\result\')
+    end
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % Read data files
+    dx = data.voxel_MR';
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    dx = repmat(dx,1,size(data.MR_PCA_RL,4));
+
+    vx = single(data.MR_PCA_RL./100);
+    vy = single(data.MR_PCA_AP./100);
+    vz = single(data.MR_PCA_FH./100);
+
+    vmask = abs(repmat(abs(vz(:,:,:,1))==data.VENC/100,1,1,1,size(vz,4))-1);
+    vx = vx.*vmask;
+    vy = vy.*vmask;
+    vz = vz.*vmask;
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % we normlize the magnitude images between 0 to 4096
+    mag_u = single(round((data.MR_FFE_RL./max(data.MR_FFE_RL(:)))*600));
+    mag_v = single(round((data.MR_FFE_AP./max(data.MR_FFE_AP(:)))*600));
+    mag_w = single(round((data.MR_FFE_FH./max(data.MR_FFE_FH(:)))*600));
+
+    venc = repmat(data.VENC/100,1,size(data.MR_PCA_RL,4));
+
+    disp('Preparing HDF5')
+    colnames = {'/dx', '/u', '/v', '/w',  '/mag_u', '/mag_v', '/mag_w','/venc_u','/venc_v','/venc_w'};
+
+    h5create(output_filepath,colnames{1},size(dx),'Datatype','single');
+    h5create(output_filepath,colnames{2},size(vx),'Datatype','single');
+    h5create(output_filepath,colnames{3},size(vy),'Datatype','single');
+    h5create(output_filepath,colnames{4},size(vz),'Datatype','single');
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    h5create(output_filepath,colnames{5},size(mag_u),'Datatype','single');
+    h5create(output_filepath,colnames{6},size(mag_v),'Datatype','single');
+    h5create(output_filepath,colnames{7},size(mag_w),'Datatype','single');
+
+    h5create(output_filepath,colnames{8},size(venc),'Datatype','single');
+    h5create(output_filepath,colnames{9},size(venc),'Datatype','single');
+    h5create(output_filepath,colnames{10},size(venc),'Datatype','single');
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    disp('Saving to HDF5')
+    h5write(output_filepath, colnames{1}, dx);
+    h5write(output_filepath, colnames{2}, vx);
+    h5write(output_filepath, colnames{3}, vy);
+    h5write(output_filepath, colnames{4}, vz);
+    h5write(output_filepath, colnames{5}, mag_v);
+    h5write(output_filepath, colnames{6}, mag_w);
+    h5write(output_filepath, colnames{7}, mag_w);
+    h5write(output_filepath, colnames{8}, venc);
+    h5write(output_filepath, colnames{9}, venc);
+    h5write(output_filepath, colnames{10}, venc);
+
+    disp('Done!');
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % we run the python code.
+    cd '4DFlowNet-master/src/'
+    pyrunfile('predictor.py')
+    cd ../../
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % we create matlab file from h5 file super res
+    h5_result_HR_path = '4DFlowNet-master\result\example_result.h5';
+    
+    RL = double(h5read(h5_result_HR_path,'/u'))*100; % change to cm/s
+    AP = double(h5read(h5_result_HR_path,'/v'))*100; % change to cm/s
+    FH = double(h5read(h5_result_HR_path,'/w'))*100; % change to cm/s
+   
+    MAG = zeros(size(FH));
+    for n=1:size(FH,4)
+        MAG(:,:,:,n) = imresize3(data.MR_FFE_FH(:,:,:,n),[size(FH,1) size(FH,2) size(FH,3)], "cubic");
     end
     
+    data_new = data;
+    data_new.MR_FFE_AP = (MAG + abs(min(MAG(:))))*255;;
+    data_new.MR_FFE_RL = (MAG + abs(min(MAG(:))))*255;;
+    data_new.MR_FFE_FH = (MAG + abs(min(MAG(:))))*255;;
+    data_new.MR_PCA_AP = AP;
+    data_new.MR_PCA_RL = RL;
+    data_new.MR_PCA_FH = FH;
+    data_new.voxel_MR = data.voxel_MR/2;
+    
+    data = data_new;
+
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
